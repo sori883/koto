@@ -6,7 +6,7 @@
 
 ## この会話で確定した仕様
 
-- 配布するスキルを開発する。agent-gear自体のブループリントを生成する作業ではない。
+- 配布するスキルを開発する。koto自体のブループリントを生成する作業ではない。
 - スキルと付属資料は日本語にする。
 - 成果物は利用先の `.space/babel/` をbundleとして、OKF CLIで作成・更新する。新規の構成・動作の説明は `knowledge/systems/<system>/`、設計判断は `decisions/systems/<system>/` に保存し、全体像は `knowledge/systems/<system>/blueprint.md` とする。
 - 単一システムでも `<system>` を省略しない。既存の同じ対象・責務の文書は元のIDで更新・参照し、標準配置に合わせるためだけに移動・複製しない。保存先は文章とconcept IDの表で示し、ディレクトリ図は設けない。
@@ -60,4 +60,4 @@ acquire-codebase-knowledgeはそのまま翻訳する対象ではない。今回
 
 ## 検証
 
-形式検証、配布物の参照先確認、[評価ケース](evaluation-cases.md)による内容確認を分ける。OKFへの保存経路は一時的な検証用プロジェクトとbundleで確かめ、agent-gearの実際の `.space/babel/` へサンプル文書を保存しない。PR取得や実際のhow・whyのモデル実行は、別途確認していない限り検証済みとしない。
+形式検証、配布物の参照先確認、[評価ケース](evaluation-cases.md)による内容確認を分ける。OKFへの保存経路は一時的な検証用プロジェクトとbundleで確かめ、kotoの実際の `.space/babel/` へサンプル文書を保存しない。PR取得や実際のhow・whyのモデル実行は、別途確認していない限り検証済みとしない。

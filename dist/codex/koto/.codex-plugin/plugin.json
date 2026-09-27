@@ -1,0 +1,23 @@
+{
+  "name": "koto",
+  "description": "開発フロー、作業管理、知識管理をAIエージェントへ提供する。",
+  "author": {
+    "name": "sori883"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "koto",
+    "shortDescription": "開発フロー・作業管理・永続的な知識管理",
+    "longDescription": "依頼整理から引き渡しまでのスキル、unitの分担と進捗を管理するorch、知識を保存するOKFを提供します。",
+    "developerName": "sori883",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": [
+      "開発依頼を整理して作業を進めて",
+      "作業をunitに分担して管理して",
+      "システムの設計と判断を記録して"
+    ]
+  },
+  "repository": "https://github.com/sori883/koto",
+  "version": "0.1.5"
+}

@@ -1,7 +1,7 @@
 {
-  "name": "agent-gear",
+  "name": "koto",
   "interface": {
-    "displayName": "Agent Gear"
+    "displayName": "koto"
   },
   "plugins": []
 }

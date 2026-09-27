@@ -11,7 +11,7 @@ Cursorのpstack、参照コミット `032be146865d973682535de75f2287da438550bf` 
 - `.space/babel/rules/` に追加するルールは `type: rule`、`governance: constraint` を明示する。具体的に守る行動・禁止事項・承認条件を記し、原則の本文を複製しない。
 - 各原則はtype検索とdescriptionから選んで参照する。適用手順を重複して記すルール文書や、場面と参照先の対応表は同梱しない。
 - [原則参照スキル](../../../skills/use-principles/SKILL.md)に、候補の検索、本文の確認、適用結果の受け渡しを置く。作業の進行・委譲・検証・記録・報告は[全体フロー](../../../skills/devlow/references/workflow.md)へ分離した。
-- [配布用AGENTS.md](../../../templates/AGENTS.md)を利用先の入口とする。agent-gearのルートにある開発用 `AGENTS.md` へ配布ルールを追加しない。`okf-agent-memory` 自体は分野に依存しない記憶管理のままにする。
+- [配布用AGENTS.md](../../../templates/AGENTS.md)を利用先の入口とする。kotoのルートにある開発用 `AGENTS.md` へ配布ルールを追加しない。`okf-agent-memory` 自体は分野に依存しない記憶管理のままにする。
 - 原著の[MITライセンス](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/LICENSE)を、OKF bundleと原則参照スキルそれぞれの `LICENSE` に同梱する。進行手順を移したdevlowにも同じLICENSEを保持する。
 
 ## ローカライズの判断
@@ -38,11 +38,11 @@ Cursorのpstack、参照コミット `032be146865d973682535de75f2287da438550bf` 
 
 ## 配布用AGENTS.mdの配置
 
-`templates/AGENTS.md` は利用先プロジェクトのルートへ配置するためのひな形であり、保存場所の `templates/` を作業するエージェントへの開発指示ではない。利用先に既存の `AGENTS.md` がある場合は、内容を上書きせず「開発ルール」の節を統合する。agent-gear固有の `work/` に関する指示は配布しない。
+`templates/AGENTS.md` は利用先プロジェクトのルートへ配置するためのひな形であり、保存場所の `templates/` を作業するエージェントへの開発指示ではない。利用先に既存の `AGENTS.md` がある場合は、内容を上書きせず「開発ルール」の節を統合する。koto固有の `work/` に関する指示は配布しない。
 
 ひな形の入口は利用先ルートの `skills/devlow/` とする。同じ親ディレクトリに、全体フローが参照するuse-principles・okf-agent-memory・checkpoint-safely・how・why・system-blueprintを配置する。23原則を含むbundleは `.space/babel/` を前提とする。既存bundleへ追加する場合はOKF CLIで検索して重複を確認し、既存の文書・目次・履歴を上書きしない。OKF CLIの依存の準備はOKF Agent Memoryの手順に従う。異なる配置にする場合は、ひな形のスキルパスとbundleパスも合わせる。
 
-運用スキルの必須参照は同梱するスキルとOKF文書に限定する。agent-gearの開発用 `.agents/skills/` は配布先の必須依存にしない。
+運用スキルの必須参照は同梱するスキルとOKF文書に限定する。kotoの開発用 `.agents/skills/` は配布先の必須依存にしない。
 
 ## 保守時の確認
 

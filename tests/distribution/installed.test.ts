@@ -13,9 +13,9 @@ async function run(cli: string, args: string[], cwd: string) {
 }
 
 for (const product of ["codex", "claude-code", "copilot"]) test(`${product} installs outside the repository, preserves user content, and runs all four CLIs`, async () => {
-  const root = await realpath(await mkdtemp(join(tmpdir(), "gear-install-"))); temporary.push(root);
+  const root = await realpath(await mkdtemp(join(tmpdir(), "koto-install-"))); temporary.push(root);
   const plugin = join(root, "plugin"), project = join(root, "consumer"); await mkdir(project);
-  const prefix = `dist/${product === "copilot" ? "claude-code" : product}/agent-gear/`;
+  const prefix = `dist/${product === "copilot" ? "claude-code" : product}/koto/`;
   for (const [path, body] of await distribution(resolve(import.meta.dir, "../.."))) {
     if (!path.startsWith(prefix)) continue;
     const target = join(plugin, path.slice(prefix.length)); await mkdir(dirname(target), { recursive: true }); await writeFile(target, body);
@@ -38,7 +38,7 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   if (product === "copilot") {
     expect(await Bun.file(join(project, "CLAUDE.md")).exists()).toBe(false);
     expect(await Bun.file(join(project, "AGENTS.md")).exists()).toBe(false);
-    expect(await Bun.file(join(project, ".space/setup/agent-gear-copilot.json")).exists()).toBe(true);
+    expect(await Bun.file(join(project, ".space/setup/koto-copilot.json")).exists()).toBe(true);
   }
   const instructions = await readFile(join(project, instruction), "utf8");
   expect(instructions).toContain("Keep these user instructions."); expect(instructions).toContain(join(plugin, "skills")); expect(instructions).not.toContain("{{");
@@ -78,7 +78,7 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   expect((await run(okf, ["init", personal, "--json"], project)).code).toBe(0);
   expect((await run(okf, ["create", "knowledge/consumer", personal, "--type", "knowledge", "--title", "Consumer", "--desc", "Project-specific knowledge", "--json"], project)).code).toBe(0);
   expect(await Bun.file(join(bundle, "knowledge/consumer.md")).exists()).toBe(true);
-  expect(await Bun.file(join(project, ".space/babel/vendor/agent-gear/index.md")).exists()).toBe(false);
+  expect(await Bun.file(join(project, ".space/babel/vendor/koto/index.md")).exists()).toBe(false);
   const ownPrinciples = await run(okf, ["search", "--type", "principle", "--all", personal, "--json"], project);
   expect(JSON.parse(ownPrinciples.out)).toHaveLength(23);
   const log = await readFile(join(bundle, "log.md"), "utf8");

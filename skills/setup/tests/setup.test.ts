@@ -4,17 +4,19 @@ import { watch } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { runSetup } from "../scripts/lib/setup.ts";
+import { instructionFiles } from "../scripts/lib/model.ts";
+import type { Product } from "../scripts/lib/model.ts";
 
 const roots: string[] = [];
-async function fixture() {
+async function fixture(plugin = "koto", product: Product = "codex") {
   const root = await mkdtemp(join(tmpdir(), "setup-test-")); roots.push(root);
   const pluginRoot = join(root, "plugin"), project = join(root, "consumer");
   await mkdir(join(pluginRoot, "templates"), { recursive: true }); await mkdir(project);
   const files = [
     { source: "templates/rule.md", destination: ".space/babel/rules/rule.md", mode: "copy" },
-    { source: "templates/instructions.md", destination: "AGENTS.md", mode: "managed-block" }
+    { source: "templates/instructions.md", destination: instructionFiles[product], mode: "managed-block" }
   ];
-  const manifest = { schemaVersion: 1, plugin: "agent-gear", product: "codex", version: "1.0.0", files };
+  const manifest = { schemaVersion: 1, plugin, product, version: "1.0.0", files };
   await writeFile(join(pluginRoot, "setup-manifest.json"), JSON.stringify(manifest));
   await writeFile(join(pluginRoot, "templates/rule.md"), "version one\n");
   await writeFile(join(pluginRoot, "templates/instructions.md"), "Use {{SKILL_ROOT}} and {{BABEL_BUNDLE}}.\n");
@@ -120,12 +122,12 @@ test("invalid shared indexes stop before any file is placed", async () => {
   }
 });
 
-for (const product of ["codex", "claude-code", "copilot"]) test(`${product} upgrades vendor installs without deleting old files and protects edits before migration`, async () => {
+for (const product of ["codex", "claude-code", "copilot"] as const) test(`${product} upgrades vendor installs without deleting old files and protects edits before migration`, async () => {
   const f = await fixture();
   f.manifest.product = product;
   f.manifest.files[1]!.destination = product === "codex" ? "AGENTS.md" : product === "claude-code" ? "CLAUDE.md" : ".github/copilot-instructions.md";
   const entry = f.manifest.files[0]!, direct = entry.destination;
-  entry.destination = direct.replace(".space/babel/", ".space/babel/vendor/agent-gear/");
+  entry.destination = direct.replace(".space/babel/", ".space/babel/vendor/koto/");
   await writeFile(join(f.pluginRoot, "setup-manifest.json"), JSON.stringify(f.manifest));
   await f.run("apply");
   const legacy = join(f.project, entry.destination);
@@ -142,7 +144,7 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} upgr
 
 test("migration checks another product's legacy installation and untracked vendor content", async () => {
   const f = await fixture(), direct = f.manifest.files[0]!.destination;
-  f.manifest.files[0]!.destination = direct.replace(".space/babel/", ".space/babel/vendor/agent-gear/");
+  f.manifest.files[0]!.destination = direct.replace(".space/babel/", ".space/babel/vendor/koto/");
   await writeFile(join(f.pluginRoot, "setup-manifest.json"), JSON.stringify(f.manifest));
   await f.run("apply");
   const legacy = join(f.project, f.manifest.files[0]!.destination);
@@ -153,7 +155,7 @@ test("migration checks another product's legacy installation and untracked vendo
   const copilot = () => runSetup({ command: "apply", project: f.project, pluginRoot: f.pluginRoot, product: "copilot" });
   await expect(copilot()).rejects.toThrow("conflict");
   expect(await Bun.file(join(f.project, ".github/copilot-instructions.md")).exists()).toBe(false);
-  await rm(join(f.project, ".space/setup/agent-gear-codex.json"));
+  await rm(join(f.project, ".space/setup/koto-codex.json"));
   await expect(copilot()).rejects.toThrow("conflict");
   await writeFile(legacy, "version one\n"); await copilot();
   expect(await readFile(f.copy, "utf8")).toBe("version one\n");
@@ -228,16 +230,16 @@ test("existing unmanaged file conflicts before any metadata or destination is wr
   const f = await fixture(); await mkdir(join(f.project, ".space/babel/rules"), { recursive: true });
   await writeFile(f.copy, "user-owned"); await expect(f.run("apply")).rejects.toThrow("conflict");
   expect(await Bun.file(join(f.project, "AGENTS.md")).exists()).toBe(false);
-  expect(await Bun.file(join(f.project, ".space/setup/agent-gear-codex.json")).exists()).toBe(false);
+  expect(await Bun.file(join(f.project, ".space/setup/koto-codex.json")).exists()).toBe(false);
   expect(await readFile(f.copy, "utf8")).toBe("user-owned");
 });
 
 test("locked apply preserves lock; broken state is not replaced", async () => {
   const f = await fixture(); await mkdir(join(f.project, ".space/setup"), { recursive: true });
-  const lock = join(f.project, ".space/setup/agent-gear.lock"); await writeFile(lock, "external lock");
+  const lock = join(f.project, ".space/setup/koto.lock"); await writeFile(lock, "external lock");
   expect((await f.run("status")).locked).toBe(true); await expect(f.run("apply")).rejects.toThrow("locked");
   expect(await readFile(lock, "utf8")).toBe("external lock"); await rm(lock);
-  const state = join(f.project, ".space/setup/agent-gear-codex.json"); await writeFile(state, "not JSON");
+  const state = join(f.project, ".space/setup/koto-codex.json"); await writeFile(state, "not JSON");
   await expect(f.run("apply")).rejects.toThrow(); expect(await readFile(state, "utf8")).toBe("not JSON");
 });
 
@@ -287,7 +289,7 @@ test("both products converge on identical Babel updates while protecting differe
   await f.run("apply");
   const result = await runClaude("apply"); expect(result.conflicts).toEqual([]);
   expect(result.actions.find(a => a.destination === f.manifest.files[0]!.destination)?.action).toBe("unchanged");
-  for (const product of ["codex", "claude-code"]) expect(JSON.parse(await readFile(join(f.project, `.space/setup/agent-gear-${product}.json`), "utf8")).version).toBe("2.0.0");
+  for (const product of ["codex", "claude-code"]) expect(JSON.parse(await readFile(join(f.project, `.space/setup/koto-${product}.json`), "utf8")).version).toBe("2.0.0");
   expect((await f.run("status")).conflicts).toEqual([]); expect((await runClaude("status")).conflicts).toEqual([]);
   await writeFile(f.copy, "local content differs from both versions\n");
   await expect(f.run("apply")).rejects.toThrow("conflict"); await expect(runClaude("apply")).rejects.toThrow("conflict");
@@ -322,7 +324,7 @@ test("Copilot CLI selection preserves existing instructions, isolates state, and
   expect((await cli(entry, ["apply", ...args], f.root)).code).toBe(0);
   const first = await readFile(path, "utf8");
   expect(first).toStartWith("User Copilot instructions\n");
-  expect(first).toContain("agent-gear:setup:agent-gear:copilot:start");
+  expect(first).toContain("koto:setup:koto:copilot:start");
   expect(first).toContain(join(f.pluginRoot, "skills"));
   expect(await Bun.file(join(f.project, "AGENTS.md")).exists()).toBe(false);
   expect(await Bun.file(join(f.project, "CLAUDE.md")).exists()).toBe(false);
@@ -340,7 +342,7 @@ test("Copilot CLI selection preserves existing instructions, isolates state, and
   expect(await readFile(path, "utf8")).toStartWith("User Copilot instructions\n");
   expect(await readFile(path, "utf8")).toEndWith("Outside block edit\n");
   expect(await readFile(path, "utf8")).toContain("Updated ");
-  for (const product of ["codex", "copilot"]) expect(JSON.parse(await readFile(join(f.project, `.space/setup/agent-gear-${product}.json`), "utf8")).version).toBe("2.0.0");
+  for (const product of ["codex", "copilot"]) expect(JSON.parse(await readFile(join(f.project, `.space/setup/koto-${product}.json`), "utf8")).version).toBe("2.0.0");
   expect((await cli(entry, ["status", ...args], f.root)).data.data.actions.every((a: { action: string }) => a.action === "unchanged")).toBe(true);
   const edited = (await readFile(path, "utf8")).replace("Updated ", "Local instruction edit ");
   await writeFile(path, edited);
@@ -361,7 +363,7 @@ test("product selection rejects unknown, unavailable, and mismatched manifests b
     expect(result.code).toBe(2);
   }
   expect(await Bun.file(f.copy).exists()).toBe(false);
-  expect(await Bun.file(join(f.project, ".space/setup/agent-gear-copilot.json")).exists()).toBe(false);
+  expect(await Bun.file(join(f.project, ".space/setup/koto-copilot.json")).exists()).toBe(false);
   const explicit = await cli(entry, ["plan", "--product", "codex", "--project", f.project, "--json"], f.root);
   expect(explicit.code).toBe(0); expect(explicit.data.data.product).toBe("codex");
 });
@@ -381,15 +383,17 @@ test("copied real CLI uses its own manifest/runtime and requires explicit projec
   await writeFile(join(f.project, "package.json"), '{"name":"consumer"}\n');
   const missing = await cli(entry, ["plan", "--json"], f.project); expect(missing.code).toBe(2); expect(missing.data.error.code).toBe("INPUT");
   const plan = await cli(entry, ["plan", "--project", f.project, "--json"], f.root); expect(plan.code).toBe(0); expect(plan.data.data.actions).toHaveLength(2);
-  expect(await Bun.file(join(f.project, ".space/setup/agent-gear-codex.json")).exists()).toBe(false);
+  expect(await Bun.file(join(f.project, ".space/setup/koto-codex.json")).exists()).toBe(false);
   const applied = await cli(entry, ["apply", "--project", f.project, "--json"], f.root); expect(applied.code).toBe(0);
   expect(await readFile(join(f.project, "package.json"), "utf8")).toBe('{"name":"consumer"}\n');
   expect(await Bun.file(join(f.pluginRoot, "skills/setup/scripts/node_modules/.setup-bootstrap.json")).exists()).toBe(true);
   const unknown = await cli(entry, ["plan", "--project", f.project, "--force", "--json"], f.root); expect(unknown.code).toBe(2);
 });
 
-test("actual killed CLI leaves recoverable pending writes and does not replace unrelated edits", async () => {
-  const f = await fixture(); await addSharedFiles(f); const entry = await copyCLI(f); await f.run("apply");
+test("actual killed CLI resumes a rename migration and does not replace unrelated edits", async () => {
+  const f = await fixture("agent-gear"); await addSharedFiles(f); const entry = await copyCLI(f); await f.run("apply");
+  const legacyState = await readFile(join(f.project, ".space/setup/agent-gear-codex.json"));
+  f.manifest.plugin = "koto";
   await writeFile(join(f.pluginRoot, "space/babel/rules/index.md"), "# rules\n* [Updated](rule.md) - Changed description\n");
   await cli(entry, ["status", "--project", f.project, "--json"], f.root);
   const folder = join(f.project, ".space/babel/rules");
@@ -406,9 +410,10 @@ test("actual killed CLI leaves recoverable pending writes and does not replace u
     const [code, out, err] = await Promise.all([process.exited, new Response(process.stdout).text(), new Response(process.stderr).text()]);
     if (!killed) throw new Error(`Writer exited before interruption: ${code}\n${out}\n${err}`);
   } finally { observer.close(); }
-  const pendingPath = join(f.project, ".space/setup/agent-gear-codex.pending.json"); expect(await Bun.file(pendingPath).exists()).toBe(true);
+  const pendingPath = join(f.project, ".space/setup/koto-codex.pending.json"); expect(await Bun.file(pendingPath).exists()).toBe(true);
   expect((await f.run("status")).pending).toBe(true);
   // Only after the writer is confirmed stopped may its abandoned lock be removed.
+  await rm(join(f.project, ".space/setup/koto.lock"));
   await rm(join(f.project, ".space/setup/agent-gear.lock"));
   const first = join(folder, "extra-0.md"), original = await readFile(first); await writeFile(first, "local edit after interruption");
   await expect(f.run("apply")).rejects.toThrow("conflict"); expect(await readFile(first, "utf8")).toBe("local edit after interruption");
@@ -416,4 +421,91 @@ test("actual killed CLI leaves recoverable pending writes and does not replace u
   expect(await Bun.file(pendingPath).exists()).toBe(false); expect((await f.run("status")).conflicts).toEqual([]);
   expect(await readFile(join(folder, "extra-39.md"), "utf8")).toBe("content-39\n".repeat(1000));
   expect(await readFile(join(folder, "index.md"), "utf8")).toContain("Changed description");
+  expect(await readFile(join(f.project, ".space/setup/agent-gear-codex.json"))).toEqual(legacyState);
+  expect(JSON.parse(await readFile(join(f.project, ".space/setup/koto-codex.json"), "utf8")).plugin).toBe("koto");
 }, 10000);
+
+async function renamePlugin(f: Awaited<ReturnType<typeof fixture>>) {
+  f.manifest.plugin = "koto"; f.manifest.version = "2.0.0";
+  await writeFile(join(f.pluginRoot, "setup-manifest.json"), JSON.stringify(f.manifest));
+}
+
+for (const product of Object.keys(instructionFiles) as Product[]) test(`${product} adopts the old setup state and replaces its block once`, async () => {
+  const f = await fixture("agent-gear", product); await addSharedFiles(f);
+  const instruction = join(f.project, instructionFiles[product]);
+  await mkdir(join(instruction, ".."), { recursive: true }); await writeFile(instruction, "Keep my instructions.\n");
+  await f.run("apply");
+  const before = await readFile(instruction), oldState = await readFile(join(f.project, `.space/setup/agent-gear-${product}.json`));
+  await renamePlugin(f);
+  await writeFile(join(f.pluginRoot, "templates/instructions.md"), "Use koto from {{SKILL_ROOT}}.\n");
+  await writeFile(join(f.pluginRoot, "templates/rule.md"), "version two\n");
+  await writeFile(join(f.pluginRoot, "space/babel/rules/index.md"), "# rules\n* [Updated](rule.md) - New description\n");
+  const plan = await f.run("plan"); expect(plan.conflicts).toEqual([]); expect(plan.plugin).toBe("koto");
+  expect(await readFile(instruction)).toEqual(before);
+  expect(await Bun.file(join(f.project, `.space/setup/koto-${product}.json`)).exists()).toBe(false);
+  await f.run("apply");
+  const after = await readFile(instruction, "utf8");
+  expect(after).toStartWith("Keep my instructions.\n"); expect(after).not.toContain("agent-gear");
+  expect(after.match(new RegExp(`koto:setup:koto:${product}:start`, "g"))).toHaveLength(1);
+  expect(await readFile(f.copy, "utf8")).toBe("version two\n");
+  expect(await readFile(join(f.project, ".space/babel/rules/index.md"), "utf8")).toContain("New description");
+  expect(await readFile(join(f.project, `.space/setup/agent-gear-${product}.json`))).toEqual(oldState);
+  const state = JSON.parse(await readFile(join(f.project, `.space/setup/koto-${product}.json`), "utf8"));
+  expect(state).toMatchObject({ plugin: "koto", product, version: "2.0.0" });
+  await f.run("apply"); expect(await readFile(instruction, "utf8")).toBe(after);
+  expect((await f.run("status")).actions.every(a => a.action === "unchanged")).toBe(true);
+});
+
+for (const target of ["instructions", "knowledge"]) test(`rename preserves local edits to old ${target}`, async () => {
+  const f = await fixture("agent-gear"); await f.run("apply"); await renamePlugin(f);
+  const path = target === "instructions" ? join(f.project, "AGENTS.md") : f.copy;
+  const edited = (await readFile(path, "utf8")).replace(target === "instructions" ? "Use " : "version one", "My local edit ");
+  await writeFile(path, edited);
+  expect((await f.run("plan")).conflicts).toHaveLength(1);
+  await expect(f.run("apply")).rejects.toThrow("conflict");
+  expect(await readFile(path, "utf8")).toBe(edited);
+  expect(await Bun.file(join(f.project, ".space/setup/koto-codex.json")).exists()).toBe(false);
+});
+
+test("rename rejects orphaned, duplicate, and incomplete old instruction blocks", async () => {
+  const f = await fixture("agent-gear"); await f.run("apply"); await renamePlugin(f);
+  const path = join(f.project, "AGENTS.md"), old = await readFile(path, "utf8");
+  const statePath = join(f.project, ".space/setup/agent-gear-codex.json"), state = await readFile(statePath);
+  await rm(statePath); await expect(f.run("apply")).rejects.toThrow("conflict");
+  expect(await readFile(path, "utf8")).toBe(old); await writeFile(statePath, state);
+  for (const content of [old + old.replaceAll("agent-gear", "koto"), old.replace("agent-gear:codex:end", "agent-gear:codex:broken")]) {
+    await writeFile(path, content); await expect(f.run("apply")).rejects.toThrow("conflict");
+    expect(await readFile(path, "utf8")).toBe(content);
+  }
+});
+
+test("rename respects the old writer lock and unfinished transactions from all products", async () => {
+  const f = await fixture("agent-gear"); await f.run("apply"); await renamePlugin(f);
+  const instruction = await readFile(join(f.project, "AGENTS.md"));
+  const lock = join(f.project, ".space/setup/agent-gear.lock"); await writeFile(lock, "old writer");
+  expect((await f.run("status")).locked).toBe(true); await expect(f.run("apply")).rejects.toThrow("locked");
+  expect(await readFile(lock, "utf8")).toBe("old writer");
+  expect(await Bun.file(join(f.project, ".space/setup/koto.lock")).exists()).toBe(false);
+  await rm(lock);
+  for (const product of Object.keys(instructionFiles)) {
+    const pending = join(f.project, `.space/setup/agent-gear-${product}.pending.json`); await writeFile(pending, "unfinished");
+    const plan = await f.run("plan"); expect(plan.pending).toBe(true); expect(plan.conflicts[0]!.destination).toEndWith(`agent-gear-${product}.pending.json`);
+    await expect(f.run("apply")).rejects.toThrow("conflict");
+    expect(await readFile(join(f.project, "AGENTS.md"))).toEqual(instruction); await rm(pending);
+  }
+  expect(await Bun.file(join(f.project, ".space/setup/koto-codex.json")).exists()).toBe(false);
+});
+
+test("rename retains old vendor files and their baselines while adopting the Babel layout", async () => {
+  const f = await fixture("agent-gear"), entry = f.manifest.files[0]!;
+  const direct = entry.destination; entry.destination = direct.replace(".space/babel/", ".space/babel/vendor/agent-gear/");
+  await writeFile(join(f.pluginRoot, "setup-manifest.json"), JSON.stringify(f.manifest)); await f.run("apply");
+  const vendor = join(f.project, entry.destination); entry.destination = direct; await renamePlugin(f);
+  await writeFile(vendor, "local vendor edit\n"); await expect(f.run("apply")).rejects.toThrow("conflict");
+  expect(await Bun.file(f.copy).exists()).toBe(false);
+  await writeFile(vendor, "version one\n"); await writeFile(join(f.pluginRoot, "templates/rule.md"), "version two\n");
+  await f.run("apply"); await f.run("apply");
+  expect(await readFile(vendor, "utf8")).toBe("version one\n"); expect(await readFile(f.copy, "utf8")).toBe("version two\n");
+  const status = await f.run("status"); expect(status.conflicts).toEqual([]);
+  expect(status.actions).toContainEqual(expect.objectContaining({ destination: direct.replace(".space/babel/", ".space/babel/vendor/agent-gear/"), action: "retain" }));
+});

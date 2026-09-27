@@ -7,7 +7,7 @@ const temporary: string[] = [];
 afterEach(async () => { for (const path of temporary.splice(0)) await rm(path, { recursive: true, force: true }); });
 const source = resolve(import.meta.dir, "../scripts");
 async function fixture() {
-  const root = await mkdtemp(join(tmpdir(), "gear-japanese-")); temporary.push(root);
+  const root = await mkdtemp(join(tmpdir(), "koto-japanese-")); temporary.push(root);
   const scripts = join(root, "plugin/skills/natural-japanese/scripts"), project = join(root, "consumer"), bin = join(root, "bin");
   await cp(source, scripts, { recursive: true, filter: path => !path.includes("node_modules") });
   await mkdir(project); await mkdir(bin); await symlink(process.execPath, join(bin, "bun"));

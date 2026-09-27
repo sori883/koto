@@ -1,4 +1,6 @@
-# agent-gear
+# koto
+
+**koto ( Knowledge-Oriented Task Orchestration )**
 
 **AIと開発を進めるための手順と、作業・知識の管理機能をまとめた、Codex・Claude Code・GitHub Copilot in VS Code向けプラグインです。**
 
@@ -44,28 +46,28 @@
 **Codexの場合**
 
 ```sh
-codex plugin marketplace add sori883/agent-gear --ref main
-codex plugin add agent-gear@agent-gear
+codex plugin marketplace add sori883/koto --ref main
+codex plugin add koto@koto
 ```
 
 **Claude Codeの場合**
 
 ```sh
-claude plugin marketplace add sori883/agent-gear --scope user
-claude plugin install agent-gear@agent-gear --scope user
+claude plugin marketplace add sori883/koto --scope user
+claude plugin install koto@koto --scope user
 ```
 
-**VS CodeのGitHub Copilotの場合（agent-gear 0.1.1以降）**
+**VS CodeのGitHub Copilotの場合**
 
 Agent Pluginsに対応したVS Codeで、ユーザー設定（settings.json）の配布元一覧にこのリポジトリを追加します。既存の一覧がある場合は、その項目を残して追加してください。
 
 ```json
 {
-  "chat.plugins.marketplaces": ["sori883/agent-gear"]
+  "chat.plugins.marketplaces": ["sori883/koto"]
 }
 ```
 
-拡張機能ビューで`@agentPlugins`を検索し、`agent-gear`をインストールします。Claude Codeと同じ配布物を利用できます。表示されない場合は`chat.plugins.enabled`を確認してください。[ローカル配布物からの導入と詳しい手順](docs/distribution.md#vs-codeのgithub-copilotへ導入する)も用意しています。
+拡張機能ビューで`@agentPlugins`を検索し、`koto`をインストールします。Claude Codeと同じ配布物を利用できます。表示されない場合は`chat.plugins.enabled`を確認してください。[ローカル配布物からの導入と詳しい手順](docs/distribution.md#vs-codeのgithub-copilotへ導入する)も用意しています。
 
 インストール後は、作業したいプロジェクトで新しい会話を開きます。
 
@@ -74,10 +76,10 @@ Agent Pluginsに対応したVS Codeで、ユーザー設定（settings.json）�
 AIに次のように依頼します。
 
 ```text
-agent-gearのsetupを使って、今開いているこのプロジェクトに初期設定を適用してください。
+kotoのsetupを使って、今開いているこのプロジェクトに初期設定を適用してください。
 ```
 
-setupは共通の開発原則を`.space/babel/principles/`へ、共通知識をBabel内の対応する分類へ配置し、AIがスキルを使うための指示を追加します。既存の指示・知識・目次・履歴を保持し、変更が衝突する場合は適用前に知らせます。初期設定は、agent-gearを使うプロジェクトごとに行います。
+setupは共通の開発原則を`.space/babel/principles/`へ、共通知識をBabel内の対応する分類へ配置し、AIがスキルを使うための指示を追加します。既存の指示・知識・目次・履歴を保持し、変更が衝突する場合は適用前に知らせます。初期設定は、kotoを使うプロジェクトごとに行います。
 
 Copilotでは「GitHub Copilot向けに、setupの`--product copilot`を使って初期設定してください」と伝えます。指示は`.github/copilot-instructions.md`に配置されます。更新・状態確認でも同じ製品指定を使います。
 
@@ -117,4 +119,4 @@ system-blueprintを使って、このプロジェクトの構成と主要な処�
 
 - [開発作業の全体フロー](skills/devlow/references/workflow.md)：工程の選び方と成果物
 - [導入・更新の詳細](docs/distribution.md)：ローカルからの導入やCLIの実行方法
-- [目的と配布設計](docs/architecture.md)：agent-gear自体を開発する人向けの設計方針
+- [目的と配布設計](docs/architecture.md)：koto自体を開発する人向けの設計方針
