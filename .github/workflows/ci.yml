@@ -21,6 +21,7 @@ jobs:
           bun skills/okf-agent-memory/scripts/okf.ts version --json
           bun skills/orch/scripts/task.ts --help
           bun skills/setup/scripts/setup.ts --help
+          bun skills/natural-japanese/scripts/japanese.ts --help
       - run: bun run typecheck
       - run: bun run test
       - name: Compare every generated file, including untracked paths

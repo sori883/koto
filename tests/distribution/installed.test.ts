@@ -12,7 +12,7 @@ async function run(cli: string, args: string[], cwd: string) {
   return { code, out, err };
 }
 
-for (const product of ["codex", "claude-code", "copilot"]) test(`${product} installs outside the repository, preserves user content, and runs all three CLIs`, async () => {
+for (const product of ["codex", "claude-code", "copilot"]) test(`${product} installs outside the repository, preserves user content, and runs all four CLIs`, async () => {
   const root = await realpath(await mkdtemp(join(tmpdir(), "gear-install-"))); temporary.push(root);
   const plugin = join(root, "plugin"), project = join(root, "consumer"); await mkdir(project);
   const prefix = `dist/${product === "copilot" ? "claude-code" : product}/agent-gear/`;
@@ -105,6 +105,14 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   const orch = join(plugin, "skills/orch/scripts/task.ts"), store = join(project, ".space/tasks/.orch");
   expect((await run(orch, ["init", "--store", store, "--project", project, "--actor", "parent", "--session", "one", "--operation-id", "init", "--json"], project)).code).toBe(0);
   const status = await run(orch, ["status", "--store", store, "--json"], project); expect(status.code).toBe(0); expect(JSON.parse(status.out).data.units).toEqual([]);
+  const japanese = join(plugin, "skills/natural-japanese/scripts/japanese.ts");
+  const draft = "いかがでしょうか。文章を確認することができます。\n";
+  await writeFile(join(project, "draft.md"), draft);
+  const japaneseResult = await run(japanese, ["lint", "draft.md", "--json"], project);
+  expect(japaneseResult.code).toBe(0);
+  expect(JSON.parse(japaneseResult.out).findings).toContainEqual(expect.objectContaining({ category: "forbidden_phrase" }));
+  expect(await readFile(join(project, "draft.md"), "utf8")).toBe(draft);
+  expect(await Bun.file(join(plugin, "skills/natural-japanese/scripts/node_modules/kuromoji/dict/base.dat.gz")).exists()).toBe(true);
   expect(await readFile(join(project, "package.json"), "utf8")).toBe('{"name":"consumer","private":true}\n');
   expect(await Bun.file(join(project, "bun.lock")).exists()).toBe(false);
   if (product === "codex") {

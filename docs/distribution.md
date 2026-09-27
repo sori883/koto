@@ -65,13 +65,16 @@ bun /path/to/installed/plugin/skills/setup/scripts/setup.ts apply --project /pat
 
 共通知識は`.space/babel/`直下のtype別ディレクトリへ、指示はCodexならAGENTS.md、Claude CodeならCLAUDE.md、Copilotなら.github/copilot-instructions.mdの管理ブロックへ入る。Copilotは上記の通り`--product copilot`を指定する。既存の指示や独自知識、目次、履歴は保持する。プラグインを更新した後もplan・applyで利用先への変更を反映する。旧vendorからの更新方法、衝突・中断時の扱いは[setupの資料](../skills/setup/references/setup.md)を参照する。
 
-OKF・orchはそれぞれ`skills/okf-agent-memory/scripts/okf.ts`、`skills/orch/scripts/task.ts`をBunで実行する。初回の依存準備はスキル自身のscripts内で行うため、書き込み権限が必要。OKFの初回はネットワークまたはBunキャッシュも必要になる。利用先のworkspaceに含まれる場所ではOKFの依存準備を拒否するため、通常のプラグインキャッシュ等、workspace外の配置を使う。
+OKF・orchはそれぞれ`skills/okf-agent-memory/scripts/okf.ts`、`skills/orch/scripts/task.ts`をBunで実行する。初回の依存準備はスキル自身のscripts内で行うため、書き込み権限が必要。OKFとnatural-japaneseの初回はネットワークまたはBunキャッシュも必要になる。利用先のworkspaceに含まれる場所ではOKFとnatural-japaneseの依存準備を拒否するため、通常のプラグインキャッシュ等、workspace外の配置を使う。
+
+natural-japaneseは`skills/natural-japanese/scripts/japanese.ts`をBunで実行する。`lint`・`outline`・`terms`・`score`は入力ファイルを読み取り、結果を標準出力に返す。使えるオプションは[CLIの資料](../skills/natural-japanese/references/cli.md)を参照する。
 
 ## 開発時の生成と検証
 
 ```sh
 bun install --frozen-lockfile --ignore-scripts
 bun skills/okf-agent-memory/scripts/okf.ts version --json
+bun skills/natural-japanese/scripts/japanese.ts --help
 bun run typecheck
 bun run test
 bun run build

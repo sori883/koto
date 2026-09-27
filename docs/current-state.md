@@ -19,10 +19,11 @@ agent-gearは、開発作業のフロー、タスク台帳、知識管理、プ�
 | teach / recall | 仕組みと理由を説明し、既存記録と実状態から現在地を再構成する |
 | show-me-your-work / no-comments | 判断の追記・訂正・照合と、コメントの知識をcode_refs付きOKFへ保存してから削除する手順 |
 | technical-writing / unslop / bro | 技術文書の構成、意味を保つ推敲、直前の回答の言い換え |
+| natural-japanese | 日本語の執筆・推敲・診断と、kuromojiを使うBun CLIによる文章検査・読解負荷・構成・用語の抽出。意味モデル検査は含まない |
 | reflect / automate-me | 作業の学び・本人の作業方針からスキル案を作り、人間の承認後に反映する |
 | 共通知識 | [space/babel](../space/babel/index.md)の23原則。実体は利用先の`.space/babel/`へ配置する |
 
-計23スキルと2役のエージェントを二つの形式の配布物へ同梱し、三製品で利用する。`devlow-worker`はdevlowで担当単位を実行し、`comment-curator`はコメントを整理する。Codexではsetupが `.codex/agents/`へTOMLを配置し、Claude形式ではプラグインの `agents/`に同梱する。各クライアントでの起動・実行は未確認。リポジトリの`.agents/skills/`と`.codex/agents/`は開発環境用であり、製品のエージェント定義として配布しない。hooksは追加していない。
+計24スキルと2役のエージェントを二つの形式の配布物へ同梱し、三製品で利用する。`devlow-worker`はdevlowで担当単位を実行し、`comment-curator`はコメントを整理する。Codexではsetupが `.codex/agents/`へTOMLを配置し、Claude形式ではプラグインの `agents/`に同梱する。各クライアントでの起動・実行は未確認。リポジトリの`.agents/skills/`と`.codex/agents/`は開発環境用であり、製品のエージェント定義として配布しない。hooksは追加していない。
 
 ## 正本と実行場所
 
@@ -36,7 +37,7 @@ agent-gearは、開発作業のフロー、タスク台帳、知識管理、プ�
 | `.agents/plugins/marketplace.json`・`.claude-plugin/marketplace.json` | それぞれのdistを参照する生成済みカタログ |
 | `docs/` | 開発者向けの設計・検証記録。配布しない |
 
-三つのCLIはそれぞれの`skills/<skill>/scripts/`で起動する。OKFのMiniSearch 7.2.0は同じscripts内のpackage.json・bun.lockで固定し、bootstrapが必要時に導入する。orchとsetupの外部依存は空であり、定義の確認だけを行う。利用先のpackage.jsonやlockへ依存を混ぜない。
+四つのCLIはそれぞれの`skills/<skill>/scripts/`で起動する。OKFのMiniSearch 7.2.0とnatural-japaneseのkuromoji 0.1.2は、それぞれのscripts内のpackage.json・bun.lockで固定し、bootstrapが必要時に導入する。orchとsetupの外部依存は空であり、定義の確認だけを行う。利用先のpackage.jsonやlockへ依存を混ぜない。natural-japaneseの採用範囲と検証は[実装記録](skills/natural-japanese/implementation.md)を参照する。
 
 旧`templates/AGENTS.md`と開発リポジトリの`.space/babel/`は既存資料として残すが、buildの入力にはしない。指示テンプレートの配布用正本はpackaging配下、共通知識の正本はspace配下である。
 
