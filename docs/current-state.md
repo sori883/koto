@@ -1,8 +1,8 @@
-# agent-gearの現状
+# kotoの現状
 
-agent-gearは、開発作業のフロー、タスク台帳、知識管理、プロジェクトへの導入をCodex・Claude Code・GitHub Copilot in VS Codeへ配布するプラグインである。CopilotはClaude形式の配布物を共用する。目的と配置方針の正本は[architecture.md](architecture.md)、導入・生成方法は[distribution.md](distribution.md)に置く。
+kotoは、開発作業のフロー、タスク台帳、知識管理、プロジェクトへの導入をCodex・Claude Code・GitHub Copilot in VS Codeへ配布するプラグインである。CopilotはClaude形式の配布物を共用する。目的と配置方針の正本は[architecture.md](architecture.md)、導入・生成方法は[distribution.md](distribution.md)に置く。
 
-2026-09-26時点の作業ツリーを対象とする。以下はローカル実装の状態であり、最新変更のmainへの公開やリモートCIの成功を意味しない。詳細な検証結果は[配布の実装記録](distribution-implementation.md)、[Copilot対応記録](copilot-support.md)、[Babel統合の記録](babel-distribution.md)、[pstackスキルの採用記録](skills/pstack-adoption.md)を参照する。
+2026-09-27時点の作業ツリーを対象とする。版数は0.1.5で、名称・配布IDをkotoへ変更した。以下はローカル実装の状態であり、最新変更のmainへの公開やリモートCIの成功を意味しない。詳細な検証結果は[改名記録](rename-koto.md)、[配布の実装記録](distribution-implementation.md)、[Copilot対応記録](copilot-support.md)、[Babel統合の記録](babel-distribution.md)、[pstackスキルの採用記録](skills/pstack-adoption.md)を参照する。
 
 ## 提供するもの
 

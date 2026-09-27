@@ -1,4 +1,4 @@
-# Agent Gear
+# koto
 
 - 開発依頼では `{{SKILL_ROOT}}/devlow/SKILL.md` を読み、依頼の種類・規模・リスクに応じて工程と成果物を選ぶ。
 - 共通のルール・原則とプロジェクト固有の知識は、同じ `{{BABEL_BUNDLE}}` に保存する。`{{SKILL_ROOT}}/use-principles/SKILL.md` の手順で検索し、利用者の指示と既存のプロジェクト規則に従う。

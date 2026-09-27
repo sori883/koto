@@ -1,12 +1,12 @@
 {
-  "name": "agent-gear",
+  "name": "koto",
   "description": "開発フロー、作業管理、知識管理をAIエージェントへ提供する。",
   "author": {
     "name": "sori883"
   },
   "skills": "./skills/",
   "interface": {
-    "displayName": "Agent Gear",
+    "displayName": "koto",
     "shortDescription": "開発フロー・作業管理・永続的な知識管理",
     "longDescription": "依頼整理から引き渡しまでのスキル、unitの分担と進捗を管理するorch、知識を保存するOKFを提供します。",
     "developerName": "sori883",
@@ -18,5 +18,5 @@
       "システムの設計と判断を記録して"
     ]
   },
-  "repository": "https://github.com/sori883/agent-gear"
+  "repository": "https://github.com/sori883/koto"
 }

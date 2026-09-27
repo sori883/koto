@@ -1,6 +1,6 @@
 {
-  "name": "agent-gear",
-  "version": "0.1.4",
+  "name": "koto",
+  "version": "0.1.5",
   "private": true,
   "type": "module",
   "packageManager": "bun@1.4.2",

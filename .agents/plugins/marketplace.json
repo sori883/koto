@@ -1,14 +1,14 @@
 {
-  "name": "agent-gear",
+  "name": "koto",
   "interface": {
-    "displayName": "Agent Gear"
+    "displayName": "koto"
   },
   "plugins": [
     {
-      "name": "agent-gear",
+      "name": "koto",
       "source": {
         "source": "local",
-        "path": "./dist/codex/agent-gear"
+        "path": "./dist/codex/koto"
       },
       "policy": {
         "installation": "AVAILABLE",

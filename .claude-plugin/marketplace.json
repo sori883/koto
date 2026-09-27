@@ -1,13 +1,13 @@
 {
-  "name": "agent-gear",
+  "name": "koto",
   "owner": {
     "name": "sori883"
   },
   "plugins": [
     {
-      "name": "agent-gear",
-      "source": "./dist/claude-code/agent-gear",
-      "version": "0.1.4",
+      "name": "koto",
+      "source": "./dist/claude-code/koto",
+      "version": "0.1.5",
       "description": "開発フロー、作業管理、知識管理をAIエージェントへ提供する。"
     }
   ]

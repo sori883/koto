@@ -1,19 +1,19 @@
 # 導入・更新と配布物の生成
 
-agent-gearはCodex・Claude Code・GitHub Copilot in VS Code用のプラグインとして導入する。CLIの実行にはBun 1.4.2以上が必要。プラグインのインストールと、プロジェクトへの共通知識・指示の配置は別の操作である。
+kotoはCodex・Claude Code・GitHub Copilot in VS Code用のプラグインとして導入する。CLIの実行にはBun 1.4.2以上が必要。プラグインのインストールと、プロジェクトへの共通知識・指示の配置は別の操作である。
 
 ## ローカルのプラグインを導入する
 
-先にこのリポジトリで`bun run build`を実行し、カタログと配布物を揃える。以下の`/path/to/agent-gear`はチェックアウトしたリポジトリの絶対パスへ置き換える。
+先にこのリポジトリで`bun run build`を実行し、カタログと配布物を揃える。以下の`/path/to/koto`はチェックアウトしたリポジトリの絶対パスへ置き換える。
 
 ```sh
-codex plugin marketplace add /path/to/agent-gear
-codex plugin add agent-gear@agent-gear
+codex plugin marketplace add /path/to/koto
+codex plugin add koto@koto
 ```
 
 ```sh
-claude plugin marketplace add /path/to/agent-gear --scope user
-claude plugin install agent-gear@agent-gear --scope user
+claude plugin marketplace add /path/to/koto --scope user
+claude plugin install koto@koto --scope user
 ```
 
 新しいタスク・セッションで導入したスキルを利用する。既に開いている会話のスキル一覧が自動で更新されたとは扱わない。共有・公開するときは、ソース・dist・カタログを同じ変更でmainへ反映してから、利用者にリポジトリを登録してもらう。ローカルで生成しただけでは公開されない。
@@ -27,7 +27,7 @@ VS CodeのAgent Pluginsで、Claude Codeと同じカタログ・配布物を利�
 ```json
 {
   "chat.pluginLocations": {
-    "/path/to/agent-gear/dist/claude-code/agent-gear": true
+    "/path/to/koto/dist/claude-code/koto": true
   }
 }
 ```
@@ -36,11 +36,11 @@ Copilot対応版をmainへ反映した後、Gitリポジトリから導入する
 
 ```json
 {
-  "chat.plugins.marketplaces": ["sori883/agent-gear"]
+  "chat.plugins.marketplaces": ["sori883/koto"]
 }
 ```
 
-拡張機能ビューで`@agentPlugins`を検索し、`agent-gear`をインストールする。共用カタログはリポジトリ直下、プラグイン本体はdist配下にあるため、リポジトリ全体を単一プラグインとして指定せずmarketplaceから選択する。`Chat: Open Customizations`でプラグインと[同梱スキル](current-state.md#提供するもの)を確認し、新しいCopilotの会話で利用する。
+拡張機能ビューで`@agentPlugins`を検索し、`koto`をインストールする。共用カタログはリポジトリ直下、プラグイン本体はdist配下にあるため、リポジトリ全体を単一プラグインとして指定せずmarketplaceから選択する。`Chat: Open Customizations`でプラグインと[同梱スキル](current-state.md#提供するもの)を確認し、新しいCopilotの会話で利用する。
 
 Copilotでsetupを実行するときは、インストール先のスキルを基準に、毎回`--product copilot`を指定する。
 
@@ -68,6 +68,12 @@ bun /path/to/installed/plugin/skills/setup/scripts/setup.ts apply --project /pat
 OKF・orchはそれぞれ`skills/okf-agent-memory/scripts/okf.ts`、`skills/orch/scripts/task.ts`をBunで実行する。初回の依存準備はスキル自身のscripts内で行うため、書き込み権限が必要。OKFとnatural-japaneseの初回はネットワークまたはBunキャッシュも必要になる。利用先のworkspaceに含まれる場所ではOKFとnatural-japaneseの依存準備を拒否するため、通常のプラグインキャッシュ等、workspace外の配置を使う。
 
 natural-japaneseは`skills/natural-japanese/scripts/japanese.ts`をBunで実行する。`lint`・`outline`・`terms`・`score`は入力ファイルを読み取り、結果を標準出力に返す。使えるオプションは[CLIの資料](../skills/natural-japanese/references/cli.md)を参照する。
+
+## 旧名で導入済みの場合
+
+`agent-gear`のプラグイン登録と、各プロジェクトのsetup管理は別に切り替える。旧プラグインを無効にし、新しい配布元`sori883/koto`から`koto@koto`を導入して、新しい会話でsetupのplan・apply・statusを実行する。旧名の管理記録・指示の引き継ぎと、衝突時の扱いは[setupの切り替え手順](../skills/setup/references/setup.md#agent-gearからの切り替え)を参照する。
+
+ローカルパスで登録している場合は、新しいclone先を登録する。cloneだけでは各製品の登録先や他プロジェクトのsetup参照は更新されない。既存の知識やタスク記録は残す。リポジトリ自身の改名・cloneの順序は[改名記録](rename-koto.md)を参照する。
 
 ## 開発時の生成と検証
 

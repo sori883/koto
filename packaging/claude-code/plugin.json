@@ -1,9 +1,9 @@
 {
-  "name": "agent-gear",
+  "name": "koto",
   "description": "開発フロー、作業管理、知識管理をAIエージェントへ提供する。",
   "author": {
     "name": "sori883"
   },
   "skills": "./skills/",
-  "repository": "https://github.com/sori883/agent-gear"
+  "repository": "https://github.com/sori883/koto"
 }
