@@ -2,7 +2,7 @@
 
 kotoは、開発作業のフロー、タスク台帳、知識管理、プロジェクトへの導入をCodex・Claude Code・GitHub Copilot in VS Codeへ配布するプラグインである。CopilotはClaude形式の配布物を共用する。目的と配置方針の正本は[architecture.md](architecture.md)、導入・生成方法は[distribution.md](distribution.md)に置く。
 
-2026-09-27時点の作業ツリーを対象とする。版数は0.1.5で、名称・配布IDをkotoへ変更した。以下はローカル実装の状態であり、最新変更のmainへの公開やリモートCIの成功を意味しない。詳細な検証結果は[改名記録](rename-koto.md)、[配布の実装記録](distribution-implementation.md)、[Copilot対応記録](copilot-support.md)、[Babel統合の記録](babel-distribution.md)、[pstackスキルの採用記録](skills/pstack-adoption.md)を参照する。
+2026-10-20時点の作業ツリーを対象とする。版数は0.1.6で、共通原則の関連リンクを整え、新規導入後のstrict検証が通るようにした。以下はローカル実装の状態であり、最新変更のmainへの公開やリモートCIの成功を意味しない。詳細な検証結果は[原則の関連付け](principle-relationships.md)、[改名記録](rename-koto.md)、[配布の実装記録](distribution-implementation.md)、[Copilot対応記録](copilot-support.md)、[Babel統合の記録](babel-distribution.md)、[pstackスキルの採用記録](skills/pstack-adoption.md)を参照する。
 
 ## 提供するもの
 
@@ -58,6 +58,6 @@ OKFのconceptはfrontmatter付きMarkdown一件、bundleはその集合を指す
 - orchはローカルJSONを排他・原子的置換で更新する。再送を操作IDで識別し、古い試行・置き換え済みの証拠・失効した提出を現在の合格として扱わない。
 - OKFは内容と根拠の正しさを判定しない。エージェントが記録の価値と本文を判断し、CLIが検索・形式検証・ファイル操作を行う。複数ファイル全体の自動巻き戻しはない。
 - 異常終了後のロックは自動で奪わない。各CLIの資料に従い、書き手の停止を確認して復旧する。
-- 共通知識23件は形式・リンク・目次の整合性を満たすが、concept同士のリンクを持たないためstrict検証では孤立文書として不合格になる。配布できたこととstrict合格を混同しない。
+- 共通知識23件は、関連する原則へのリンクとその関係の説明を持ち、新規導入後のstrict/drift検証を満たす。利用先固有の孤立文書は引き続き検出し、setupが自動で関連付けたり書き換えたりしない。
 
 日月単位の運用、他OS、ネットワーク共有、電源断はローカルの短時間試験で確認済みにしない。orchの保持・切り替えと測定範囲は[運用資料](skills/orch/operations.md)、OKFの依存配置は[移行記録](skills/okf-agent-memory/runtime-migration.md)、setupは[実装記録](skills/setup/implementation.md)に記録する。

@@ -31,6 +31,14 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   const existingHistory = await readFile(join(bundle, "log.md"));
   const setup = join(plugin, "skills/setup/scripts/setup.ts");
   const setupArgs = ["--project", project, "--json", ...(product === "copilot" ? ["--product", "copilot"] : [])];
+  const freshProject = join(root, "fresh-consumer"); await mkdir(freshProject);
+  const freshArgs = ["--project", freshProject, "--json", ...(product === "copilot" ? ["--product", "copilot"] : [])];
+  expect((await run(setup, ["apply", ...freshArgs], freshProject)).code).toBe(0);
+  const freshValidation = await run(okf, ["validate", "--strict", "--drift", "--json"], freshProject);
+  expect(freshValidation.code).toBe(0);
+  expect(JSON.parse(freshValidation.out)).toMatchObject({
+    concept_count: 23, errors: [], warnings: [], gate_findings: [], broken_links: [], orphans: [], gate_passed: true,
+  });
   const plan = await run(setup, ["plan", ...setupArgs], project);
   expect(plan.code).toBe(0); expect(await Bun.file(join(bundle, "principles/minimize-reader-load.md")).exists()).toBe(false);
   const apply = await run(setup, ["apply", ...setupArgs], project); expect(apply.code).toBe(0);
@@ -71,9 +79,8 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   const validation = await run(okf, ["validate", bundle, "--drift", "--json"], project);
   expect(validation.code).toBe(0);
   expect(JSON.parse(validation.out)).toMatchObject({ concept_count: 24, errors: [], warnings: [], broken_links: [], is_conformant: true });
-  // The curated principles have no concept-to-concept links; strict mode reports that existing limitation.
   const strict = await run(okf, ["validate", bundle, "--strict", "--drift", "--json"], project);
-  expect(strict.code).toBe(1); expect(JSON.parse(strict.out).orphans).toHaveLength(24);
+  expect(strict.code).toBe(1); expect(JSON.parse(strict.out).orphans).toEqual(["knowledge/existing"]);
   const personal = join(project, ".space/babel");
   expect((await run(okf, ["init", personal, "--json"], project)).code).toBe(0);
   expect((await run(okf, ["create", "knowledge/consumer", personal, "--type", "knowledge", "--title", "Consumer", "--desc", "Project-specific knowledge", "--json"], project)).code).toBe(0);
