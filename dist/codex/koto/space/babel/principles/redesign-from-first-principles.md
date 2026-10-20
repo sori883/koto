@@ -11,7 +11,7 @@ sources:
     title: "pstack: redesign-from-first-principles"
 generated:
   by: agent:codex
-  at: 2026-09-20T12:35:56.357Z
+  at: 2026-10-20T11:04:12Z
 ---
 # 新しい要件を前提に設計し直す
 
@@ -29,3 +29,6 @@ generated:
 - 全体像を考えたうえで、検証可能な小さな段階で届ける。
 
 設計の見直しを、依頼されていない全面改修の許可にはしない。必要な変更とその影響を示し、認められた範囲で実施する。
+
+# Related Concepts
+- [有力な設計案を具体化して比較する](exhaust-the-design-space.md): 新要件を前提に構造を見直し、有力な案が複数ある場合は、同じ判断軸で具体化して比較する。

@@ -11,7 +11,7 @@ sources:
     title: "pstack: separate-before-serializing-shared-state"
 generated:
   by: agent:codex
-  at: 2026-09-20T12:35:56.955Z
+  at: 2026-10-20T11:04:12Z
 ---
 # 共有状態を分離してから排他制御を考える
 
@@ -29,3 +29,6 @@ generated:
 - 注意書きや口頭の担当分けだけを、競合を防ぐ仕組みとして扱わない。
 
 分離にブランチやworktreeが有効な場合でも、ユーザーの作業場所の指定に従う。worktreeを使わない場合は、ファイルの所有範囲や単一の書き込み担当で競合を防ぐ。
+
+# Related Concepts
+- [ロジックより先にデータと基盤を整える](foundational-thinking.md): 状態の所有と読み書きの経路を先に整理し、共有が必要かを判断してから排他制御の方式を決める。

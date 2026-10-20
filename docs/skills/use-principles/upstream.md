@@ -48,4 +48,4 @@ Cursorのpstack、参照コミット `032be146865d973682535de75f2287da438550bf` 
 
 原則・ルールの追加・変更はOKF Agent MemoryのCLIで行い、`show` で本文とメタデータを読み返す。`search --type rule --all` で承認ルールの草案1件を取得し、`show` で `governance: constraint`、`status: draft` と本文のTODOコメントを確認する。草案を確定済みのルールとして扱わない。`search --type principle --all` で全23件のID、`type: principle`、`governance: context` とdescriptionを確認し、各本文の適用条件・参照元を確かめる。
 
-`validate --strict --drift` で形式・目次・リンク・孤立文書を検証する。同梱bundleでは、23原則と承認ルールの草案1件がconcept間のリンクを持たないため、現行のstrict検証は孤立文書24件で不合格になる。エラー・警告・リンク切れが0件であることと区別して報告し、検証を通すためだけの関連リンクは追加しない。運用スキルはskill-creatorの `quick_validate.py` と参照先の存在確認を行う。形式検証は実際のエージェントの行動を保証しないため、適用条件や権限境界は代表的な依頼に照らして見直す。
+`validate --strict --drift` で形式・目次・リンク・孤立文書を検証する。初期移植時のbundleでは、23原則と承認ルールの草案1件がconcept間のリンクを持たず、孤立文書24件で不合格だった。草案は配布用bundleに含めず、2026-10-20に配布用の23原則へ意味のある関係を説明するリンクを追加した。現在の新規導入ではstrict検証が成功する（[変更・検証記録](../../principle-relationships.md)）。運用スキルはskill-creatorの `quick_validate.py` と参照先の存在確認を行う。形式検証は実際のエージェントの行動を保証しないため、適用条件や権限境界は代表的な依頼に照らして見直す。

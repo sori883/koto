@@ -11,7 +11,7 @@ sources:
     title: "pstack: guard-the-context-window"
 generated:
   by: agent:codex
-  at: 2026-09-20T12:35:55.682Z
+  at: 2026-10-20T11:04:12Z
 ---
 # 必要な情報に絞ってコンテキストを保つ
 
@@ -30,3 +30,6 @@ generated:
 - 必要な状態は再開可能な記録に残し、縮約後に推測で補わない。
 
 要約のために判断の前提、例外、未解決事項を落とさない。大量の原文を親へ転送することを、委譲の成果としない。
+
+# Related Concepts
+- [検証できる小さな単位で作業を進める](sequence-verifiable-units.md): 作業段階ごとに読む範囲を区切る際、変更と検証の単位を手掛かりに、今の判断に必要な情報を選ぶ。

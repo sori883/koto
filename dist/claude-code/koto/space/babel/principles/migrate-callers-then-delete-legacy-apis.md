@@ -11,7 +11,7 @@ sources:
     title: "pstack: migrate-callers-then-delete-legacy-apis"
 generated:
   by: agent:codex
-  at: 2026-09-20T12:35:56.835Z
+  at: 2026-10-20T11:04:12Z
 ---
 # 呼び出し元を移行して旧APIを取り除く
 
@@ -29,3 +29,6 @@ generated:
 - テストは新しい契約を確認するものへ更新し、旧実装の細部だけを固定するテストは整理する。
 
 外部利用者が互換性に依存するAPIや、同時移行できない公開インターフェースには、そのまま適用しない。互換性の約束と段階移行の必要性を確認する。
+
+# Related Concepts
+- [追加する前に不要なものを取り除く](subtract-before-you-add.md): 呼び出し元の移行後に旧APIと不要な互換経路を取り除くことで、後続の追加前に既存構造を単純化する。
