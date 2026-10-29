@@ -7,7 +7,7 @@
     {
       "name": "koto",
       "source": "./dist/claude-code/koto",
-      "version": "0.1.6",
+      "version": "0.1.7",
       "description": "開発フロー、作業管理、知識管理をAIエージェントへ提供する。"
     }
   ]

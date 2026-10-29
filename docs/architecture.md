@@ -36,6 +36,8 @@ kotoは、AIエージェントが開発で使うスキル・CLI・共通知識�
 
 共通知識の本文を `space/babel/` と各スキルの `references/` に重複して管理しない。共通文書を修正するときは `space/babel/` を変更し、配布物と利用先のコピーへ反映する。
 
+explain-before-shortenは、2026-10-29のユーザー指示により、Kazuki Otaの[紹介記事](https://zenn.dev/microsoft/articles/explain-before-shorten)で公開された`SKILL.md`を改変せず、独立したスキルとして同梱する。正本は`skills/explain-before-shorten/SKILL.md`に置き、既存の文章改善スキルへ統合しない。付属CLIや追加依存は設けず、既存の製品別ビルドで配布する。出典・取得時点・原文との一致・検証結果は、配布対象外の[取込記録](skills/explain-before-shorten/upstream-import.md)に置く。
+
 ## 全体フローと工程の定義
 
 開発作業の全体フローは、統括スキルに同梱する `skills/devlow/references/workflow.md` を正本とする。工程の順序・分岐、各工程の成果物と完了条件、依頼種別・作業規模・リスクによる実施判断を定義する。判断や設計は、小規模な作業でもなるべく記録に残す。

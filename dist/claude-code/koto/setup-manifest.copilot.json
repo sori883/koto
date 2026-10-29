@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "plugin": "koto",
   "product": "copilot",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "files": [
     {
       "source": "space/babel/LICENSE",

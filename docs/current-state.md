@@ -2,7 +2,9 @@
 
 kotoは、開発作業のフロー、タスク台帳、知識管理、プロジェクトへの導入をCodex・Claude Code・GitHub Copilot in VS Codeへ配布するプラグインである。CopilotはClaude形式の配布物を共用する。目的と配置方針の正本は[architecture.md](architecture.md)、導入・生成方法は[distribution.md](distribution.md)に置く。
 
-2026-10-20時点の作業ツリーを対象とする。版数は0.1.6で、共通原則の関連リンクを整え、新規導入後のstrict検証が通るようにした。以下はローカル実装の状態であり、最新変更のmainへの公開やリモートCIの成功を意味しない。詳細な検証結果は[原則の関連付け](principle-relationships.md)、[改名記録](rename-koto.md)、[配布の実装記録](distribution-implementation.md)、[Copilot対応記録](copilot-support.md)、[Babel統合の記録](babel-distribution.md)、[pstackスキルの採用記録](skills/pstack-adoption.md)を参照する。
+2026-10-29時点の作業ツリーを対象とする。版数は0.1.7で、explain-before-shortenを原文のまま追加した。0.1.6の共通原則の関連リンクと、新規導入後のstrict検証に関する修正を保持している。以下はローカル実装の状態であり、最新変更のmainへの公開やリモートCIの成功を意味しない。詳細な検証結果は[原則の関連付け](principle-relationships.md)、[改名記録](rename-koto.md)、[配布の実装記録](distribution-implementation.md)、[Copilot対応記録](copilot-support.md)、[Babel統合の記録](babel-distribution.md)、[pstackスキルの採用記録](skills/pstack-adoption.md)を参照する。
+
+explain-before-shortenの出典と検証範囲は[取込記録](skills/explain-before-shorten/upstream-import.md)を参照する。
 
 ## 提供するもの
 
@@ -19,11 +21,12 @@ kotoは、開発作業のフロー、タスク台帳、知識管理、プロジ�
 | teach / recall | 仕組みと理由を説明し、既存記録と実状態から現在地を再構成する |
 | show-me-your-work / no-comments | 判断の追記・訂正・照合と、コメントの知識をcode_refs付きOKFへ保存してから削除する手順 |
 | technical-writing / unslop / bro | 技術文書の構成、意味を保つ推敲、直前の回答の言い換え |
+| explain-before-shorten | 紹介記事の原文を保持した説明文の作成・修正スキル。口頭で伝わる説明を組み立ててから、意味・条件を保って短くする |
 | natural-japanese | 日本語の執筆・推敲・診断と、kuromojiを使うBun CLIによる文章検査・読解負荷・構成・用語の抽出。意味モデル検査は含まない |
 | reflect / automate-me | 作業の学び・本人の作業方針からスキル案を作り、人間の承認後に反映する |
 | 共通知識 | [space/babel](../space/babel/index.md)の23原則。実体は利用先の`.space/babel/`へ配置する |
 
-計24スキルと2役のエージェントを二つの形式の配布物へ同梱し、三製品で利用する。`devlow-worker`はdevlowで担当単位を実行し、`comment-curator`はコメントを整理する。Codexではsetupが `.codex/agents/`へTOMLを配置し、Claude形式ではプラグインの `agents/`に同梱する。各クライアントでの起動・実行は未確認。リポジトリの`.agents/skills/`と`.codex/agents/`は開発環境用であり、製品のエージェント定義として配布しない。hooksは追加していない。
+計25スキルと2役のエージェントを二つの形式の配布物へ同梱し、三製品で利用する。`devlow-worker`はdevlowで担当単位を実行し、`comment-curator`はコメントを整理する。Codexではsetupが `.codex/agents/`へTOMLを配置し、Claude形式ではプラグインの `agents/`に同梱する。各クライアントでの起動・実行は未確認。リポジトリの`.agents/skills/`と`.codex/agents/`は開発環境用であり、製品のエージェント定義として配布しない。hooksは追加していない。
 
 ## 正本と実行場所
 
