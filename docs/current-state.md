@@ -2,11 +2,11 @@
 
 kotoは、開発作業のフロー、タスク台帳、知識管理、プロジェクトへの導入をCodex・Claude Code・GitHub Copilot in VS Codeへ配布するプラグインである。CopilotはClaude形式の配布物を共用する。目的と配置方針の正本は[architecture.md](architecture.md)、導入・生成方法は[distribution.md](distribution.md)に置く。
 
-2026-10-29時点の作業ツリーを対象とする。版数は0.1.7で、explain-before-shortenを原文のまま追加した。0.1.6の共通原則の関連リンクと、新規導入後のstrict検証に関する修正を保持している。以下はローカル実装の状態であり、最新変更のmainへの公開やリモートCIの成功を意味しない。詳細な検証結果は[原則の関連付け](principle-relationships.md)、[改名記録](rename-koto.md)、[配布の実装記録](distribution-implementation.md)、[Copilot対応記録](copilot-support.md)、[Babel統合の記録](babel-distribution.md)、[pstackスキルの採用記録](skills/pstack-adoption.md)を参照する。
-
-explain-before-shortenの出典と検証範囲は[取込記録](skills/explain-before-shorten/upstream-import.md)を参照する。
+2026-10-30時点の作業ツリーを対象とする。ローカル版数は0.1.8で、natural-japaneseの原版への置換、yomiyasu、全スキルのプロジェクト導入を含む。これらはリモート未公開であり、手元のorigin/mainは25スキルを含む0.1.7を指している。名称・配布IDはkoto。0.1.7のexplain-before-shortenと、0.1.6の共通原則の関連リンク・新規導入後のstrict検証の修正を保持している。以下はローカル実装の状態であり、最新変更のmainへの公開やリモートCIの成功を意味しない。今回の確認は[ローカル変更の反映記録](local-plugin-update-2026-10-30.md)、詳細な検証結果は[原則の関連付け](principle-relationships.md)、[改名記録](rename-koto.md)、[配布の実装記録](distribution-implementation.md)、[Copilot対応記録](copilot-support.md)、[Babel統合の記録](babel-distribution.md)、[pstackスキルの採用記録](skills/pstack-adoption.md)、[natural-japaneseの取込記録](skills/natural-japanese/upstream-import.md)、[yomiyasuの取込記録](skills/yomiyasu/upstream-import.md)、[explain-before-shortenの取込記録](skills/explain-before-shorten/upstream-import.md)を参照する。
 
 ## 提供するもの
+
+Codex・Claude Codeには、全スキルをプロジェクトへ実ファイルで配置する`setup --scope project`を追加した。プラグイン登録は不要で、同じ製品別配布物を使う。配置後のCLI実行と、コピーしたsetupへの`--source`指定による更新を確認した。設計・検証範囲は[プロジェクト導入の記録](project-installation.md)に置く。
 
 | 構成物 | 役割・入口 |
 | --- | --- |
@@ -22,11 +22,12 @@ explain-before-shortenの出典と検証範囲は[取込記録](skills/explain-b
 | show-me-your-work / no-comments | 判断の追記・訂正・照合と、コメントの知識をcode_refs付きOKFへ保存してから削除する手順 |
 | technical-writing / unslop / bro | 技術文書の構成、意味を保つ推敲、直前の回答の言い換え |
 | explain-before-shorten | 紹介記事の原文を保持した説明文の作成・修正スキル。口頭で伝わる説明を組み立ててから、意味・条件を保って短くする |
-| natural-japanese | 日本語の執筆・推敲・診断と、kuromojiを使うBun CLIによる文章検査・読解負荷・構成・用語の抽出。意味モデル検査は含まない |
+| natural-japanese | 原版の日本語執筆・推敲・診断スキル。Python・uvとSudachiによる文章検査・読解負荷・構成・用語の抽出、任意の意味モデル検査を同梱する |
+| yomiyasu | 意味・条件を保つ日本語の推敲スキル。Python標準ライブラリによる表現・Markdownの検査と、推敲前後の語句・文末・文の種類の変化の検査を同梱する |
 | reflect / automate-me | 作業の学び・本人の作業方針からスキル案を作り、人間の承認後に反映する |
 | 共通知識 | [space/babel](../space/babel/index.md)の23原則。実体は利用先の`.space/babel/`へ配置する |
 
-計25スキルと2役のエージェントを二つの形式の配布物へ同梱し、三製品で利用する。`devlow-worker`はdevlowで担当単位を実行し、`comment-curator`はコメントを整理する。Codexではsetupが `.codex/agents/`へTOMLを配置し、Claude形式ではプラグインの `agents/`に同梱する。各クライアントでの起動・実行は未確認。リポジトリの`.agents/skills/`と`.codex/agents/`は開発環境用であり、製品のエージェント定義として配布しない。hooksは追加していない。
+計26スキルと2役のエージェントを二つの形式の配布物へ同梱し、三製品で利用する。`devlow-worker`はdevlowで担当単位を実行し、`comment-curator`はコメントを整理する。Codexではsetupが `.codex/agents/`へTOMLを配置し、Claude形式ではプラグインの `agents/`に同梱する。Claude Codeのプロジェクト導入では`.claude/agents/`へコピーする。各クライアントでの起動・実行は未確認。リポジトリの`.agents/skills/`と`.codex/agents/`は開発環境用であり、製品のエージェント定義として配布しない。hooksは追加していない。
 
 ## 正本と実行場所
 
@@ -36,11 +37,13 @@ explain-before-shortenの出典と検証範囲は[取込記録](skills/explain-b
 | `space/babel/` | 共通知識の配布用正本 |
 | `packaging/codex/`・`packaging/claude-code/` | 製品別manifest・指示テンプレート・エージェント定義 |
 | `packaging/copilot/` | 共用配布物へ組み込むCopilot用指示テンプレート |
-| `dist/` | buildで生成しGit管理する配布物。テスト・docs・node_modulesを含めない |
+| `dist/` | buildで生成しGit管理する配布物。kotoのテスト・docs・node_modules・Pythonの実行キャッシュを含めない。natural-japaneseの原版fixturesは同梱 |
 | `.agents/plugins/marketplace.json`・`.claude-plugin/marketplace.json` | それぞれのdistを参照する生成済みカタログ |
 | `docs/` | 開発者向けの設計・検証記録。配布しない |
 
-四つのCLIはそれぞれの`skills/<skill>/scripts/`で起動する。OKFのMiniSearch 7.2.0とnatural-japaneseのkuromoji 0.1.2は、それぞれのscripts内のpackage.json・bun.lockで固定し、bootstrapが必要時に導入する。orchとsetupの外部依存は空であり、定義の確認だけを行う。利用先のpackage.jsonやlockへ依存を混ぜない。natural-japaneseの採用範囲と検証は[実装記録](skills/natural-japanese/implementation.md)を参照する。
+OKF・orch・setupのCLIはそれぞれの`skills/<skill>/scripts/`からBunで起動する。OKFのMiniSearch 7.2.0はscripts内のpackage.json・bun.lockで固定し、bootstrapが必要時に導入する。orchとsetupの外部依存は空であり、定義の確認だけを行う。natural-japaneseは原版のPythonスクリプトをuvで実行し、スクリプト内の依存定義を使う。利用先のpackage.jsonやlockへ依存を混ぜない。取込範囲と検証は[原版への置換記録](skills/natural-japanese/upstream-import.md)、旧TypeScript版は[過去の実装記録](skills/natural-japanese/implementation.md)を参照する。
+
+yomiyasuは原版のスキル本体・参照資料・assets・三つのPythonファイルと、MIT・Unicodeのライセンスを同梱する。検査は外部ライブラリなしで動作する。原版の単独プラグイン用マニフェストと開発用コーパスは含めない。
 
 旧`templates/AGENTS.md`と開発リポジトリの`.space/babel/`は既存資料として残すが、buildの入力にはしない。指示テンプレートの配布用正本はpackaging配下、共通知識の正本はspace配下である。
 

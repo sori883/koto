@@ -4,9 +4,11 @@ koto（コト）は **Knowledge-Oriented Task Orchestration** の略であり、
 
 kotoは、AIエージェントが開発で使うスキル・CLI・共通知識・ルールを、Codex・Claude Code・GitHub Copilot in VS Code向けに配布するためのリポジトリである。利用先のプロジェクトで、知識管理、タスク分割・管理、必要な文書や設定の導入を行える道具を作る。
 
-**スキルごとにCLIと実行時の依存関係を持たせ、配布物を `main` ブランチで管理する。Codex形式とClaude形式を生成し、Claude Code・CopilotはClaude形式を共用する。CLIは配布後もTypeScriptとし、Bunで実行する。**
+**スキルごとにCLIと実行時の依存関係を持たせ、配布物を `main` ブランチで管理する。Codex形式とClaude形式を生成し、Claude Code・CopilotはClaude形式を共用する。koto独自のCLIは配布後もTypeScriptとし、Bunで実行する。natural-japaneseとyomiyasuは原版のPythonスクリプトを保持する。natural-japaneseの依存はuvで準備し、yomiyasuは標準ライブラリだけで実行する。**
 
 この文書を、何を作るか・どこに置くか・どう配布するかを判断するための設計方針の正本とする。以下は目標の構成であり、すべてが実装済みという意味ではない。実装状況や検証結果は [現状資料](current-state.md) や個別の開発資料に記録し、この設計と区別する。
+
+Codex・Claude Codeには、プラグイン方式に加えて、全スキルを利用先プロジェクトへ実ファイルで配置する方式を提供する。同じ製品別配布物からsetupで導入し、プラグインの登録を必須にしない。スキルの正本や第三の配布形式は増やさず、スキルの選択・除外はこの方式の対象に含めない。
 
 ## 製品と開発環境を区別する
 
@@ -59,6 +61,10 @@ checkpointは中断・引き継ぎ等の再開に必要な要約と、作業成�
 具体的なスキル構成、工程ファイル、成果物の分割、規模ごとの選択は[開発フローの設計案](devlow-design.md)で扱う。統括スキルの入口と全体フローを作成し、use-principlesは原則参照の責務へ分離した。依頼整理から引き渡しまで8工程の手順と、タスク・設計・計画・検証記録のひな形を作成済みである。大規模管理はorchスキルと専用CLIへ具体化した。unitの進行、対象の成果判定、親の受け入れを分離し、JSONを正本、TSV・Markdownを出力とする。配布生成・setupを実装し、実際の子担当による提出・受け入れを確認する。長期運用は別に確認する。[実装・確認記録](skills/devlow/implementation.md)に実施範囲を記録し、配置方針と実装状況を区別する。
 
 ## CLIと依存関係はスキル単位にする
+
+以下のTypeScript・Bun・bootstrapの方針は、koto独自のCLIに適用する。natural-japaneseは2026-10-13のユーザー指示により、独自のTypeScript移植を取りやめ、[coji/natural-japanese](https://github.com/coji/natural-japanese)のスキル一式を改変せず取り込む。Pythonスクリプトとインライン依存定義を保持し、uvが実行環境を準備する。原版のsemantic・calibrate・fixturesも同梱し、MIT LICENSEを添える。koto側の保守説明・出典の版・検証記録は配布物へ追記せず、[取込記録](skills/natural-japanese/upstream-import.md)で管理する。
+
+yomiyasuも同日のユーザー依頼で追加する。[nanaism/yomiyasu](https://github.com/nanaism/yomiyasu)のスキル本文・参照資料・assets・Pythonスクリプトを改変せず取り込み、MIT LICENSEとUnicodeの著作権・許諾通知を同梱する。原版の単独プラグイン用マニフェストは取り込まず、kotoの製品別定義で配布する。実行はPython標準ライブラリだけで完結し、Bunへの移植やbootstrapの追加は行わない。出典と検証は[取込記録](skills/yomiyasu/upstream-import.md)に置く。
 
 共通のトップレベルCLIは作らない。次の責務を別のスキルとCLIで提供する。
 
@@ -130,11 +136,17 @@ checkpointの必要な記録項目とGitへの保存条件はcheckpoint-safely�
 
 setupは、プラグイン自身の位置から同梱ファイルを読み、利用先プロジェクトへ配置する。プラグインの更新と、プロジェクト内の文書・設定の更新は別の処理として扱う。
 
+`--scope project`では、取得した製品別配布物から全スキル・CLI・資料・エージェントをコピーする。Codexのスキルは`.agents/skills/`、Claude Codeのスキルは`.claude/skills/`へ配置する。シンボリックリンクは使わない。共通知識と指示の管理は既存のsetupと共通にし、CodexとClaude Codeを同じプロジェクトに導入できる。Copilotには既存のプラグイン方式を維持する。
+
+コピー済みのCLIはプロジェクト内で実行でき、スキル間の相対参照も維持する。プロジェクト導入の指示はプロジェクトルートからの相対パスを使い、配布元や導入者の絶対パスを埋め込まない。依存関係は引き続き各スキルのscripts内に準備する。利用先のworkspaceへ依存を混ぜる配置は拒否し、利用先のpackage.jsonやlockを自動変更しない。
+
+初期配置と更新は同じsetup CLIが所有する。通常は実行元の配布ルートを使い、コピー済みのsetupから更新・比較するときは`--source`で取得した配布ルートを明示する。更新の取得と適用を分け、最新版の自動取得や実行中の自動更新は行わない。プロジェクト導入後も同じscopeで更新し、省略によってプラグインへの参照へ戻さない。
+
 | 配布するもの | 利用先での扱い |
 | --- | --- |
 | 共通知識・ルール | `.space/babel/` のtype別ディレクトリへ配置し、共通知識とプロジェクト固有の知識を一つのbundleで扱う。既存の目次・履歴・独自文書を保持する |
 | Codex向けエージェント定義 | 配布物の `templates/agents/` に同梱し、必要に応じて `.codex/agents/` へ配置する |
-| Claude Code向けエージェント定義 | 配布物の `agents/` に同梱し、プラグインのエージェントとして提供する |
+| Claude Code向けエージェント定義 | 配布物の `agents/` に同梱し、プラグインのエージェントとして提供する。プロジェクト導入では`.claude/agents/`へコピーする |
 | `AGENTS.md`・`CLAUDE.md`・`copilot-instructions.md` のテンプレート | Codexは`AGENTS.md`、Claude Codeは`CLAUDE.md`、Copilotは`.github/copilot-instructions.md`へ既存の指示を確認して統合する。配布用テンプレートと開発リポジトリの指示を混同しない |
 | hooks | 使用する場合にだけ、配布先製品の形式で組み込む |
 
@@ -152,7 +164,7 @@ CopilotとClaude Codeはスキル・CLI・共通知識の配布物を共用し�
 
 `scripts/build.ts` は `skills/`・`space/` をコピーし、`packaging/` の製品別定義を組み合わせる。TypeScriptからJavaScriptへの変換や、単一バイナリへの変換は行わない。CLIが必要とする `lib/`・資料・依存定義・ロックファイルを含める。
 
-テスト、開発用ファイル、開発リポジトリ自身の `.space/`、すべての `node_modules/` は配布物に含めない。`node_modules/` はGit管理からも除外する。
+テスト、開発用ファイル、開発リポジトリ自身の `.space/`、すべての `node_modules/` は配布物に含めない。natural-japaneseは原版のスキル一式を保持するため、原版に含まれる校正スクリプトとfixturesをそのまま同梱する。`node_modules/`・`__pycache__/`・`.venv/`など実行時に生成する依存・キャッシュはGit管理と配布から除外する。
 
 | 配布先 | 生成するカタログ | カタログが指す配布物 |
 | --- | --- | --- |
@@ -164,9 +176,13 @@ Copilot対応は2026-09-24のユーザー依頼で追加した。VS CodeがClaud
 
 カタログと配布物の版数はルートの版数からそろえて生成する。ソース・`dist/`・カタログを同じリポジトリの `main` で管理し、ソース変更と生成結果を同じPRに含める。利用者はリポジトリをマーケットプレイスとして登録し、クライアントのインストール・更新機能から配布物を取得する。別のリリースブランチへ生成物を送る構成にはしない。
 
+プロジェクト導入では、利用者は同じ`main`の製品別配布物を取得し、setupを実行する。buildは既存のsetup-manifest.jsonに加え、コピーするスキルとエージェントを列挙したsetup-manifest.project.jsonを生成する。管理記録は既存の製品別記録に導入方式を保持し、ローカル編集・未管理ファイル・未完了の適用を保護する。配布元から消えたファイルの自動削除は行わない。
+
 GitHub Actionsではテスト・型や定義の検証に加え、配布物を再生成してコミット済みの内容と比較する。変更済みファイルだけでなく、新たに生成された未追跡ファイルも確認する。
 
 完成確認では配布物を開発リポジトリの外へコピーし、初回の依存導入、2回目の起動、ロックファイル変更後の再導入を検証する。依存がスキル内に入り、成果物が利用先に保存されること、setupの再実行・更新で重複や既存データの消失が起きないことも確認する。
+
+natural-japaneseは原版ファイルとの一致と、リポジトリ外にコピーした配布物のuvによる実行を確認する。Bunのbootstrap・lock更新検査は適用せず、入力文書と利用先の依存定義が変更されないことを確かめる。
 
 ## 現行実装との差と変更時の判断
 

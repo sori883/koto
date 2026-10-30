@@ -36,6 +36,11 @@ node_modules/
 *.tsbuildinfo
 coverage/
 
+# Python runtime artifacts
+__pycache__/
+*.py[cod]
+.venv/
+
 # macOS metadata
 .DS_Store
 

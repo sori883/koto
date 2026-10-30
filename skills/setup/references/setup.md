@@ -10,6 +10,36 @@ setup apply --project /absolute/path/to/project --json
 setup status --project /absolute/path/to/project --json
 ```
 
+## 全スキルをプロジェクトへ配置する
+
+CodexとClaude Codeでは、各コマンドに`--scope project`を追加すると、全スキルと同梱CLI・資料・エージェントを実ファイルで配置する。プラグインの登録は不要。対象製品の配布物を取得して、その中のsetupを実行する。インストール済みプラグインからも同じ操作ができる。
+
+```text
+setup plan --project /absolute/path/to/project --scope project --json
+setup apply --project /absolute/path/to/project --scope project --json
+setup status --project /absolute/path/to/project --scope project --json
+```
+
+| 製品 | スキル | エージェント | 指示 |
+| --- | --- | --- | --- |
+| Codex | `.agents/skills/` | `.codex/agents/` | `AGENTS.md` |
+| Claude Code | `.claude/skills/` | `.claude/agents/` | `CLAUDE.md` |
+
+同梱ファイルは`setup-manifest.project.json`に従って配置する。スキルの選択・除外は行わない。通常のCLI実行に配布元は不要で、更新・配布物との比較には配布元を指定する。コピーしたsetupを使う場合は、取得した配布物のルートを`--source`で渡す。
+
+```text
+bun .agents/skills/setup/scripts/setup.ts plan --project . --scope project --source /path/to/koto/dist/codex/koto --json
+bun .agents/skills/setup/scripts/setup.ts apply --project . --scope project --source /path/to/koto/dist/codex/koto --json
+```
+
+Claude CodeではCLIの場所を`.claude/skills/setup/scripts/setup.ts`、配布元を`dist/claude-code/koto`に読み替える。`--source`には利用先のスキルフォルダではなく、`setup-manifest.json`を含む配布ルートを指定する。新しい版への更新には、新版の配布物にあるsetupを使える。
+
+プロジェクト導入の指示は、プロジェクトルートからの相対パスでスキルとBabelを参照する。コピーしたファイルはGitで共有できる。実行時にできる`node_modules/`・`__pycache__/`・`.venv/`はGit管理から除外する。OKFの依存をプロジェクト本体へ混ぜないため、package.jsonのworkspaceパターンにスキルのscriptsを含めない。
+
+既存のプラグイン用setupからプロジェクト導入へ切り替える場合も、同じ管理記録で既存編集を確認してから参照先を更新する。切り替え後に`--scope project`を省略すると停止する。プラグインの有効・無効は変更しないため、同じスキルが重複して見える場合は利用する導入方式に合わせてプラグインの有効範囲を調整する。
+
+## 製品と導入方式の指定
+
 GitHub Copilot in VS Codeでは、各コマンドに`--product copilot`を指定する。
 
 ```text
@@ -28,7 +58,7 @@ setup status --project /absolute/path/to/project --product copilot --json
 
 planとstatusは対象プロジェクトへ書き込まない。初回起動ではスキル自身のscripts/node_modules内に、依存定義の確認結果を記録する。外部依存のない構成なので、パッケージのダウンロードは行わない。Bun 1.4.2以上とscriptsへの書き込み権限が必要。
 
-配布ルートのsetup-manifest.jsonが、この製品で配置するファイルを指定する。CLI自身の配置から読み取り、作業ディレクトリから配布元を推測しない。setupスキルだけを別の場所へ移した場合は、同じ構造の配布ルートとmanifestが必要になる。
+通常は配布ルートのsetup-manifest.jsonが、この製品で配置するファイルを指定する。プロジェクト導入では同梱のsetup-manifest.project.jsonを使う。配布元は`--source`またはCLI自身の配置から読み取り、作業ディレクトリから推測しない。
 
 ## 配置先と保持する内容
 
@@ -41,9 +71,9 @@ planとstatusは対象プロジェクトへ書き込まない。初回起動で�
 | GitHub Copilotの指示 | `.github/copilot-instructions.md`内の管理ブロック |
 | 前回配置した内容のハッシュ | `.space/setup/<plugin>-<product>.json` |
 
-Claude Codeのエージェントはプラグインのagentsとして提供される。setupではCodexのagents配置先へコピーしない。
+既定のプラグイン方式では、Claude Codeのエージェントはプラグインのagentsとして提供される。プロジェクト導入では`.claude/agents/`へコピーする。
 
-指示テンプレートの`{{SKILL_ROOT}}`は配布ルートのskills、`{{BABEL_BUNDLE}}`は利用先の`.space/babel/`の絶対パスに置き換わる。プラグインの配置場所が変わった場合もplanで差を確認し、applyで参照を更新する。
+プラグイン方式では、指示テンプレートの`{{SKILL_ROOT}}`は配布ルートのskills、`{{BABEL_BUNDLE}}`は利用先の`.space/babel/`の絶対パスに置き換わる。プラグインの配置場所が変わった場合もplanで差を確認し、applyで参照を更新する。プロジェクト導入では、製品別のスキル配置先と`.space/babel`の相対パスに置き換わる。
 
 指示ファイルでは、次の開始・終了マーカーに挟まれた部分だけを管理する。マーカー外の既存指示、別のプラグインの指示、利用先独自の文書は保持する。
 

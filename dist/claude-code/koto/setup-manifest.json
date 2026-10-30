@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "plugin": "koto",
   "product": "claude-code",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "files": [
     {
       "source": "space/babel/LICENSE",

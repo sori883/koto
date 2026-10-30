@@ -17,10 +17,13 @@ beforeEach(async () => {
   await put("packaging/copilot/templates/copilot-instructions.md", "Use {{SKILL_ROOT}} in Copilot\n");
   await put("skills/example/SKILL.md", "---\nname: example\ndescription: Example\n---\n\nSee [guide](references/guide.md).\n");
   await put("skills/example/references/guide.md", "# Guide\n");
+  await put("skills/example/UNICODE-LICENSE.txt", "Unicode copyright and permission notice\n");
   await put("skills/example/scripts/main.ts", "export {};\n");
   await put("skills/example/scripts/package.json", '{"dependencies":{}}\n');
   await put("skills/example/tests/private.test.ts", "Do not distribute\n");
   await put("skills/example/scripts/node_modules/private/index.js", "Do not distribute\n");
+  await put("skills/example/scripts/__pycache__/lint.cpython-313.pyc", "Do not distribute\n");
+  await put("skills/example/scripts/.venv/pyvenv.cfg", "Do not distribute\n");
   await put("docs/private.md", "Maintainer notes\n");
   await put(".space/babel/private.md", "Project knowledge\n");
   await put("space/babel/index.md", "# Shared knowledge\n");
@@ -34,7 +37,8 @@ test("builds both self-contained products and creates catalogs with the root ver
     const manifest = JSON.parse(await readFile(join(dist, product === "codex" ? ".codex-plugin/plugin.json" : ".claude-plugin/plugin.json"), "utf8"));
     expect(manifest.version).toBe("1.2.3");
     expect(await Bun.file(join(dist, "skills/example/scripts/main.ts")).exists()).toBe(true);
-    for (const path of ["docs/private.md", ".space/babel/private.md", "skills/example/tests/private.test.ts", "skills/example/scripts/node_modules/private/index.js"]) expect(await Bun.file(join(dist, path)).exists()).toBe(false);
+    expect(await Bun.file(join(dist, "skills/example/UNICODE-LICENSE.txt")).text()).toBe("Unicode copyright and permission notice\n");
+    for (const path of ["docs/private.md", ".space/babel/private.md", "skills/example/tests/private.test.ts", "skills/example/scripts/node_modules/private/index.js", "skills/example/scripts/__pycache__/lint.cpython-313.pyc", "skills/example/scripts/.venv/pyvenv.cfg"]) expect(await Bun.file(join(dist, path)).exists()).toBe(false);
     const setup = JSON.parse(await readFile(join(dist, "setup-manifest.json"), "utf8"));
     expect(setup.files).toContainEqual({ source: "space/babel/index.md", destination: ".space/babel/index.md", mode: "merge-index" });
     expect(setup.product).toBe(product);

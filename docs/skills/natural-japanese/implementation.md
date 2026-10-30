@@ -1,5 +1,7 @@
 # natural-japaneseのBun対応
 
+この文書は旧TypeScript版の実装記録である。2026-10-13に原版へ置き換えた。現在の構成と検証は[取込記録](upstream-import.md)を参照する。
+
 2026-09-26。ユーザーはPythonを依存に含めず、通常検査をkuromojiとBunへ移し、意味モデルによるsemanticを除く案を承認した。
 
 配布版数は0.1.4。ルートpackage.jsonから製品別マニフェストとカタログを再生成し、スキルの正本と同じ変更に含める。

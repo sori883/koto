@@ -12,7 +12,15 @@ async function run(cli: string, args: string[], cwd: string) {
   return { code, out, err };
 }
 
-for (const product of ["codex", "claude-code", "copilot"]) test(`${product} installs outside the repository, preserves user content, and runs all four CLIs`, async () => {
+async function runPython(cli: string, args: string[], cwd: string, runtime: "uv" | "python3" = "uv") {
+  const command = runtime === "uv" ? ["uv", "run"] : ["python3"];
+  const child = Bun.spawn([...command, cli, ...args], { cwd, stdout: "pipe", stderr: "pipe" });
+  const [code, out, err] = await Promise.all([child.exited, new Response(child.stdout).text(), new Response(child.stderr).text()]);
+  expect({ code, error: code === 0 ? "" : err }).toEqual({ code: 0, error: "" });
+  return JSON.parse(out);
+}
+
+for (const product of ["codex", "claude-code", "copilot"]) test(`${product} installs outside the repository, preserves user content, and runs the bundled CLIs`, async () => {
   const root = await realpath(await mkdtemp(join(tmpdir(), "koto-install-"))); temporary.push(root);
   const plugin = join(root, "plugin"), project = join(root, "consumer"); await mkdir(project);
   const prefix = `dist/${product === "copilot" ? "claude-code" : product}/koto/`;
@@ -112,14 +120,33 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   const orch = join(plugin, "skills/orch/scripts/task.ts"), store = join(project, ".space/tasks/.orch");
   expect((await run(orch, ["init", "--store", store, "--project", project, "--actor", "parent", "--session", "one", "--operation-id", "init", "--json"], project)).code).toBe(0);
   const status = await run(orch, ["status", "--store", store, "--json"], project); expect(status.code).toBe(0); expect(JSON.parse(status.out).data.units).toEqual([]);
-  const japanese = join(plugin, "skills/natural-japanese/scripts/japanese.ts");
-  const draft = "いかがでしょうか。文章を確認することができます。\n";
+  const japanese = join(plugin, "skills/natural-japanese/scripts/lint.py");
+  const draft = "# APIの確認\n\nいかがでしょうか。APIで文章を確認することができます。\n";
   await writeFile(join(project, "draft.md"), draft);
-  const japaneseResult = await run(japanese, ["lint", "draft.md", "--json"], project);
-  expect(japaneseResult.code).toBe(0);
-  expect(JSON.parse(japaneseResult.out).findings).toContainEqual(expect.objectContaining({ category: "forbidden_phrase" }));
+  const japaneseResult = await runPython(japanese, ["draft.md", "--json"], project);
+  expect(japaneseResult.findings).toContainEqual(expect.objectContaining({ category: "forbidden_phrase" }));
+  const outline = await runPython(join(dirname(japanese), "outline.py"), ["draft.md", "--json"], project);
+  expect(outline.outline).toContainEqual(expect.objectContaining({ kind: "heading", text: "APIの確認" }));
+  const terms = await runPython(join(dirname(japanese), "terms.py"), ["draft.md", "--json"], project);
+  expect(terms.terms).toContainEqual(expect.objectContaining({ term: "API" }));
   expect(await readFile(join(project, "draft.md"), "utf8")).toBe(draft);
-  expect(await Bun.file(join(plugin, "skills/natural-japanese/scripts/node_modules/kuromoji/dict/base.dat.gz")).exists()).toBe(true);
+  expect(await Bun.file(join(plugin, "skills/natural-japanese/scripts/japanese.ts")).exists()).toBe(false);
+  expect(await Bun.file(join(project, "uv.lock")).exists()).toBe(false);
+  expect(await Bun.file(join(project, ".venv/pyvenv.cfg")).exists()).toBe(false);
+  const yomiyasu = join(plugin, "skills/yomiyasu");
+  const before = "原因は設定ミスだとされる。時間を溶かす。\n", after = "原因は設定ミスだ。時間を使う。\n";
+  await writeFile(join(project, "before.md"), before);
+  await writeFile(join(project, "after.md"), after);
+  const lintResult = await runPython(join(yomiyasu, "scripts/yomiyasu_lint.py"), ["before.md", "--json"], project, "python3");
+  expect(lintResult.is_clean).toBe(false);
+  expect(lintResult.findings).toContainEqual(expect.objectContaining({ rule: "metaphor_verb" }));
+  const diffResult = await runPython(join(yomiyasu, "scripts/yomiyasu_diff.py"), ["before.md", "after.md", "--json"], project, "python3");
+  expect(diffResult.type_changes).toContainEqual(expect.objectContaining({ lost: expect.arrayContaining([expect.objectContaining({ kind: "伝聞" })]) }));
+  expect(await readFile(join(project, "before.md"), "utf8")).toBe(before);
+  expect(await readFile(join(project, "after.md"), "utf8")).toBe(after);
+  expect(await Bun.file(join(yomiyasu, "LICENSE")).text()).toContain("Copyright (c) 2026 nanaism");
+  expect(await Bun.file(join(yomiyasu, "UNICODE-LICENSE.txt")).text()).toContain("UNICODE LICENSE V3");
+  expect(await Bun.file(join(yomiyasu, ".claude-plugin/plugin.json")).exists()).toBe(false);
   expect(await readFile(join(project, "package.json"), "utf8")).toBe('{"name":"consumer","private":true}\n');
   expect(await Bun.file(join(project, "bun.lock")).exists()).toBe(false);
   if (product === "codex") {

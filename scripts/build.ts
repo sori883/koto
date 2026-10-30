@@ -1,13 +1,13 @@
 import { lstat, mkdir, open, readdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, join, posix, resolve } from "node:path";
-import { instructionFiles } from "../skills/setup/scripts/lib/model.ts";
+import { instructionFiles, projectSkillRoots } from "../skills/setup/scripts/lib/model.ts";
 import type { Entry } from "../skills/setup/scripts/lib/model.ts";
 
 type Files = Map<string, Buffer>;
 const products = ["codex", "claude-code"] as const;
 const catalogs = [".agents/plugins/marketplace.json", ".claude-plugin/marketplace.json"];
-const ignored = new Set(["node_modules", ".DS_Store", ".gitkeep"]);
-const skillParts = new Set(["SKILL.md", "LICENSE", "LICENSE.md", "references", "assets", "scripts", "agents"]);
+const ignored = new Set(["node_modules", "__pycache__", ".venv", ".DS_Store", ".gitkeep"]);
+const skillParts = new Set(["SKILL.md", "LICENSE", "LICENSE.md", "UNICODE-LICENSE.txt", "references", "assets", "scripts", "agents"]);
 const json = (value: unknown) => Buffer.from(JSON.stringify(value, null, 2) + "\n");
 
 async function filesAt(directory: string, optional = false): Promise<Files> {
@@ -84,6 +84,14 @@ export async function distribution(root: string): Promise<Files> {
       const targetFiles = [...setupFiles];
       if (files.has(template)) targetFiles.push({ source: template, destination: instruction, mode: "managed-block" });
       files.set(target === product ? "setup-manifest.json" : `setup-manifest.${target}.json`, json({ schemaVersion: 1, plugin: name, product: target, version, files: targetFiles }));
+      if (target === product) {
+        const projectFiles = [...targetFiles];
+        for (const path of [...files.keys()].sort()) {
+          if (path.startsWith("skills/")) projectFiles.push({ source: path, destination: `${projectSkillRoots[product]}/${path.slice("skills/".length)}`, mode: "copy" });
+          if (product === "claude-code" && path.startsWith("agents/")) projectFiles.push({ source: path, destination: `.claude/${path}`, mode: "copy" });
+        }
+        files.set("setup-manifest.project.json", json({ schemaVersion: 1, plugin: name, product, version, scope: "project", files: projectFiles }));
+      }
     }
     checkLinks(files);
     for (const [path, body] of files) result.set(`${prefix}/${path}`, body);

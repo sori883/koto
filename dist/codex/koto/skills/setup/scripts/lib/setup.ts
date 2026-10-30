@@ -1,8 +1,8 @@
 import { lstat, open, realpath, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
-import type { Manifest, State, Pending, Result, Entry, Operation, Product } from "./model.ts";
-import { instructionFiles, isProduct, setupPlugins, SetupError } from "./model.ts";
+import type { Manifest, State, Pending, Result, Entry, Operation, Product, Scope } from "./model.ts";
+import { instructionFiles, isProduct, projectSkillRoot, setupPlugins, SetupError } from "./model.ts";
 import { atomicWrite, hash, jsonBytes, readOptional, safeMkdir, safePath } from "./files.ts";
 import { parseManifest, parsePending, parseState } from "./validation.ts";
 import { mergeIndex } from "./index.ts";
@@ -30,11 +30,12 @@ function managedHash(content: Buffer | null, entry: Entry, manifest: Manifest): 
   if (entry.mode !== "managed-block") return digest(content);
   const value = block(content, manifest).value; return value === null ? null : hash(value);
 }
-async function context(project: string, pluginRoot: string, product?: Product): Promise<Context> {
+async function context(project: string, pluginRoot: string, product?: Product, scope: Scope = "plugin"): Promise<Context> {
   if (product !== undefined && !isProduct(product)) throw new SetupError("INPUT", "Unknown product");
+  if (scope !== "plugin" && scope !== "project") throw new SetupError("INPUT", "Unknown installation scope");
   project = await realpath(project); pluginRoot = await realpath(pluginRoot);
   if (!(await lstat(project)).isDirectory() || !(await lstat(pluginRoot)).isDirectory()) throw new SetupError("INVALID_DIRECTORY", "Project and plugin root must be directories");
-  let raw = await readOptional(pluginRoot, "setup-manifest.json"); if (!raw) throw new SetupError("MANIFEST", "setup-manifest.json is missing from the plugin root");
+  let raw = await readOptional(pluginRoot, "setup-manifest.json"); if (!raw) throw new SetupError("MANIFEST", "setup-manifest.json is missing; use --source <distribution-root> when running a project-installed setup skill");
   let manifest = parseManifest(JSON.parse(raw.toString()));
   if (product !== undefined && product !== manifest.product) {
     const selected = await readOptional(pluginRoot, `setup-manifest.${product}.json`);
@@ -43,6 +44,14 @@ async function context(project: string, pluginRoot: string, product?: Product): 
     if (alternate.product !== product || alternate.plugin !== manifest.plugin || alternate.version !== manifest.version) throw new SetupError("MANIFEST", "Selected setup manifest does not match the requested product, plugin, and version");
     raw = selected; manifest = alternate;
   }
+  if (scope === "project") {
+    if (!projectSkillRoot(manifest.product)) throw new SetupError("INPUT", "Project scope is supported only for Codex and Claude Code");
+    const selected = await readOptional(pluginRoot, "setup-manifest.project.json");
+    if (!selected) throw new SetupError("MANIFEST", "This distribution does not include project installation");
+    const alternate = parseManifest(JSON.parse(selected.toString()));
+    if (alternate.scope !== "project" || alternate.product !== manifest.product || alternate.plugin !== manifest.plugin || alternate.version !== manifest.version) throw new SetupError("MANIFEST", "Project setup manifest does not match the product, plugin, and version");
+    raw = selected; manifest = alternate;
+  } else if (manifest.scope !== undefined) throw new SetupError("MANIFEST", "Default setup manifest must use plugin scope");
   const base = `.space/setup/${manifest.plugin}-${manifest.product}`;
   return { project, pluginRoot, manifest, manifestHash: hash(raw), statePath: `${base}.json`, pendingPath: `${base}.pending.json`, lockPaths: setupPlugins(manifest.plugin).map(plugin => `.space/setup/${plugin}.lock`) };
 }
@@ -57,7 +66,8 @@ async function plan(ctx: Context): Promise<{ result: Result; pending: Pending; s
   const { manifest: m, project, pluginRoot } = ctx;
   const stateBytes = await readOptional(project, ctx.statePath);
   const state = await installedState(project, m);
-  const result: Result = { plugin: m.plugin, product: m.product, version: m.version, project, actions: [], conflicts: [], pending: false, locked: (await Promise.all(ctx.lockPaths.map(path => readOptional(project, path)))).some(raw => raw !== null) };
+  if (state.scope === "project" && m.scope !== "project") throw new SetupError("INPUT", "This project uses project scope; pass --scope project to preserve local skill references");
+  const result: Result = { plugin: m.plugin, product: m.product, version: m.version, scope: m.scope ?? "plugin", project, actions: [], conflicts: [], pending: false, locked: (await Promise.all(ctx.lockPaths.map(path => readOptional(project, path)))).some(raw => raw !== null) };
   for (const plugin of setupPlugins(m.plugin).slice(1)) for (const product of Object.keys(instructionFiles) as Product[]) {
     const path = `.space/setup/${plugin}-${product}.pending.json`;
     if (await readOptional(project, path)) {
@@ -78,7 +88,7 @@ async function plan(ctx: Context): Promise<{ result: Result; pending: Pending; s
     }
     return { result, pending, stateBytes };
   }
-  const nextState: State = { ...state, version: m.version, entries: [] }, operations: Operation[] = [];
+  const nextState: State = { ...state, version: m.version, ...(m.scope ? { scope: m.scope } : {}), entries: [] }, operations: Operation[] = [];
   let legacyStates: State[] | undefined;
   for (const entry of m.files) {
     const source = await readOptional(pluginRoot, entry.source); if (!source) throw new SetupError("SOURCE", `Missing source: ${entry.source}`);
@@ -88,7 +98,8 @@ async function plan(ctx: Context): Promise<{ result: Result; pending: Pending; s
     catch (error) { if (!(error instanceof SetupError) || error.code !== "BLOCK_CONFLICT") throw error; result.conflicts.push({ destination: entry.destination, reason: error.message }); continue; }
     let desired = source, desiredManaged: string;
     if (entry.mode === "managed-block") {
-      const text = source.toString("utf8").replaceAll("{{SKILL_ROOT}}", join(pluginRoot, "skills")).replaceAll("{{BABEL_BUNDLE}}", join(project, ".space/babel")).replaceAll("{{VENDOR_BUNDLE}}", join(project, ".space/babel/vendor", m.plugin));
+      const local = m.scope === "project";
+      const text = source.toString("utf8").replaceAll("{{SKILL_ROOT}}", local ? projectSkillRoot(m.product)! : join(pluginRoot, "skills")).replaceAll("{{BABEL_BUNDLE}}", local ? ".space/babel" : join(project, ".space/babel")).replaceAll("{{VENDOR_BUNDLE}}", local ? `.space/babel/vendor/${m.plugin}` : join(project, ".space/babel/vendor", m.plugin));
       const { start, end } = markers(m);
       if (setupPlugins(m.plugin).some(plugin => { const pair = markers({ ...m, plugin }); return text.includes(pair.start) || text.includes(pair.end); })) throw new SetupError("SOURCE", "Template contains managed block markers");
       const managed = `${start}\n${text.trimEnd()}\n${end}`, old = block(current, m), outside = current?.toString("utf8") ?? "";
@@ -128,8 +139,8 @@ async function plan(ctx: Context): Promise<{ result: Result; pending: Pending; s
   for (const old of state.entries.filter(e => !m.files.some(n => n.destination === e.destination))) { nextState.entries.push(old); result.actions.push({ destination: old.destination, mode: old.mode, action: "retain", reason: "Removed from the plugin; existing destination is preserved" }); }
   return { result, pending: { schemaVersion: 1, manifestHash: ctx.manifestHash, beforeStateHash: digest(stateBytes), nextState, operations }, stateBytes };
 }
-export async function runSetup(options: { command: "plan" | "apply" | "status"; project: string; pluginRoot: string; product?: Product }): Promise<Result> {
-  const ctx = await context(options.project, options.pluginRoot, options.product);
+export async function runSetup(options: { command: "plan" | "apply" | "status"; project: string; pluginRoot: string; product?: Product; scope?: Scope }): Promise<Result> {
+  const ctx = await context(options.project, options.pluginRoot, options.product, options.scope);
   if (options.command !== "apply") return (await plan(ctx)).result;
   // Complete validation before creating metadata or acquiring the write lock.
   const preliminary = await plan(ctx); if (preliminary.result.conflicts.length) throw new SetupError("CONFLICT", "Setup conflict; no destination files were written", preliminary.result);

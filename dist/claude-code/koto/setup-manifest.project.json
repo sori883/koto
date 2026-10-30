@@ -1,0 +1,969 @@
+{
+  "schemaVersion": 1,
+  "plugin": "koto",
+  "product": "claude-code",
+  "version": "0.1.8",
+  "scope": "project",
+  "files": [
+    {
+      "source": "space/babel/LICENSE",
+      "destination": ".space/babel/LICENSE",
+      "mode": "seed"
+    },
+    {
+      "source": "space/babel/decisions/index.md",
+      "destination": ".space/babel/decisions/index.md",
+      "mode": "merge-index"
+    },
+    {
+      "source": "space/babel/index.md",
+      "destination": ".space/babel/index.md",
+      "mode": "merge-index"
+    },
+    {
+      "source": "space/babel/knowledge/index.md",
+      "destination": ".space/babel/knowledge/index.md",
+      "mode": "merge-index"
+    },
+    {
+      "source": "space/babel/log.md",
+      "destination": ".space/babel/log.md",
+      "mode": "seed"
+    },
+    {
+      "source": "space/babel/principles/attack-the-premise.md",
+      "destination": ".space/babel/principles/attack-the-premise.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/boundary-discipline.md",
+      "destination": ".space/babel/principles/boundary-discipline.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/build-the-lever.md",
+      "destination": ".space/babel/principles/build-the-lever.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/encode-lessons-in-structure.md",
+      "destination": ".space/babel/principles/encode-lessons-in-structure.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/exhaust-the-design-space.md",
+      "destination": ".space/babel/principles/exhaust-the-design-space.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/experience-first.md",
+      "destination": ".space/babel/principles/experience-first.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/fix-root-causes.md",
+      "destination": ".space/babel/principles/fix-root-causes.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/foundational-thinking.md",
+      "destination": ".space/babel/principles/foundational-thinking.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/guard-the-context-window.md",
+      "destination": ".space/babel/principles/guard-the-context-window.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/index.md",
+      "destination": ".space/babel/principles/index.md",
+      "mode": "merge-index"
+    },
+    {
+      "source": "space/babel/principles/laziness-protocol.md",
+      "destination": ".space/babel/principles/laziness-protocol.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/make-operations-idempotent.md",
+      "destination": ".space/babel/principles/make-operations-idempotent.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/migrate-callers-then-delete-legacy-apis.md",
+      "destination": ".space/babel/principles/migrate-callers-then-delete-legacy-apis.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/minimize-reader-load.md",
+      "destination": ".space/babel/principles/minimize-reader-load.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/model-the-domain.md",
+      "destination": ".space/babel/principles/model-the-domain.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/never-block-on-the-human.md",
+      "destination": ".space/babel/principles/never-block-on-the-human.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/outcome-oriented-execution.md",
+      "destination": ".space/babel/principles/outcome-oriented-execution.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/prove-it-works.md",
+      "destination": ".space/babel/principles/prove-it-works.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/redesign-from-first-principles.md",
+      "destination": ".space/babel/principles/redesign-from-first-principles.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/separate-before-serializing-shared-state.md",
+      "destination": ".space/babel/principles/separate-before-serializing-shared-state.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/sequence-verifiable-units.md",
+      "destination": ".space/babel/principles/sequence-verifiable-units.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/subtract-before-you-add.md",
+      "destination": ".space/babel/principles/subtract-before-you-add.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/test-behavior-not-implementation.md",
+      "destination": ".space/babel/principles/test-behavior-not-implementation.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/principles/type-system-discipline.md",
+      "destination": ".space/babel/principles/type-system-discipline.md",
+      "mode": "copy"
+    },
+    {
+      "source": "space/babel/procedures/index.md",
+      "destination": ".space/babel/procedures/index.md",
+      "mode": "merge-index"
+    },
+    {
+      "source": "space/babel/rules/index.md",
+      "destination": ".space/babel/rules/index.md",
+      "mode": "merge-index"
+    },
+    {
+      "source": "templates/CLAUDE.md",
+      "destination": "CLAUDE.md",
+      "mode": "managed-block"
+    },
+    {
+      "source": "agents/comment-curator.md",
+      "destination": ".claude/agents/comment-curator.md",
+      "mode": "copy"
+    },
+    {
+      "source": "agents/devlow-worker.md",
+      "destination": ".claude/agents/devlow-worker.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/automate-me/LICENSE",
+      "destination": ".claude/skills/automate-me/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/automate-me/SKILL.md",
+      "destination": ".claude/skills/automate-me/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/blast-radius/LICENSE",
+      "destination": ".claude/skills/blast-radius/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/blast-radius/SKILL.md",
+      "destination": ".claude/skills/blast-radius/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/bro/LICENSE",
+      "destination": ".claude/skills/bro/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/bro/SKILL.md",
+      "destination": ".claude/skills/bro/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/checkpoint-safely/LICENSE",
+      "destination": ".claude/skills/checkpoint-safely/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/checkpoint-safely/SKILL.md",
+      "destination": ".claude/skills/checkpoint-safely/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/create-verification-skill/LICENSE",
+      "destination": ".claude/skills/create-verification-skill/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/create-verification-skill/SKILL.md",
+      "destination": ".claude/skills/create-verification-skill/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/create-verification-skill/assets/feature-template.md",
+      "destination": ".claude/skills/create-verification-skill/assets/feature-template.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/LICENSE",
+      "destination": ".claude/skills/devlow/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/SKILL.md",
+      "destination": ".claude/skills/devlow/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/assets/design-template.md",
+      "destination": ".claude/skills/devlow/assets/design-template.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/assets/plan-template.md",
+      "destination": ".claude/skills/devlow/assets/plan-template.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/assets/task-template.md",
+      "destination": ".claude/skills/devlow/assets/task-template.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/assets/verification-template.md",
+      "destination": ".claude/skills/devlow/assets/verification-template.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/references/delegation.md",
+      "destination": ".claude/skills/devlow/references/delegation.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/references/deliver.md",
+      "destination": ".claude/skills/devlow/references/deliver.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/references/design.md",
+      "destination": ".claude/skills/devlow/references/design.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/references/implement.md",
+      "destination": ".claude/skills/devlow/references/implement.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/references/intake.md",
+      "destination": ".claude/skills/devlow/references/intake.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/references/investigate.md",
+      "destination": ".claude/skills/devlow/references/investigate.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/references/orchestrate.md",
+      "destination": ".claude/skills/devlow/references/orchestrate.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/references/plan.md",
+      "destination": ".claude/skills/devlow/references/plan.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/references/review.md",
+      "destination": ".claude/skills/devlow/references/review.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/references/verify.md",
+      "destination": ".claude/skills/devlow/references/verify.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlow/references/workflow.md",
+      "destination": ".claude/skills/devlow/references/workflow.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/explain-before-shorten/SKILL.md",
+      "destination": ".claude/skills/explain-before-shorten/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/how/LICENSE",
+      "destination": ".claude/skills/how/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/how/SKILL.md",
+      "destination": ".claude/skills/how/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/how/references/explainer-prompt.md",
+      "destination": ".claude/skills/how/references/explainer-prompt.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/how/references/explorer-prompt.md",
+      "destination": ".claude/skills/how/references/explorer-prompt.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/interrogate/LICENSE",
+      "destination": ".claude/skills/interrogate/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/interrogate/SKILL.md",
+      "destination": ".claude/skills/interrogate/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/interrogate/references/reviewer-prompt.md",
+      "destination": ".claude/skills/interrogate/references/reviewer-prompt.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/maintain-verification-skill/LICENSE",
+      "destination": ".claude/skills/maintain-verification-skill/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/maintain-verification-skill/SKILL.md",
+      "destination": ".claude/skills/maintain-verification-skill/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/LICENSE",
+      "destination": ".claude/skills/natural-japanese/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/SKILL.md",
+      "destination": ".claude/skills/natural-japanese/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/assets/style-profile-template.md",
+      "destination": ".claude/skills/natural-japanese/assets/style-profile-template.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/diagnose.md",
+      "destination": ".claude/skills/natural-japanese/references/diagnose.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/doctypes/guide.md",
+      "destination": ".claude/skills/natural-japanese/references/doctypes/guide.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/doctypes/memo.md",
+      "destination": ".claude/skills/natural-japanese/references/doctypes/memo.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/doctypes/minutes.md",
+      "destination": ".claude/skills/natural-japanese/references/doctypes/minutes.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/doctypes/report.md",
+      "destination": ".claude/skills/natural-japanese/references/doctypes/report.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/doctypes/slide.md",
+      "destination": ".claude/skills/natural-japanese/references/doctypes/slide.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/eval-rubric.md",
+      "destination": ".claude/skills/natural-japanese/references/eval-rubric.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/examples.md",
+      "destination": ".claude/skills/natural-japanese/references/examples.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/forbidden-patterns.md",
+      "destination": ".claude/skills/natural-japanese/references/forbidden-patterns.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/genre-notes.md",
+      "destination": ".claude/skills/natural-japanese/references/genre-notes.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/manual-checklist.md",
+      "destination": ".claude/skills/natural-japanese/references/manual-checklist.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/readability-antipatterns.md",
+      "destination": ".claude/skills/natural-japanese/references/readability-antipatterns.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/readability-principles.md",
+      "destination": ".claude/skills/natural-japanese/references/readability-principles.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/revision-guide.md",
+      "destination": ".claude/skills/natural-japanese/references/revision-guide.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/translationese.md",
+      "destination": ".claude/skills/natural-japanese/references/translationese.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/references/writing-constitution.md",
+      "destination": ".claude/skills/natural-japanese/references/writing-constitution.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/scripts/calibrate.py",
+      "destination": ".claude/skills/natural-japanese/scripts/calibrate.py",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/scripts/fixtures/ai-smelly.md",
+      "destination": ".claude/skills/natural-japanese/scripts/fixtures/ai-smelly.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/scripts/fixtures/natural.md",
+      "destination": ".claude/skills/natural-japanese/scripts/fixtures/natural.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/scripts/lint.py",
+      "destination": ".claude/skills/natural-japanese/scripts/lint.py",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/scripts/outline.py",
+      "destination": ".claude/skills/natural-japanese/scripts/outline.py",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/scripts/semantic.py",
+      "destination": ".claude/skills/natural-japanese/scripts/semantic.py",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/scripts/terms.py",
+      "destination": ".claude/skills/natural-japanese/scripts/terms.py",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/scripts/textcore.py",
+      "destination": ".claude/skills/natural-japanese/scripts/textcore.py",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/no-comments/LICENSE",
+      "destination": ".claude/skills/no-comments/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/no-comments/SKILL.md",
+      "destination": ".claude/skills/no-comments/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/LICENSE",
+      "destination": ".claude/skills/okf-agent-memory/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/SKILL.md",
+      "destination": ".claude/skills/okf-agent-memory/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/references/cli.md",
+      "destination": ".claude/skills/okf-agent-memory/references/cli.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/references/discovery.md",
+      "destination": ".claude/skills/okf-agent-memory/references/discovery.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/references/examples.md",
+      "destination": ".claude/skills/okf-agent-memory/references/examples.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/references/frontmatter.md",
+      "destination": ".claude/skills/okf-agent-memory/references/frontmatter.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/references/relationships.md",
+      "destination": ".claude/skills/okf-agent-memory/references/relationships.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/references/remember.md",
+      "destination": ".claude/skills/okf-agent-memory/references/remember.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/references/update.md",
+      "destination": ".claude/skills/okf-agent-memory/references/update.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/scripts/bootstrap.ts",
+      "destination": ".claude/skills/okf-agent-memory/scripts/bootstrap.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/scripts/bun.lock",
+      "destination": ".claude/skills/okf-agent-memory/scripts/bun.lock",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/scripts/lib/bundle.ts",
+      "destination": ".claude/skills/okf-agent-memory/scripts/lib/bundle.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/scripts/lib/cli.ts",
+      "destination": ".claude/skills/okf-agent-memory/scripts/lib/cli.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/scripts/lib/document.ts",
+      "destination": ".claude/skills/okf-agent-memory/scripts/lib/document.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/scripts/lib/files.ts",
+      "destination": ".claude/skills/okf-agent-memory/scripts/lib/files.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/scripts/lib/search.ts",
+      "destination": ".claude/skills/okf-agent-memory/scripts/lib/search.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/scripts/lib/validate.ts",
+      "destination": ".claude/skills/okf-agent-memory/scripts/lib/validate.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/scripts/okf.ts",
+      "destination": ".claude/skills/okf-agent-memory/scripts/okf.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/scripts/package.json",
+      "destination": ".claude/skills/okf-agent-memory/scripts/package.json",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/okf-agent-memory/scripts/run.ts",
+      "destination": ".claude/skills/okf-agent-memory/scripts/run.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/SKILL.md",
+      "destination": ".claude/skills/orch/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/references/cli.md",
+      "destination": ".claude/skills/orch/references/cli.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/references/orchestration.md",
+      "destination": ".claude/skills/orch/references/orchestration.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/bootstrap.ts",
+      "destination": ".claude/skills/orch/scripts/bootstrap.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/lib/cli.ts",
+      "destination": ".claude/skills/orch/scripts/lib/cli.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/lib/engine.ts",
+      "destination": ".claude/skills/orch/scripts/lib/engine.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/lib/model.ts",
+      "destination": ".claude/skills/orch/scripts/lib/model.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/lib/policy.ts",
+      "destination": ".claude/skills/orch/scripts/lib/policy.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/lib/queries.ts",
+      "destination": ".claude/skills/orch/scripts/lib/queries.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/lib/records.ts",
+      "destination": ".claude/skills/orch/scripts/lib/records.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/lib/store.ts",
+      "destination": ".claude/skills/orch/scripts/lib/store.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/lib/units.ts",
+      "destination": ".claude/skills/orch/scripts/lib/units.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/lib/validation.ts",
+      "destination": ".claude/skills/orch/scripts/lib/validation.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/package.json",
+      "destination": ".claude/skills/orch/scripts/package.json",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/run.ts",
+      "destination": ".claude/skills/orch/scripts/run.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/orch/scripts/task.ts",
+      "destination": ".claude/skills/orch/scripts/task.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/recall/LICENSE",
+      "destination": ".claude/skills/recall/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/recall/SKILL.md",
+      "destination": ".claude/skills/recall/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/reflect/LICENSE",
+      "destination": ".claude/skills/reflect/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/reflect/SKILL.md",
+      "destination": ".claude/skills/reflect/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/reflect/references/approval.md",
+      "destination": ".claude/skills/reflect/references/approval.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/setup/SKILL.md",
+      "destination": ".claude/skills/setup/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/setup/references/setup.md",
+      "destination": ".claude/skills/setup/references/setup.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/setup/scripts/bootstrap.ts",
+      "destination": ".claude/skills/setup/scripts/bootstrap.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/setup/scripts/cli.ts",
+      "destination": ".claude/skills/setup/scripts/cli.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/setup/scripts/lib/files.ts",
+      "destination": ".claude/skills/setup/scripts/lib/files.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/setup/scripts/lib/index.ts",
+      "destination": ".claude/skills/setup/scripts/lib/index.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/setup/scripts/lib/model.ts",
+      "destination": ".claude/skills/setup/scripts/lib/model.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/setup/scripts/lib/setup.ts",
+      "destination": ".claude/skills/setup/scripts/lib/setup.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/setup/scripts/lib/validation.ts",
+      "destination": ".claude/skills/setup/scripts/lib/validation.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/setup/scripts/package.json",
+      "destination": ".claude/skills/setup/scripts/package.json",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/setup/scripts/setup.ts",
+      "destination": ".claude/skills/setup/scripts/setup.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/show-me-your-work/LICENSE",
+      "destination": ".claude/skills/show-me-your-work/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/show-me-your-work/SKILL.md",
+      "destination": ".claude/skills/show-me-your-work/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/show-me-your-work/assets/decision-log-template.tsv",
+      "destination": ".claude/skills/show-me-your-work/assets/decision-log-template.tsv",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/show-me-your-work/references/log-format.md",
+      "destination": ".claude/skills/show-me-your-work/references/log-format.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/system-blueprint/LICENSE",
+      "destination": ".claude/skills/system-blueprint/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/system-blueprint/SKILL.md",
+      "destination": ".claude/skills/system-blueprint/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/system-blueprint/assets/blueprint-template.md",
+      "destination": ".claude/skills/system-blueprint/assets/blueprint-template.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/system-blueprint/references/document-model.md",
+      "destination": ".claude/skills/system-blueprint/references/document-model.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/tdd/LICENSE",
+      "destination": ".claude/skills/tdd/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/tdd/SKILL.md",
+      "destination": ".claude/skills/tdd/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/teach/LICENSE",
+      "destination": ".claude/skills/teach/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/teach/SKILL.md",
+      "destination": ".claude/skills/teach/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/technical-writing/LICENSE",
+      "destination": ".claude/skills/technical-writing/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/technical-writing/SKILL.md",
+      "destination": ".claude/skills/technical-writing/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/unslop/LICENSE",
+      "destination": ".claude/skills/unslop/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/unslop/SKILL.md",
+      "destination": ".claude/skills/unslop/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/use-principles/LICENSE",
+      "destination": ".claude/skills/use-principles/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/use-principles/SKILL.md",
+      "destination": ".claude/skills/use-principles/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/why/LICENSE",
+      "destination": ".claude/skills/why/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/why/SKILL.md",
+      "destination": ".claude/skills/why/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/why/references/epistemics.md",
+      "destination": ".claude/skills/why/references/epistemics.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/why/references/investigator-prompt.md",
+      "destination": ".claude/skills/why/references/investigator-prompt.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/why/references/source-playbook.md",
+      "destination": ".claude/skills/why/references/source-playbook.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/why/references/sources/code-archaeology.md",
+      "destination": ".claude/skills/why/references/sources/code-archaeology.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/why/references/sources/incident-postmortem.md",
+      "destination": ".claude/skills/why/references/sources/incident-postmortem.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/why/references/sources/okf.md",
+      "destination": ".claude/skills/why/references/sources/okf.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/why/references/synthesizer-prompt.md",
+      "destination": ".claude/skills/why/references/synthesizer-prompt.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/yomiyasu/LICENSE",
+      "destination": ".claude/skills/yomiyasu/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/yomiyasu/SKILL.md",
+      "destination": ".claude/skills/yomiyasu/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/yomiyasu/UNICODE-LICENSE.txt",
+      "destination": ".claude/skills/yomiyasu/UNICODE-LICENSE.txt",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/yomiyasu/assets/algo-artis.png",
+      "destination": ".claude/skills/yomiyasu/assets/algo-artis.png",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/yomiyasu/references/domains/business.md",
+      "destination": ".claude/skills/yomiyasu/references/domains/business.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/yomiyasu/references/domains/essay.md",
+      "destination": ".claude/skills/yomiyasu/references/domains/essay.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/yomiyasu/references/domains/tech.md",
+      "destination": ".claude/skills/yomiyasu/references/domains/tech.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/yomiyasu/references/gemini-syntax.md",
+      "destination": ".claude/skills/yomiyasu/references/gemini-syntax.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/yomiyasu/references/slop-catalog.md",
+      "destination": ".claude/skills/yomiyasu/references/slop-catalog.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/yomiyasu/scripts/markdown_visibility.py",
+      "destination": ".claude/skills/yomiyasu/scripts/markdown_visibility.py",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/yomiyasu/scripts/yomiyasu_diff.py",
+      "destination": ".claude/skills/yomiyasu/scripts/yomiyasu_diff.py",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/yomiyasu/scripts/yomiyasu_lint.py",
+      "destination": ".claude/skills/yomiyasu/scripts/yomiyasu_lint.py",
+      "mode": "copy"
+    }
+  ]
+}
