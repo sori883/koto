@@ -1,9 +1,0 @@
-# Preserve upstream files' trailing blank lines without changing their contents.
-skills/natural-japanese/references/doctypes/memo.md whitespace=-blank-at-eof
-dist/*/koto/skills/natural-japanese/references/doctypes/memo.md whitespace=-blank-at-eof
-skills/natural-japanese/scripts/lint.py whitespace=-blank-at-eof
-skills/natural-japanese/scripts/outline.py whitespace=-blank-at-eof
-skills/natural-japanese/scripts/terms.py whitespace=-blank-at-eof
-dist/*/koto/skills/natural-japanese/scripts/lint.py whitespace=-blank-at-eof
-dist/*/koto/skills/natural-japanese/scripts/outline.py whitespace=-blank-at-eof
-dist/*/koto/skills/natural-japanese/scripts/terms.py whitespace=-blank-at-eof

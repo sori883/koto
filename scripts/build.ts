@@ -1,7 +1,5 @@
 import { lstat, mkdir, open, readdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, join, posix, resolve } from "node:path";
-import { instructionFiles, projectSkillRoots } from "../skills/setup/scripts/lib/model.ts";
-import type { Entry } from "../skills/setup/scripts/lib/model.ts";
 
 type Files = Map<string, Buffer>;
 const products = ["codex", "claude-code"] as const;
@@ -50,7 +48,11 @@ export async function distribution(root: string): Promise<Files> {
   const version = packageJson.version;
   if (typeof version !== "string" || !/^\d+\.\d+\.\d+(?:-[\w.-]+)?(?:\+[\w.-]+)?$/.test(version)) throw new Error("Root version must be semver");
   const common: Files = new Map();
-  for (const name of (await readdir(join(root, "skills"))).sort()) {
+  const skills = await readdir(join(root, "skills")).catch((error: NodeJS.ErrnoException) => {
+    if (error.code === "ENOENT") return [];
+    throw error;
+  });
+  for (const name of skills.sort()) {
     const directory = join(root, "skills", name);
     if ((await lstat(directory)).isSymbolicLink()) throw new Error(`Symlink skill: ${name}`);
     if (!(await lstat(directory)).isDirectory()) continue;
@@ -60,7 +62,12 @@ export async function distribution(root: string): Promise<Files> {
       for (const [path, body] of await filesAt(join(directory, part))) common.set(`skills/${name}/${part}${path ? `/${path}` : ""}`, body);
     }
   }
-  for (const [path, body] of await filesAt(join(root, "space/babel"))) common.set(`space/babel/${path}`, body);
+  for (const [path, body] of await filesAt(join(root, "space/default"))) common.set(`space/default/${path}`, body);
+  const cli = await filesAt(join(root, "cli/monorepo"), true);
+  for (const [path, body] of cli) {
+    if (!["monorepo.ts", "package.json", "README.md"].includes(path) && !path.startsWith("lib/")) continue;
+    common.set(`cli/monorepo/${path}`, path === "package.json" ? json({ ...JSON.parse(body.toString()), version }) : body);
+  }
   const result: Files = new Map();
   for (const product of products) {
     const source = join(root, "packaging", product);
@@ -69,30 +76,10 @@ export async function distribution(root: string): Promise<Files> {
     const name: string = manifest.name, prefix = `dist/${product}/${name}`;
     const files = new Map(common);
     manifest.version = version;
+    if ([...common.keys()].some(path => path.startsWith("skills/"))) manifest.skills = "./skills/";
+    else delete manifest.skills;
     files.set(product === "codex" ? ".codex-plugin/plugin.json" : ".claude-plugin/plugin.json", json(manifest));
     for (const part of ["templates", "agents", "assets"]) for (const [path, body] of await filesAt(join(source, part), true)) files.set(`${part}/${path}`, body);
-    if (product === "claude-code") {
-      for (const [, body] of await filesAt(join(root, "packaging/copilot/templates/copilot-instructions.md"))) files.set("templates/copilot-instructions.md", body);
-    }
-    const setupFiles: Entry[] = [];
-    for (const path of [...files.keys()].sort()) {
-      if (path.startsWith("space/babel/")) setupFiles.push({ source: path, destination: `.${path}`, mode: posix.basename(path) === "index.md" ? "merge-index" : ["space/babel/log.md", "space/babel/LICENSE"].includes(path) ? "seed" : "copy" });
-      if (product === "codex" && path.startsWith("templates/agents/")) setupFiles.push({ source: path, destination: `.codex/agents/${path.slice("templates/agents/".length)}`, mode: "copy" });
-    }
-    for (const target of product === "claude-code" ? ["claude-code", "copilot"] as const : ["codex"] as const) {
-      const instruction = instructionFiles[target], template = `templates/${posix.basename(instruction)}`;
-      const targetFiles = [...setupFiles];
-      if (files.has(template)) targetFiles.push({ source: template, destination: instruction, mode: "managed-block" });
-      files.set(target === product ? "setup-manifest.json" : `setup-manifest.${target}.json`, json({ schemaVersion: 1, plugin: name, product: target, version, files: targetFiles }));
-      if (target === product) {
-        const projectFiles = [...targetFiles];
-        for (const path of [...files.keys()].sort()) {
-          if (path.startsWith("skills/")) projectFiles.push({ source: path, destination: `${projectSkillRoots[product]}/${path.slice("skills/".length)}`, mode: "copy" });
-          if (product === "claude-code" && path.startsWith("agents/")) projectFiles.push({ source: path, destination: `.claude/${path}`, mode: "copy" });
-        }
-        files.set("setup-manifest.project.json", json({ schemaVersion: 1, plugin: name, product, version, scope: "project", files: projectFiles }));
-      }
-    }
     checkLinks(files);
     for (const [path, body] of files) result.set(`${prefix}/${path}`, body);
     const marketplace = JSON.parse(await readFile(join(source, "marketplace.json"), "utf8"));
@@ -126,7 +113,10 @@ export async function build(root: string): Promise<number> {
   const stage = join(root, `.build-${crypto.randomUUID()}`), backup = `${stage}-previous`;
   let moved = false;
   try {
-    for (const [path, body] of files) { await mkdir(dirname(join(stage, path)), { recursive: true }); await writeFile(join(stage, path), body); }
+    for (const [path, body] of files) {
+      await mkdir(dirname(join(stage, path)), { recursive: true });
+      await writeFile(join(stage, path), body, { mode: path.endsWith("/cli/monorepo/monorepo.ts") ? 0o755 : 0o644 });
+    }
     try { await rename(join(root, "dist"), backup); moved = true; } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }
     try { await rename(join(stage, "dist"), join(root, "dist")); }
     catch (error) { if (moved) await rename(backup, join(root, "dist")); throw error; }

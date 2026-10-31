@@ -16,6 +16,6 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true
   },
-  "include": ["scripts/**/*.ts", "skills/**/*.ts", "tests/**/*.ts"],
+  "include": ["cli/**/*.ts", "scripts/**/*.ts", "skills/**/*.ts", "tests/**/*.ts"],
   "exclude": ["**/node_modules", "dist", "work", ".agents", ".codex"]
 }

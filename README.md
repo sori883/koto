@@ -1,130 +1,28 @@
 # koto
 
-**koto ( Knowledge-Oriented Task Orchestration )**
+**koto (Knowledge-Oriented Task Orchestration)**
 
-**AIと開発を進めるための手順と、作業・知識の管理機能をまとめた、Codex・Claude Code・GitHub Copilot in VS Code向けプラグインです。**
+作業と知識を扱うための、Codex・Claude Code向けプラグインを開発するリポジトリです。Memory・Tasks・Workspaceを独立した責務のツールとして構成します。
 
-「何を作るかを整理する」「実装して確かめる」「なぜその設計にしたかを残す」といった作業を支援します。途中で会話や担当が変わっても、記録を手がかりに続きを進められます。
+最初のツールとして、koto所有の **`@koto/monorepo`** を実装しています。初期設定、プロジェクト追加、Gitリポジトリの登録・更新取得・登録解除、タスクごとのWorktree作成・状態確認・片付けを行います。Gitの処理には既存Gitを使います。
 
-機能は「スキル」として提供します。スキルは、AIが作業するときに読む手順書です。利用者は日本語で依頼し、AIが必要な手順や付属のコマンドを使います。
-
-## できること
-
-| やりたいこと | 機能 |
-| --- | --- |
-| 機能追加や修正を、依頼の整理から完了報告まで進めたい | **devlow**：必要な工程を選び、調査・設計・実装・検証などを進める |
-| 大きな仕事を分け、進捗を把握したい | **orch**：作業ごとの担当、依存関係、確認結果、成果物の受け入れを管理する |
-| 既存のコードを理解したい | **how / why**：「どう動くか」「なぜこの設計にしたか」を根拠とともに調べる |
-| システムの説明資料を作りたい | **system-blueprint**：コードや設定から、構成と動作を説明する文書を作る |
-| 設計や判断理由を、次の開発でも参照したい | **okf-agent-memory（OKF）**：知識をMarkdownで保存・検索・更新する |
-| 作業を中断し、後で再開したい | **checkpoint-safely**：再開に必要な状況と、作業記録への参照を残す |
-| 作業の現在地を取り戻し、仕組みを理解したい | **recall / teach**：記録と現在の状態を照合し、仕組みと理由をつなげて説明する |
-| 変更の影響や見落としを確認したい | **blast-radius / interrogate**：影響経路と安全性の前提を確かめ、独立した指摘を照合する |
-| 不具合を再現し、検証を繰り返せるようにしたい | **tdd / create-verification-skill / maintain-verification-skill**：失敗テストから修正し、アプリ専用の検証手順を作成・更新する |
-| 判断の経緯を追いたい | **show-me-your-work**：判断ログを追記・訂正し、証拠と照合する |
-| コードコメントにある理由や制約を知識として残したい | **no-comments**：必要な知識をOKFへ保存し、`code_refs`でコードと結び付けてからコメントを整理する |
-| 文書や説明を読みやすくしたい | **technical-writing / unslop / bro**：文書の構成、文章の推敲、直前の説明の言い換えを担当する |
-| 日本語の説明を、意味が伝わる短い文章に整えたい | **explain-before-shorten**：口頭で伝わる説明を組み立ててから、重要な条件を保って短くする |
-| 日本語の文章を書き、定型句や読みにくい箇所を確認したい | **natural-japanese**：執筆・推敲の手順と、Python・uvで動く文章検査・構成抽出・用語抽出・診断を提供する |
-| AIが生成した日本語を、意味や条件を保って読みやすく直したい | **yomiyasu**：不自然な比喩・主述関係・装飾を見直し、Pythonで文章と推敲前後の差分を検査する |
-| 作業の学びや自分の進め方をスキルにしたい | **reflect / automate-me**：改善案や本人向けの草案を示し、人間の承認後に作成・更新する |
-
-たとえばdevlowでは、次の工程から依頼に必要なものを選びます。
-
-```text
-依頼整理 → 調査 → 設計 → 計画 → 実装 → 検証 → レビュー → 引き渡し
-```
-
-小さな修正では工程をまとめ、大きな変更では設計や計画を分けます。「設計まで」「レビューだけ」という依頼にも対応し、レビューだけなら指摘を報告して終了します。目的や条件に重要な不明点があれば、AIが質問して確認します。
-
-分担が必要なときの担当として、開発作業を進める **devlow-worker** と、コメントの知識を保存して整理する **comment-curator** を同梱しています。担当へ渡す範囲と、参照するスキル・既存の判断をそろえて使います。
-
-## 使い始める
-
-Codex・Claude Codeでは、プラグイン方式のほかに、**プロジェクトへ全スキルを実ファイルで配置する方式**も選べます。Codexは`.agents/skills/`、Claude Codeは`.claude/skills/`へ配置し、チームでGit管理できます。プラグインの登録は不要です。[プロジェクトへ直接導入する手順](docs/distribution.md#全スキルをプロジェクトへ直接導入する)を参照してください。以下はプラグイン方式の手順です。
-
-### 1. プラグインをインストールする
-
-使う製品と、付属ツールを動かすための **Bun 1.4.2以上**を用意してください。Codex・Claude Codeの以下のコマンドは、それぞれのCLIを用意してターミナルで実行します。1行目は配布元の登録、2行目はプラグインのインストールです。
-
-natural-japaneseの検査スクリプトには **uvとPython 3.10以上**が必要です。依存パッケージはuvが実行時に準備します。
-
-yomiyasuの検査スクリプトは **Python 3**で動作し、外部ライブラリは不要です。
-
-**Codexの場合**
+Bun 1.4.2以上とGitを用意し、このリポジトリのルートで実行できます。
 
 ```sh
-codex plugin marketplace add sori883/koto --ref main
-codex plugin add koto@koto
+bun run monorepo -- setup --root /path/to/my-workspace
+bun run monorepo -- repo add api --url git@github.com:your-org/api.git --root /path/to/my-workspace
+bun run monorepo -- workspace create task-001 --repo api --root /path/to/my-workspace --json
 ```
 
-**Claude Codeの場合**
+利用者向けの[CLI手順](cli/monorepo/README.md)と、AI向けの[monorepoスキル](skills/monorepo/SKILL.md)を両製品へ同梱します。CLIはAIなしでも実行できます。登録解除ではGitデータを残します。
 
-```sh
-claude plugin marketplace add sori883/koto --scope user
-claude plugin install koto@koto --scope user
-```
+片付けは `workspace remove <task> --dry-run` で事前確認できます。未保存のファイルや送信を確認できないコミットがあれば停止し、削除後もブランチとGit履歴を保持します。
 
-**VS CodeのGitHub Copilotの場合**
+Memory・Tasks、利用先への共通知識や指示ファイルの配置は未実装です。旧スキル・付属CLIは削除済みで、共通知識の正本は`space/default/`に保持しています。
 
-Agent Pluginsに対応したVS Codeで、ユーザー設定（settings.json）の配布元一覧にこのリポジトリを追加します。既存の一覧がある場合は、その項目を残して追加してください。
+- [現在の構成・検証状況](docs/current-state.md)
+- [目的と配布設計](docs/architecture.md)
+- [monorepo CLIの設計](docs/monorepo-cli-design.md)
+- [配布物の生成と検証](docs/distribution.md)
 
-```json
-{
-  "chat.plugins.marketplaces": ["sori883/koto"]
-}
-```
-
-拡張機能ビューで`@agentPlugins`を検索し、`koto`をインストールします。Claude Codeと同じ配布物を利用できます。表示されない場合は`chat.plugins.enabled`を確認してください。[ローカル配布物からの導入と詳しい手順](docs/distribution.md#vs-codeのgithub-copilotへ導入する)も用意しています。
-
-インストール後は、作業したいプロジェクトで新しい会話を開きます。
-
-### 2. プロジェクトを初期設定する
-
-AIに次のように依頼します。
-
-```text
-kotoのsetupを使って、今開いているこのプロジェクトに初期設定を適用してください。
-```
-
-setupは共通の開発原則を`.space/babel/principles/`へ、共通知識をBabel内の対応する分類へ配置し、AIがスキルを使うための指示を追加します。既存の指示・知識・目次・履歴を保持し、変更が衝突する場合は適用前に知らせます。初期設定は、kotoを使うプロジェクトごとに行います。
-
-Copilotでは「GitHub Copilot向けに、setupの`--product copilot`を使って初期設定してください」と伝えます。指示は`.github/copilot-instructions.md`に配置されます。更新・状態確認でも同じ製品指定を使います。
-
-### 3. やりたいことを依頼する
-
-目的と、どこまで進めてほしいかを伝えます。たとえば機能追加なら、次のように依頼できます。
-
-```text
-devlowを使って、商品一覧に名前で検索する機能を追加してください。
-既存の画面構成を保ち、実装とテストまで進めてください。
-```
-
-調査や文書作成だけでも使えます。
-
-```text
-system-blueprintを使って、このプロジェクトの構成と主要な処理の流れを、
-初めて参加する人向けの資料にしてください。
-```
-
-通常はAIが必要なコマンドを実行するため、利用者が各CLIの操作を覚える必要はありません。プラグイン更新後にプロジェクト内の共通文書も更新したい場合は、もう一度setupに依頼します。
-
-## 作業の記録はどこに残る？
-
-記録は、作業しているプロジェクトの `.space/` に保存します。
-
-| 保存先 | 残すもの |
-| --- | --- |
-| `.space/tasks/<task-id>/` | 今回の作業の目的・進捗を記す `task.md` と、必要に応じた設計案・計画・検証結果 |
-| `.space/babel/` | 共通の開発原則と、OKFで管理するシステムの構成・採用した設計と理由・重要な変更の歴史 |
-| `.space/checkpoint/` | 中断・引き継ぎ時に、どこから再開するかを伝える記録 |
-
-`task.md`は標準（中規模）・大規模の作業で作成します。会話中の小さな修正では新しく作りません。複数の作業を分担するときは、必要に応じてorchの台帳で管理し、TSVやMarkdownの一覧を出力できます。
-
-作業中の試行や途中の結果はtasks側に置き、後からシステムを理解するために必要な結論をOKFへ残します。たとえば「テストを何回実行したか」は作業記録、「なぜこのデータ構造を採用したか」は設計の知識として整理します。
-
-## 詳しく知りたいとき
-
-- [開発作業の全体フロー](skills/devlow/references/workflow.md)：工程の選び方と成果物
-- [導入・更新の詳細](docs/distribution.md)：ローカルからの導入やCLIの実行方法
-- [目的と配布設計](docs/architecture.md)：koto自体を開発する人向けの設計方針
+作業ブランチ上の変更です。公開済み0.1.8と導入済みのプラグインには未反映で、NPMへの公開も行っていません。
