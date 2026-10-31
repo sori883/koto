@@ -14,7 +14,7 @@
 | `skills/memory/` | 知識の検索・記録・更新・検証にCLIを使うAI向け手順 |
 | `skills/devlow/`・`skills/recall/` | 3つのCLIを使う開発フローと、記録・実態の照合による現在地の復元 |
 | `skills/tdd/`・`skills/blast-radius/`・`skills/interrogate/` | 不具合の再現と修正、影響調査、独立レビューの専門手順 |
-| `templates/AGENTS.md` | 変更前のTasks登録と現在のスキルへ案内する指示。monorepoのinstructions操作で利用先へ適用 |
+| `templates/AGENTS.md` | コード変更前のTasks登録と現在のスキルへ案内する指示。monorepoのinstructions操作で利用先へ適用 |
 | `packaging/codex/`・`packaging/claude-code/` | 製品別のプラグイン定義とカタログ定義 |
 | `space/default/` | 共通知識の正本。既存の23原則を保持 |
 | `scripts/build.ts` | 2製品の配布物とカタログを生成・照合 |
@@ -63,7 +63,7 @@ setup、プロジェクト追加・参照、リポジトリ登録・取得・参
 
 devlowは工程の選択と受け渡し、3つのCLIを使った開始・中断・再開・完了・片付けを案内する。recallは現在のTasks、保存時点のcheckpoint、コードとGit、関連するMemoryを読み取り専用で照合する。tdd・blast-radius・interrogateは必要な工程だけで使う。計8スキルを両製品へ同梱する。
 
-変更する仕事は規模に関係なくTasksへ登録し、Gitで管理する変更はPR／MRと相互参照する。標準では必要な検証と全PR／MRのマージを確認して完了にし、レビュー・マージ待ちはwaitingとして残す。devlow、recallと利用先向け指示へ反映した運用であり、Tasks CLIがGitやホスティングサービスへ接続して強制する機能ではない。
+ソースコードを変更する仕事は規模に関係なく編集前にTasksへ登録し、PR／MRと相互参照する。調査途中でコード変更へ移る場合も対象とし、コードを変更しない調査などは自動でタスク化しない。完了は原則、必要な検証と全PR／MRのマージ確認後とし、ユーザーの明示的な完了指定も受け付ける。その場合も未マージ・未検証の実状態を残す。devlow、recallと利用先向け指示へ反映した運用であり、Tasks CLIがGitやホスティングサービスへ接続して強制する機能ではない。
 
 旧mainの5スキルと工程資料を再利用し、現在の保存先とCLIへ接続した。各LICENSEの著作権表示と許諾文は元のまま保持し、出典・変更経緯・検証記録は[開発資料](devlow-cli-integration.md)へ置いた。旧orch・OKFのCLI、固定エージェント、他の削除済みスキルには依存しない。
 
