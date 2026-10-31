@@ -36,6 +36,11 @@ beforeEach(async () => {
   await put("cli/tasks/lib/example.ts", "export {};\n");
   await put("cli/tasks/tests/private.test.ts", "Do not distribute\n");
   await put("cli/tasks/node_modules/private/index.js", "Do not distribute\n");
+  await put("cli/memory/package.json", JSON.stringify({ name: "@koto/memory", version: "0.0.0" }));
+  await put("cli/memory/memory.ts", "#!/usr/bin/env bun\nexport {};\n");
+  await put("cli/memory/lib/example.ts", "export {};\n");
+  await put("cli/memory/tests/private.test.ts", "Do not distribute\n");
+  await put("cli/memory/node_modules/private/index.js", "Do not distribute\n");
 });
 afterEach(async () => { await rm(root, { recursive: true, force: true }); });
 
@@ -59,6 +64,10 @@ test("builds both self-contained products and creates catalogs with the root ver
     expect(await Bun.file(join(dist, "cli/tasks/lib/example.ts")).exists()).toBe(true);
     expect(await Bun.file(join(dist, "cli/tasks/tests/private.test.ts")).exists()).toBe(false);
     expect(await Bun.file(join(dist, "cli/tasks/node_modules/private/index.js")).exists()).toBe(false);
+    expect(JSON.parse(await readFile(join(dist, "cli/memory/package.json"), "utf8")).version).toBe("1.2.3");
+    expect(await Bun.file(join(dist, "cli/memory/lib/example.ts")).exists()).toBe(true);
+    expect(await Bun.file(join(dist, "cli/memory/tests/private.test.ts")).exists()).toBe(false);
+    expect(await Bun.file(join(dist, "cli/memory/node_modules/private/index.js")).exists()).toBe(false);
   }
   const codex = JSON.parse(await readFile(join(root, ".agents/plugins/marketplace.json"), "utf8"));
   expect(codex.plugins[0].source.path).toBe("./dist/codex/koto");
@@ -155,8 +164,8 @@ test("each distributed Tasks CLI works without the source tree, monorepo CLI, or
   }
 });
 
-test("distributed Tasks and monorepo share IDs while preserving each other's data through worktree cleanup", async () => {
-  for (const name of ["tasks", "monorepo"]) {
+test("distributed Memory, Tasks and monorepo preserve each other's data through worktree cleanup", async () => {
+  for (const name of ["tasks", "monorepo", "memory"]) {
     await cp(resolve(import.meta.dir, "../../cli", name), join(root, "cli", name), { recursive: true });
     await cp(resolve(import.meta.dir, "../../skills", name), join(root, "skills", name), { recursive: true });
   }
@@ -189,6 +198,12 @@ test("distributed Tasks and monorepo share IDs while preserving each other's dat
     await cli("monorepo", ["workspace", "create", "job"], { repo: ["api"] });
     expect(await readFile(taskPath, "utf8")).toBe(taskBefore);
     const monoPath = join(destination, ".space/default/monorepo.json"), monoBefore = await readFile(monoPath, "utf8");
+    await cli("memory", ["setup"]);
+    await cli("memory", ["create", "knowledge/repository"], { metadata: { type: "knowledge", title: "Repository", description: "Repository layout", code_refs: ["workspaces/default/job/api/README.md"] }, body: "Repository document" });
+    expect((await cli("memory", ["validate"], { strict: true, drift: true })).data.gate_passed).toBe(true);
+    expect(await readFile(taskPath, "utf8")).toBe(taskBefore);
+    expect(await readFile(monoPath, "utf8")).toBe(monoBefore);
+    const memoryPath = join(destination, ".space/default/memory/knowledge/repository.md"), memoryBefore = await readFile(memoryPath, "utf8");
     await cli("tasks", ["workspace", "link", "job"], { repo: ["api"], ifVersion: 1, operationId: "link" });
     await cli("tasks", ["task", "start", "job"], { ifVersion: 2, operationId: "start" });
     await cli("tasks", ["artifact", "add", "job", "readme"], { ref: "workspaces/default/job/api/README.md", description: "Repository document", ifVersion: 3, operationId: "artifact" });
@@ -199,9 +214,42 @@ test("distributed Tasks and monorepo share IDs while preserving each other's dat
     await cli("monorepo", ["workspace", "remove", "job"], { dryRun: true });
     await cli("monorepo", ["workspace", "remove", "job"]);
     expect(await readFile(taskPath, "utf8")).toBe(taskAfter);
+    expect(await readFile(memoryPath, "utf8")).toBe(memoryBefore);
+    expect((await cli("memory", ["show", "knowledge/repository"])).data.body).toBe("Repository document");
+    expect((await cli("memory", ["validate"], { drift: true })).data.warnings.join("\n")).toContain("matches no accessible path");
     expect((await cli("tasks", ["task", "show", "job"])).data.completionCurrent).toBe(true);
     expect(JSON.parse(await readFile(join(destination, ".space/default/checkpoint/job/handoff.json"), "utf8")).snapshot.artifacts[0].id).toBe("readme");
     expect((await cli("tasks", ["doctor"])).data.healthy).toBe(true);
     expect((await cli("monorepo", ["doctor"])).data.healthy).toBe(true);
   }
-}, 20000);
+}, 30000);
+
+
+test("distributed Memory runs alone with the bundled version after removing source and other CLIs", async () => {
+  await cp(resolve(import.meta.dir, "../../cli/memory"), join(root, "cli/memory"), { recursive: true });
+  await cp(resolve(import.meta.dir, "../../skills/memory"), join(root, "skills/memory"), { recursive: true });
+  await build(root);
+  await rm(join(root, "cli"), { recursive: true }); await rm(join(root, "skills"), { recursive: true });
+  for (const product of ["codex", "claude-code"]) {
+    const dist = join(root, "dist", product, "koto"), destination = join(root, "memory-only-" + product);
+    await mkdir(destination);
+    for (const name of ["monorepo", "tasks"]) await rm(join(dist, "cli", name), { recursive: true });
+    const entry = join(dist, "cli/memory/memory.ts");
+    async function cli(command: string[], fields = {}) {
+      const child = Bun.spawn([entry, "--input-json", JSON.stringify({ command, root: destination, ...fields })], { cwd: destination, stdout: "pipe", stderr: "pipe" });
+      const [code, out, err] = await Promise.all([child.exited, new Response(child.stdout).text(), new Response(child.stderr).text()]);
+      expect({ code, err }, out).toEqual({ code: 0, err: "" });
+      const response = JSON.parse(out); expect(response.ok).toBe(true); return response.data;
+    }
+    expect((await cli(["version"])).version).toBe("1.2.3");
+    await cli(["setup"]);
+    await cli(["create", "decisions/auth"], { metadata: { type: "decision", title: "認証判断", description: "方式を選んだ理由" }, body: "判断の内容" });
+    expect((await cli(["search", "認証"]))).toHaveLength(1);
+    const shown = await cli(["show", "decisions/auth"]);
+    await cli(["update", "decisions/auth"], { ifHash: shown.content_hash, body: "更新した理由" });
+    expect((await cli(["validate"], { strict: true })).gate_passed).toBe(true);
+    await cli(["delete", "decisions/auth"], { dryRun: true });
+    await cli(["delete", "decisions/auth"]);
+    expect((await cli(["validate"])).concept_count).toBe(0);
+  }
+});

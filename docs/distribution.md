@@ -1,6 +1,6 @@
 # 配布物の生成と検証
 
-対応する配布形式はCodexとClaude Codeの2つ。現在の配布物はmonorepo・Tasks CLI、それぞれの利用手順のスキル、プラグイン定義、共通知識で構成する。以前のsetupによるプラグイン導入・更新機能は復元せず、各CLIのsetupは自身の管理領域を準備する。
+対応する配布形式はCodexとClaude Codeの2つ。現在の配布物はmonorepo・Tasks・Memory CLI、それぞれの利用手順のスキル、プラグイン定義、共通知識で構成する。以前のsetupによるプラグイン導入・更新機能は復元せず、各CLIのsetupは自身の管理領域を準備する。
 
 ## 正本と生成先
 
@@ -15,6 +15,8 @@
 | `skills/monorepo/` | 両製品の`dist/<製品>/koto/skills/monorepo/` |
 | `cli/tasks/` | 両製品の`dist/<製品>/koto/cli/tasks/` |
 | `skills/tasks/` | 両製品の`dist/<製品>/koto/skills/tasks/` |
+| `cli/memory/` | 両製品の`dist/<製品>/koto/cli/memory/` |
+| `skills/memory/` | 両製品の`dist/<製品>/koto/skills/memory/` |
 
 ルートの`package.json`のversionを両製品と同梱CLIのパッケージ定義へ反映する。生成先はGitで管理し、手編集しない。カタログはそれぞれ同じリポジトリの製品別配布物を指す。CLIは入口・lib・パッケージ定義・利用手順だけを配布し、入口へ実行権限を付ける。
 
@@ -42,4 +44,4 @@ build:checkは期待する全ファイルを組み立て、内容の変更、不
 
 別の一時フォルダの`.agents/`へCodex配布物をコピーし、Codex CLIへの自然言語依頼からスキル選択・CLI操作までを確認した。作業場所の準備、未保存ファイルの保護、片付けの結果は[実モデルの検証記録](monorepo-codex-verification.md)に記載する。導入済みキャッシュの更新、Codexデスクトップ画面の操作、Claude Codeモデルへの自然言語依頼は未確認。
 
-monorepoはユーザーの指示により`main`から作った`develop`へ履歴を残して統合した。Tasksも`develop`から作業ブランチを切り、同じ方法で統合する。開発ブランチをGitHubへ反映することと、プラグインを正式リリースすることは区別する。版数の変更と導入済みプラグインの更新は今回の範囲に含めない。公開済みの版との違いは[現状資料](current-state.md)に記録する。
+monorepoはユーザーの指示により`main`から作った`develop`へ履歴を残して統合した。Tasks・Memoryも`develop`から作業ブランチを切り、同じ方法で統合する。開発ブランチをGitHubへ反映することと、プラグインを正式リリースすることは区別する。版数の変更と導入済みプラグインの更新は今回の範囲に含めない。公開済みの版との違いは[現状資料](current-state.md)に記録する。

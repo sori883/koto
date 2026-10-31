@@ -1,6 +1,6 @@
 # kotoの現状
 
-2026-10-31、developへ統合する開発内容を対象とする。対応先はCodexとClaude Codeの2製品。旧スキルと付属CLIを削除した後、ユーザーの依頼により、現在のkotoリポジトリ内に`@koto/monorepo`、続いて`@koto/tasks`を実装した。
+2026-10-31、developへ統合する開発内容を対象とする。対応先はCodexとClaude Codeの2製品。旧スキルと付属CLIを削除した後、ユーザーの依頼により、現在のkotoリポジトリ内に`@koto/monorepo`、続いて`@koto/tasks`・`@koto/memory`を実装した。
 
 ## 現在の構成
 
@@ -10,6 +10,8 @@
 | `skills/monorepo/` | CLIを使うAI向けの利用手順。処理はCLIへ委ねる |
 | `cli/tasks/` | Bunで動く独立したTasks CLI。実行名は`koto-tasks`、外部実行時ライブラリ依存なし |
 | `skills/tasks/` | タスク・依存・成果物・引き継ぎを記録するAI向け手順 |
+| `cli/memory/` | OKF v0.2を扱う独立したBun CLI。実行名は`koto-memory`、外部実行時ライブラリ依存なし |
+| `skills/memory/` | 知識の検索・記録・更新・検証にCLIを使うAI向け手順 |
 | `packaging/codex/`・`packaging/claude-code/` | 製品別のプラグイン定義とカタログ定義 |
 | `space/default/` | 共通知識の正本。既存の23原則を保持 |
 | `scripts/build.ts` | 2製品の配布物とカタログを生成・照合 |
@@ -17,6 +19,7 @@
 | `.agents/plugins/marketplace.json`・`.claude-plugin/marketplace.json` | 各製品の配布物を参照するカタログ |
 | `tests/monorepo/` | 実際のローカルGitとCLI子プロセスによる操作・保護条件の検証 |
 | `tests/tasks/` | タスク操作、競合、再送、依存の失効、記録の保持と保存失敗の検証 |
+| `tests/memory/` | 語句検索、属性、Markdown、プロジェクト境界、排他、復旧、JSON入力と競合を検証 |
 | `tests/distribution/` | 生成、参照切れ、生成物照合、スキルなし構成、開発環境外でのCLI起動を検証 |
 
 ## monorepo CLI
@@ -29,7 +32,7 @@ setup、プロジェクト追加・参照、リポジトリ登録・取得・参
 
 片付けは`workspace remove <task> [--dry-run]`で行う。未保存・未追跡・無視対象のファイル、未送信コミット、ロックやGitの作業中状態等を検査し、通常のGitで削除する。ブランチと履歴は残し、途中失敗後は削除記録と実体を照合して再開する。[片付けの設計と検証](monorepo-cleanup-design.md)を参照する。
 
-Memory、プロジェクト削除、利用先への共通知識とクライアント指示の配置は未実装。専用エージェント・旧setupマニフェスト・旧スキルは復元していない。[機能一覧](workspace-feature-inventory.md)の全項目が実装済みという意味ではない。[初版設計](monorepo-cli-design.md)と[CLI手順](../cli/monorepo/README.md)を参照する。
+プロジェクト削除、利用先への共通知識とクライアント指示の配置は未実装。専用エージェント・旧setupマニフェスト・旧スキルは復元していない。[機能一覧](workspace-feature-inventory.md)の全項目が実装済みという意味ではない。[初版設計](monorepo-cli-design.md)と[CLI手順](../cli/monorepo/README.md)を参照する。
 
 ## Tasks CLI
 
@@ -38,6 +41,14 @@ Memory、プロジェクト削除、利用先への共通知識とクライア�
 正本は`.space/<project>/tasks/state.json`。操作IDと当時の応答を一緒に保存して二重更新を防ぎ、versionで古い判断による上書きを拒否する。依存先の版を開始時に固定し、先行タスクのやり直しや推移的な依存の失効を後続の開始・再開・完了へ反映する。
 
 チェックポイントは正本のスナップショットを`.space/<project>/checkpoint/<task>/<id>.json`へ出力する。出力だけ失敗した場合は保存済みであることを返し、同じ操作の再送で完了できる。成果物や作業場所は参照を記録するもので、ファイルの保存・検証・Git操作は行わない。詳細は[Tasksの設計と検証](tasks-cli-design.md)と[利用手順](../cli/tasks/README.md)を参照する。
+
+## Memory CLI
+
+初期化、5分類の知識の保存・詳細・語句検索・属性フィルタ・コード参照検索、更新・関連付け・削除の事前確認と実行、形式・リンク・目次・期限の検証、中断した書き込みの復旧を実装した。YAML frontmatter付きMarkdownを正本とし、既存の任意属性や人間の確認記録を保持する。
+
+保存先は`.space/<project>/memory/`。書き込みの排他、内容ハッシュによる競合検出、各ファイルの置換、複数ファイルの更新予定を使った復旧に対応する。コード参照の存在検査は選択したプロジェクトの領域に限定し、他プロジェクトやシンボリックリンク経由の探索を拒否する。
+
+試作agent-memoryの現時点のソースを参考にした。元リポジトリの未コミット変更はそのまま保持し、データの移動や自動移行は行っていない。[Memoryの設計と検証](memory-cli-design.md)と[利用手順](../cli/memory/README.md)を参照する。
 
 ## 検証と公開状態
 
@@ -55,12 +66,14 @@ Codex 0.164.0のapp-serverはローカル配布物の`koto:monorepo`を有効な
 
 monorepoをdevelopへ統合したコミット83902faでは、[GitHubのLinux CI](https://github.com/sori883/koto/actions/runs/41190574787)も成功した。Tasks追加後はローカルの全36テスト・754 assertions、型検査が成功した。Tasks専用9件と配布検証2件を追加し、両製品の配布物だけでTasks単独の操作と、モノレポと組み合わせた準備から片付けまでを確認した。
 
+Memory追加後は全261件・1627 assertionsと型検査・配布物照合が成功し、両製品のMemory単独実行と三つのCLIの併用を確認した。Codexはkoto:memoryをenabledとして認識し、Claude Codeは3スキルを認識した。実装コミットe2db5c7の[GitHub Linux CI](https://github.com/sori883/koto/actions/runs/41196383068)も成功した。詳細は[Memoryの検証記録](memory-cli-design.md#検証)を参照する。
+
 Tasks追加後の配布物も、Codexのapp-serverがkoto:tasksを有効なスキルとして読み取り、Claude Codeのセッション限定の読込ではmonorepo・tasksの2件を認識した。
 
-Codexデスクトップ画面とClaude Codeモデルへの自然言語依頼、個別の認証方式・認証失敗時の実接続は未確認。Tasksへの自然言語依頼は今回のCLI検証とは別であり、monorepoの実モデル検証をTasksの検証として扱わない。
+Codexデスクトップ画面とClaude Codeモデルへの自然言語依頼、個別の認証方式・認証失敗時の実接続は未確認。Tasks・Memoryへの自然言語依頼は今回のCLI検証とは別であり、monorepoの実モデル検証を他のCLIの検証として扱わない。
 
-monorepoは`main`から作った`develop`へ履歴を残して統合済み。Tasksもユーザーの指示により`develop`から`codex/tasks-cli`を切り、検証後に元の履歴を保持するマージコミットで取り込む。`main`へのマージは今回の範囲に含めない。
+monorepoは`main`から作った`develop`へ履歴を残して統合済み。Tasksも`codex/tasks-cli`から履歴を残して統合済み（7cbc872）。Memoryは`develop`から`codex/memory-cli`を切り、同じ方法で取り込む。`main`へのマージは今回の範囲に含めない。
 
-版数は0.1.8のまま。開発ブランチのGitHubへの反映とプラグインの正式リリースは区別する。公開済み0.1.8とMacに導入済みのプラグインには未反映。`@koto/monorepo`はローカルのパッケージ識別名で、NPM公開は行っていない。
+版数は0.1.8のまま。開発ブランチのGitHubへの反映とプラグインの正式リリースは区別する。公開済み0.1.8とMacに導入済みのプラグインには未反映。`@koto/monorepo`・`@koto/tasks`・`@koto/memory`はローカルのパッケージ識別名で、NPM公開は行っていない。
 
 [配布物の生成](distribution.md)、[先行した配布整理](issue-23-packaging-reset.md)、[先行したスキル削除](issue-23-skill-pruning.md)も参照できる。過去のスキル・CLIの検証記録は、現在利用できる機能を示すものではない。

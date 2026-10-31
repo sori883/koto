@@ -63,7 +63,7 @@ export async function distribution(root: string): Promise<Files> {
     }
   }
   for (const [path, body] of await filesAt(join(root, "space/default"))) common.set(`space/default/${path}`, body);
-  for (const name of ["monorepo", "tasks"]) {
+  for (const name of ["monorepo", "tasks", "memory"]) {
     const cli = await filesAt(join(root, "cli", name), true);
     for (const [path, body] of cli) {
       if (![name + ".ts", "package.json", "README.md"].includes(path) && !path.startsWith("lib/")) continue;
@@ -117,7 +117,7 @@ export async function build(root: string): Promise<number> {
   try {
     for (const [path, body] of files) {
       await mkdir(dirname(join(stage, path)), { recursive: true });
-      const executable = ["monorepo", "tasks"].some(name => path.endsWith("/cli/" + name + "/" + name + ".ts"));
+      const executable = ["monorepo", "tasks", "memory"].some(name => path.endsWith("/cli/" + name + "/" + name + ".ts"));
       await writeFile(join(stage, path), body, { mode: executable ? 0o755 : 0o644 });
     }
     try { await rename(join(root, "dist"), backup); moved = true; } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }

@@ -12,8 +12,9 @@
     "tasks": "bun cli/tasks/tasks.ts",
     "build": "bun scripts/build.ts",
     "build:check": "bun scripts/build.ts --check",
-    "test": "bun test tests/distribution tests/monorepo tests/tasks",
-    "typecheck": "tsc --noEmit"
+    "test": "bun test tests/distribution tests/monorepo tests/tasks tests/memory",
+    "typecheck": "tsc --noEmit",
+    "memory": "bun cli/memory/memory.ts"
   },
   "devDependencies": {
     "@types/bun": "1.4.2",

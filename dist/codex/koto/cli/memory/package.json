@@ -1,0 +1,12 @@
+{
+  "name": "@koto/memory",
+  "version": "0.1.8",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "koto-memory": "./memory.ts"
+  },
+  "engines": {
+    "bun": ">=1.4.2"
+  }
+}

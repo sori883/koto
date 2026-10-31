@@ -28,12 +28,23 @@ bun run tasks -- task show task-001 --root /path/to/my-workspace --json
 
 [Tasks CLIの利用手順](cli/tasks/README.md)と[Tasksスキル](skills/tasks/SKILL.md)も両製品へ同梱します。古い版による上書きや操作の重複を防ぎ、依存タスクのやり直しを後続の確認に反映します。
 
-Memory、利用先への共通知識や指示ファイルの配置は未実装です。旧スキル・付属CLIは削除済みで、共通知識の正本は`space/default/`に保持しています。
+**`@koto/memory`** はプロジェクトの知識・経験・設計判断をOKFのMarkdownで保存します。語句・属性・コード参照で検索でき、関連付け・削除・形式検証と、中断した書き込みの復旧にも対応します。Bunだけで動き、TasksやGitには依存しません。
+
+```sh
+bun run memory -- setup --root /path/to/my-workspace --json
+bun run memory -- create knowledge/auth --root /path/to/my-workspace --type knowledge --title "認証方式" --desc "採用した理由" --body "根拠を記録する。" --json
+bun run memory -- search "認証" --root /path/to/my-workspace --json
+```
+
+[Memory CLIの利用手順](cli/memory/README.md)と[Memoryスキル](skills/memory/SKILL.md)を両製品へ同梱します。保存先は`.space/<project>/memory/`で、TasksやWorkspaceのデータは変更しません。
+
+利用先への共通知識や指示ファイルの配置は未実装です。旧スキル・付属CLIは削除済みで、共通知識の正本は`space/default/`に保持しています。
 
 - [現在の構成・検証状況](docs/current-state.md)
 - [目的と配布設計](docs/architecture.md)
 - [monorepo CLIの設計](docs/monorepo-cli-design.md)
 - [Tasks CLIの設計](docs/tasks-cli-design.md)
+- [Memory CLIの設計](docs/memory-cli-design.md)
 - [配布物の生成と検証](docs/distribution.md)
 
 作業ブランチ上の変更です。公開済み0.1.8と導入済みのプラグインには未反映で、NPMへの公開も行っていません。

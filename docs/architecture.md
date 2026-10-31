@@ -8,13 +8,13 @@ koto（コト）は **Knowledge-Oriented Task Orchestration** の略であり、
 
 2026-10-31のユーザー指示により、対応先をCodex・Claude Codeの2製品に限定する。Copilot対応は削除する。製品ごとに配布物とカタログを生成し、ソースとともにGitで管理する。続くユーザー指示により、今回のmonorepo機能は`main`から作る`develop`へ統合する。元のコミット履歴を保持するマージコミットを使い、スカッシュや履歴の書き換えは行わない。
 
-ユーザーが削除した旧スキルと付属CLI、削除済みスキルを呼ぶエージェントと指示テンプレート、setup用マニフェストは復元しない。続く依頼で、新しいmonorepo・Tasks CLIとそれぞれの利用手順を持つスキルを追加する。スキルのない構成でも配布物を生成できる機能は維持し、既存の共通知識は保持する。
+ユーザーが削除した旧スキルと付属CLI、削除済みスキルを呼ぶエージェントと指示テンプレート、setup用マニフェストは復元しない。続く依頼で、新しいmonorepo・Tasks・Memory CLIとそれぞれの利用手順を持つスキルを追加する。スキルのない構成でも配布物を生成できる機能は維持し、既存の共通知識は保持する。
 
 以前のdevlow・OKF・orch・setup等の設計と検証は開発履歴としてdocsに残すが、現行機能や再実装の指示として扱わない。以前の[配布設計](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/docs/architecture.md)と、[今回の整理](issue-23-packaging-reset.md)を区別する。新しい機能・配置への移行は依頼された範囲で進める。
 
 ## 統合ワークスペースの構想
 
-2026-10-30に共有された方針を基準とし、Memory・Tasks・Workspaceを独立した責務のツールとして開発する。当初はすべて別リポジトリを想定していたが、2026-10-31のユーザー指示により、Workspaceに続いてTasksも現在のkotoリポジトリ内で所有・開発する。Memoryの別リポジトリ方針は維持する。共通Coreや中央の統合CLIを必須にせず、AIエージェントが必要なツールを個別に利用する。
+2026-10-30に共有された方針を基準とし、Memory・Tasks・Workspaceを独立した責務のツールとして開発する。当初はすべて別リポジトリを想定していたが、2026-10-31のユーザー指示により、Workspaceに続いてTasks・Memoryも現在のkotoリポジトリ内で所有・開発する。Memoryはユーザー指定のagent-memory試作を参考にする。共通Coreや中央の統合CLIを必須にせず、AIエージェントが必要なツールを個別に利用する。
 
 | ツール | 責務 |
 | --- | --- |
@@ -28,7 +28,7 @@ koto（コト）は **Knowledge-Oriented Task Orchestration** の略であり、
 
 各ツールに用意するCLIは非対話実行とJSON入出力に対応し、特定の言語やAI製品に依存しない構成を目指す。Workspaceの初期設定・管理操作はCLIを中心に実装し、スキルは利用手順、AIは依頼の解釈と結果の説明を担う。パスの境界、シンボリックリンク、認証情報、並行更新、異常終了、再実行時のデータ保護を考慮する。CLIの対象選択と実際のアクセス認可を区別し、必要な隔離は実行環境側でも行う。
 
-Workspaceのパッケージ名は`@koto/monorepo`、実行コマンドは`koto-monorepo`とする。Tasksは`@koto/tasks`、実行コマンドは`koto-tasks`とする。正本はそれぞれ`cli/monorepo/`・`cli/tasks/`に置き、スキルから独立して直接実行できる。Memoryの実装と正式名称は別途決める。既存の利用先データを暗黙に移動・削除しない。
+Workspaceのパッケージ名は`@koto/monorepo`、実行コマンドは`koto-monorepo`とする。Tasksは`@koto/tasks`、実行コマンドは`koto-tasks`とする。正本はそれぞれ`cli/monorepo/`・`cli/tasks/`に置き、スキルから独立して直接実行できる。Memoryは`@koto/memory`、実行コマンドは`koto-memory`、正本は`cli/memory/`とする。既存の利用先データを暗黙に移動・削除しない。
 
 ### モノレポ管理から着手する
 
@@ -45,6 +45,14 @@ monorepoの初版完成後、ユーザーはTasksの開発を指示した。Bun�
 Tasksはタスク・依存関係・進捗・成果物参照・チェックポイントを所有する。正本は`.space/<project>/tasks/state.json`。チェックポイントは正本へ保存したスナップショットを`.space/<project>/checkpoint/<task>/<id>.json`にも出力し、出力だけが失敗しても同じ操作から再開できるようにする。操作IDによる再送、versionによる古い更新の拒否、プロジェクト単位の排他、依存先の版の照合を行う。
 
 TasksとWorkspaceは管理ファイルや実装モジュールを共有せず、同じproject_id・task_id・repository_idを参照する。タスクの完了、成果物の検証、Worktreeの削除は別々の結果として扱う。Tasksの変更は`develop`から作業ブランチを切り、検証後に履歴を残して`develop`へマージする。[Tasks CLIの設計](tasks-cli-design.md)を参照する。
+
+### Memoryの追加
+
+Tasksのdevelop統合後、ユーザーはMemoryの開発を指示し、試作のagent-memoryを参考にkoto内へ実装する方針を確認した。MemoryはOKF v0.2のMarkdownを`.space/<project>/memory/`へ保存し、ルール・原則・知識・手順・判断を扱う。タスクの進捗やGit管理を引き取らず、他のCLIの内部実装や管理ファイルに依存しない。
+
+初期化・保存・検索・参照・更新・関連付け・削除・検証・中断した書き込みの復旧はCLIが担当する。AIは知識の内容と根拠を整理し、スキルはCLIの選択・入力・結果確認を案内する。検索はローカルの語句検索と属性・コード参照の照合を使い、外部の検索サービスや埋め込みを必須にしない。
+
+更新にはプロジェクト単位の排他と内容のハッシュ照合を用意する。複数ファイルの更新予定を先に残し、失敗後は既存の変更と照合して続きから復旧する。コード参照の存在検査も選択したプロジェクト内に限定する。人間の確認記録を自動生成せず、形式検証と知識の正しさを区別する。詳細は[Memory CLIの設計](memory-cli-design.md)に定める。Memoryもdevelopから作業ブランチを切り、検証後に履歴を残してdevelopへ統合する。
 
 ### 実現方法と利用環境
 
@@ -78,6 +86,8 @@ Git操作の補助はWorkspaceの機能に含めない。commit・push・merge�
 | `skills/monorepo/` | CLIを使うAI向け手順の正本 |
 | `cli/tasks/` | `@koto/tasks`の実装・パッケージ定義・利用者向け手順の正本 |
 | `skills/tasks/` | Tasks CLIを使うAI向け手順の正本 |
+| `cli/memory/` | `@koto/memory`の実装・パッケージ定義・利用者向け手順の正本 |
+| `skills/memory/` | Memory CLIを使うAI向け手順の正本 |
 | `scripts/build.ts` | 正本から配布物とカタログを生成する開発用の入口 |
 | `dist/<製品>/koto/` | 生成物。Gitで管理し、手編集しない |
 | ルートの`package.json`・`bun.lock` | 生成・検証の開発依存と配布版数 |
@@ -95,7 +105,7 @@ Git操作の補助はWorkspaceの機能に含めない。commit・push・merge�
 | Codex | `.agents/plugins/marketplace.json` | `dist/codex/koto/` |
 | Claude Code | `.claude-plugin/marketplace.json` | `dist/claude-code/koto/` |
 
-buildは製品別定義と共通ソースを組み合わせ、ルートの版数を各配布物・カタログ・同梱CLIのパッケージ定義へ反映する。monorepo・Tasks CLIは両製品の`cli/monorepo/`・`cli/tasks/`へ、スキルはそれぞれの`skills/`配下へコピーする。CLIに開発環境の依存パッケージを要求しない。スキルがない場合はプラグイン定義からskillsパスを省く。旧setupのマニフェストは生成しない。
+buildは製品別定義と共通ソースを組み合わせ、ルートの版数を各配布物・カタログ・同梱CLIのパッケージ定義へ反映する。monorepo・Tasks・Memory CLIは両製品の`cli/monorepo/`・`cli/tasks/`・`cli/memory/`へ、スキルはそれぞれの`skills/`配下へコピーする。CLIに開発環境の依存パッケージを要求しない。スキルがない場合はプラグイン定義からskillsパスを省く。旧setupのマニフェストは生成しない。
 
 スキルを追加した場合は、本文と必要な付属資料・実行ファイルを配布する。テスト、開発資料、利用先の記録、node_modules、実行時キャッシュは含めない。生成時に配布内のMarkdownリンクを確認し、シンボリックリンクを拒否する。
 
