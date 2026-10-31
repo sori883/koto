@@ -14,6 +14,7 @@
 | `skills/memory/` | 知識の検索・記録・更新・検証にCLIを使うAI向け手順 |
 | `skills/devlow/`・`skills/recall/` | 3つのCLIを使う開発フローと、記録・実態の照合による現在地の復元 |
 | `skills/tdd/`・`skills/blast-radius/`・`skills/interrogate/` | 不具合の再現と修正、影響調査、独立レビューの専門手順 |
+| `templates/AGENTS.md` | 変更前のTasks登録と現在のスキルへ案内する指示。monorepoのinstructions操作で利用先へ適用 |
 | `packaging/codex/`・`packaging/claude-code/` | 製品別のプラグイン定義とカタログ定義 |
 | `space/default/` | 共通知識の正本。既存の23原則を保持 |
 | `scripts/build.ts` | 2製品の配布物とカタログを生成・照合 |
@@ -34,7 +35,13 @@ setup、プロジェクト追加・参照、リポジトリ登録・取得・参
 
 片付けは`workspace remove <task> [--dry-run]`で行う。未保存・未追跡・無視対象のファイル、未送信コミット、ロックやGitの作業中状態等を検査し、通常のGitで削除する。ブランチと履歴は残し、途中失敗後は削除記録と実体を照合して再開する。[片付けの設計と検証](monorepo-cleanup-design.md)を参照する。
 
-プロジェクト削除、利用先への共通知識とクライアント指示の配置は未実装。専用エージェント・旧setupマニフェスト・今回追加した5つ以外の旧スキルは復元していない。[機能一覧](workspace-feature-inventory.md)の全項目が実装済みという意味ではない。[初版設計](monorepo-cli-design.md)と[CLI手順](../cli/monorepo/README.md)を参照する。
+追加依頼により、`instructions plan|apply|status`でAGENTS.md・CLAUDE.mdの管理ブロックを追加・更新できる。root・project・対象ディレクトリ・製品を指定し、既存文章と独自編集を保護する。旧setupの一致する配置記録を引き継ぎ、途中失敗後も同じ操作で再実行できる。[指示更新の設計](instruction-setup-design.md)を参照する。
+
+指示更新専用12テストと両製品の配布物だけによる実行で、更新・旧形式の移行・途中失敗後の再実行・既存編集と境界の保護を確認した。今回の配布物は192ファイル。型検査と生成物照合も成功した。
+
+実装コミットa7d8c3dの[GitHub Linux CI](https://github.com/sori883/koto/actions/runs/41221775333)では、Bun 1.4.2で全275テスト・1914 assertions、型検査、全生成物照合が成功した。
+
+プロジェクト削除、利用先への共通知識の配置は未実装。専用エージェント・旧setupマニフェスト・今回追加した5つ以外の旧スキルは復元していない。[機能一覧](workspace-feature-inventory.md)の全項目が実装済みという意味ではない。[初版設計](monorepo-cli-design.md)と[CLI手順](../cli/monorepo/README.md)を参照する。
 
 ## Tasks CLI
 

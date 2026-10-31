@@ -4,6 +4,7 @@ import { directory, exists, locked, readJson, rootPath, safePath, saveJson } fro
 import { changes, git, refName, remoteUrl, worktrees } from "./git.ts";
 import { emptyProject, identifier, MonorepoError, requireThat, validateProject, validateRoot } from "./model.ts";
 import type { Owner, Project, Repository, RootState, Workspace, Worktree } from "./model.ts";
+import { instructions } from "./instructions.ts";
 
 interface RemovalCheck {
   repositoryId: string; path: string; branch: string; head?: string;
@@ -56,6 +57,13 @@ export class Monorepo {
   async projectShow(id: string) {
     const project = await this.project(id);
     return { id, path: join(this.root, ".space", id), repositories: Object.keys(project.repositories), workspaces: Object.keys(project.workspaces) };
+  }
+  async instructions(id: string, mode: string, target: string, product: string, source?: string) {
+    const execute = async () => {
+      const project = await this.project(id);
+      return instructions(this.root, project.rootId, project.id, mode, target, product, source);
+    };
+    return mode === "apply" ? locked(this.root, "instructions apply", execute) : execute();
   }
   private repository(project: Project, id: string): Repository {
     identifier(id);

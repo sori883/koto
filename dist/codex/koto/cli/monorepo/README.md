@@ -40,6 +40,8 @@ IDは1〜64文字で、半角の小文字・数字から始まり、小文字・
 
 setupは `default` の管理情報と保存先を準備します。管理ルート全体のGit管理は必要ありません。Memory・Tasksのデータや、Codex・Claude Codeの指示ファイルは作成しません。
 
+利用先の指示ファイルは、配置先と製品を指定する`instructions`操作で追加・更新します。
+
 ## コマンド
 
 すべてのコマンドで `--root PATH` と `--json` が使えます。`setup`、`project add`、`project list` 以外は `--project ID` も使えます。
@@ -58,6 +60,8 @@ setupは `default` の管理情報と保存先を準備します。管理ルー�
 | `workspace list` / `workspace show <task>` | 作業場所、変更ファイル、現在のコミット、開始元とのコミット数の差を返す |
 | `workspace remove <task> --dry-run` | 全Worktreeの削除対象と保護条件を検査する。作業場所と管理JSONは保持する |
 | `workspace remove <task>` | 全件を再検査して作業場所とタスクの登録を取り除く。ブランチとGit履歴は保持する |
+| `instructions plan` / `instructions status` | 指定した指示ファイルの変更予定・配置状態・衝突を読み取り専用で確認する |
+| `instructions apply` | kotoの管理ブロックを追加・更新し、管理記録を保存する |
 | `status` | 指定プロジェクトの登録状態と実体を確認する |
 | `doctor` | 整合性を確認し、不整合やロックがあれば終了コード1を返す |
 
@@ -73,7 +77,35 @@ JSONで入力する場合は `--input-json` を使います。入力と出力の
 koto-monorepo --input-json '{"command":["workspace","create","task-001"],"root":"/path/to/my-workspace","project":"client","repo":["api","web"]}'
 ```
 
-`command` はコマンドと位置引数の配列です。その他の入力は `root`、`project`、`url`、`branch`、`base` が文字列、`repo` が文字列の配列、片付けのプレビュー用の `dryRun` がbooleanです。未知のキーや、通常の入力オプションとの混在は拒否します。
+`command` はコマンドと位置引数の配列です。その他の入力は `root`、`project`、`url`、`branch`、`base`、`target`、`product`、`source` が文字列、`repo` が文字列の配列、片付けのプレビュー用の `dryRun` がbooleanです。未知のキーや、通常の入力オプションとの混在は拒否します。
+
+## 指示ファイルの追加・更新
+
+既存の管理ルートと登録済みプロジェクトを選び、`--target`に配置先ディレクトリの絶対パス、`--product`に`codex`または`claude-code`を指定します。対象ファイルはそれぞれ`AGENTS.md`・`CLAUDE.md`です。
+
+```sh
+koto-monorepo instructions plan --root /path/to/workspace --project default --target /path/to/existing-repo --product codex --json
+koto-monorepo instructions apply --root /path/to/workspace --project default --target /path/to/existing-repo --product codex --json
+koto-monorepo instructions status --root /path/to/workspace --project default --target /path/to/existing-repo --product codex --json
+```
+
+plan/statusは対象と管理記録を書き換えません。返された`block`が配置する内容、`action`がcreate・update・adopt・unchanged・resume、`conflicts`が停止理由です。`canApply`がfalseなら終了コード1で停止します。終了コード0だけで配置済みと判断せず、`current: true`と`pending: false`を確認してください。
+
+指示には管理ルート・project、devlow・recall・3つのCLIスキルへのリンクを設定します。変更前のTasks登録、小規模でもタスクを残すこと、既存タスクの再利用、読み取り専用依頼では書き込まないことを定めます。タスク未登録の編集を機械的に禁止する機能ではなく、AIが読む作業手順です。
+
+配布元は通常このCLIの配置から求めます。単独のCLIなど必要なスキルがない環境では、8スキル・3CLI・指示テンプレートを含むkotoのルートを`--source /absolute/path/to/koto`で明示してください。指示は配布元への絶対パスを参照するため、配布元を削除・移動した場合は、新しい場所をsourceに指定して再適用します。スキルのコピーやプラグイン設定の変更は行いません。
+
+管理ルート内では、ルート自体（defaultのみ）か、選択projectの`workspaces/<project>/`配下へ配置できます。別projectの作業場所、`.space`・`repositories`内、共通の`workspaces/`直下には配置しません。外部の既存リポジトリもtargetとして明示できます。指示ファイル、管理記録、管理ルート内の経路にあるシンボリックリンクは拒否します。指示に埋め込むパスでは制御文字とバッククォートを使えません。
+
+既存ファイルでは`<!-- koto:setup:koto:<product>:start -->`から対応するendまでだけを管理し、その外の内容とファイルのrwx権限を保持します。前回配置時と異なる管理部分の編集・削除、不正・重複したマーカーは衝突として止めます。今回配置する内容に既に完全一致する場合は管理記録へ採用できます。管理記録は`.space/<project>/instructions/<targetのSHA-256>/<product>.json`です。
+
+旧setupの指示は、target内の`.space/setup/koto-<product>.json`のハッシュと一致すれば更新できます。旧記録と他の配置物は残します。旧setupのpendingやロックがある場合は、元の版で処理を完了してから進めてください。元の記録がない既存ブロックや独自編集は自動的に取り込みません。内容を確認せず、記録やマーカーを消して衝突を回避しないでください。
+
+applyは最新の内容を再確認し、管理ルートの`.space/monorepo.lock`とtargetの`.koto-instructions.lock`で排他します。旧setupの記録先がある場合はその`koto.lock`も使います。ロックが残った場合はPID・実際の処理を確認し、停止を確認できたものだけを除いてください。強制上書きはありません。
+
+指示ファイルと管理記録の保存が途中で失敗した場合はPARTIAL_FAILUREを返し、管理記録の隣に`<product>.pending.json`を保持します。同じ対象と配布元でstatusを確認し、原因解消後にapplyを再実行します。途中に別の編集が入ると、ブロック外の編集も含めて停止します。pendingは直接編集・削除せず、保存時の内容と追加編集を保全してから解決してください。
+
+通常のローカルファイルシステムを対象とし、この排他を使わない他の編集ソフトとの同時書き込みを完全には防げません。更新後の指示はGit上の変更になります。保存・共有は利用先の方針に従い、Worktreeの片付けでも通常の未保存ファイル保護が適用されます。配置成功とクライアントによる読込は別なので、実際に利用するフォルダから開始し、既存の指示や入れ子の指示との整合も確認してください。
 
 `--json` は標準出力に1つのJSONを返します。
 

@@ -15,6 +15,8 @@ Usage: koto-monorepo <command> [--root PATH] [--project ID] [--json]
       [--base <remote-branch>] [--branch <work-branch>]
   workspace list | workspace show <task-id>
   workspace remove <task-id> [--dry-run]
+  instructions plan | instructions apply | instructions status
+      --target <existing-directory> --product codex|claude-code [--source <koto-root>]
   status | doctor
 
 --root defaults to the current directory; --project defaults to default.
@@ -23,6 +25,7 @@ repo remove unregisters a repository and RETAINS its Git data.
 Existing worktrees prevent unregistering. No remote data is deleted.
 workspace remove checks all worktrees and retains branches and Git history.
 --dry-run previews removal, refreshing remote refs without deleting worktrees.
+instructions plan/status are read-only; apply preserves text outside the managed block.
 doctor exits 1 for an unhealthy environment. All commands accept --json.
 `;
 
@@ -37,7 +40,7 @@ function requestArguments(args: string[]): string[] {
   } catch { throw new MonorepoError("INVALID_INPUT", "Use --input-json with a JSON request; other input options cannot be mixed with it."); }
   requireThat(request !== null && typeof request === "object" && !Array.isArray(request), "INVALID_INPUT", "The JSON request must be an object.");
   const input = request as Record<string, unknown>;
-  const fields = ["root", "project", "url", "branch", "base"];
+  const fields = ["root", "project", "url", "branch", "base", "target", "product", "source"];
   requireThat(Object.keys(input).every(key => ["command", "repo", "dryRun", ...fields].includes(key)), "INVALID_INPUT", "Unknown JSON request field.");
   requireThat(Array.isArray(input.command) && input.command.length > 0 && input.command.every(value => typeof value === "string"), "INVALID_INPUT", "command must be a nonempty string array, such as [\"workspace\",\"create\",\"task-001\"].");
   const expanded: string[] = [];
@@ -64,11 +67,12 @@ export async function execute(args: string[]): Promise<{ data: unknown; code: nu
       root: { type: "string" }, project: { type: "string" }, json: { type: "boolean" }, help: { type: "boolean" },
       url: { type: "string" }, repo: { type: "string", multiple: true }, branch: { type: "string" }, base: { type: "string" },
       "dry-run": { type: "boolean" },
+      target: { type: "string" }, product: { type: "string" }, source: { type: "string" },
     } });
   } catch { throw new MonorepoError("INVALID_INPUT", "Invalid arguments. Use --help for supported commands and options."); }
   if (parsed.values.help || args.length === 0) return { data: { help }, code: 0 };
   const { values, positionals: parts } = parsed;
-  const command = ["project", "repo", "workspace"].includes(parts[0] ?? "") ? parts.slice(0, 2).join(" ") : parts[0];
+  const command = ["project", "repo", "workspace", "instructions"].includes(parts[0] ?? "") ? parts.slice(0, 2).join(" ") : parts[0];
   const specs: Record<string, { count: number; flags: string[] }> = {
     setup: { count: 1, flags: [] },
     "project add": { count: 3, flags: [] }, "project list": { count: 2, flags: [] }, "project show": { count: 2, flags: ["project"] },
@@ -76,6 +80,9 @@ export async function execute(args: string[]): Promise<{ data: unknown; code: nu
     "repo show": { count: 3, flags: ["project"] }, "repo sync": { count: 3, flags: ["project"] }, "repo remove": { count: 3, flags: ["project"] },
     "workspace create": { count: 3, flags: ["project", "repo", "base", "branch"] }, "workspace list": { count: 2, flags: ["project"] }, "workspace show": { count: 3, flags: ["project"] },
     "workspace remove": { count: 3, flags: ["project", "dry-run"] },
+    "instructions plan": { count: 2, flags: ["project", "target", "product", "source"] },
+    "instructions apply": { count: 2, flags: ["project", "target", "product", "source"] },
+    "instructions status": { count: 2, flags: ["project", "target", "product", "source"] },
     status: { count: 1, flags: ["project"] }, doctor: { count: 1, flags: ["project"] },
   };
   requireThat(command && Object.hasOwn(specs, command), "INVALID_INPUT", "Unknown command. Use --help.");
@@ -84,6 +91,7 @@ export async function execute(args: string[]): Promise<{ data: unknown; code: nu
   requireThat(Object.keys(values).every(key => ["root", "json", "help", ...spec.flags].includes(key)), "INVALID_INPUT", "An option does not apply to this command.");
   if (command === "repo add") requireThat(values.url, "INVALID_INPUT", "repo add requires --url.");
   if (command === "workspace create") requireThat(values.repo?.length, "INVALID_INPUT", "workspace create requires --repo.");
+  if (command.startsWith("instructions ")) requireThat(values.target && values.product, "INVALID_INPUT", "instructions requires --target and --product.");
   const service = await Monorepo.open(values.root ?? process.cwd(), command === "setup"), project = values.project ?? "default", id = parts[2]!;
   let data: unknown;
   switch (command) {
@@ -91,6 +99,10 @@ export async function execute(args: string[]): Promise<{ data: unknown; code: nu
     case "project add": data = await service.projectAdd(id); break;
     case "project list": data = await service.projectList(); break;
     case "project show": data = await service.projectShow(project); break;
+    case "instructions plan": case "instructions apply": case "instructions status": {
+      const result = await service.instructions(project, parts[1]!, values.target!, values.product!, values.source);
+      return { data: result, code: result.canApply ? 0 : 1 };
+    }
     case "repo add": data = await service.repoAdd(project, id, values.url!); break;
     case "repo list": data = await service.repoList(project); break;
     case "repo show": data = await service.repoShow(project, id); break;

@@ -63,6 +63,7 @@ export async function distribution(root: string): Promise<Files> {
     }
   }
   for (const [path, body] of await filesAt(join(root, "space/default"))) common.set(`space/default/${path}`, body);
+  for (const [path, body] of await filesAt(join(root, "templates"), true)) if (path === "AGENTS.md") common.set(`templates/${path}`, body);
   for (const name of ["monorepo", "tasks", "memory"]) {
     const cli = await filesAt(join(root, "cli", name), true);
     for (const [path, body] of cli) {

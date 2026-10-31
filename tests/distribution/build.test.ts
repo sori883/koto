@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { afterEach, beforeEach, expect, test } from "bun:test";
-import { cp, mkdtemp, mkdir, readFile, rm, writeFile, symlink } from "node:fs/promises";
+import { cp, mkdtemp, mkdir, readFile, realpath, rm, writeFile, symlink } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { build, checkBuild } from "../../scripts/build.ts";
@@ -276,4 +276,34 @@ test("licensed development skills ship with complete notices and resolvable bund
   const tdd = await readFile(join(source, "skills/tdd/SKILL.md"));
   expect(createHash("sha256").update(tdd).digest("hex")).toBe(provenance.skills.tdd["skills/tdd/SKILL.md"]);
   expect(await checkBuild(root)).toEqual([]);
+});
+
+test("both distributed instruction updaters work after removing their source checkout", async () => {
+  const source = resolve(import.meta.dir, "../..");
+  for (const name of ["cli", "skills", "templates"]) await cp(join(source, name), join(root, name), { recursive: true });
+  for (const product of ["codex", "claude-code"]) await rm(join(root, "packaging", product, "templates"), { recursive: true });
+  await build(root);
+  for (const name of ["cli", "skills", "templates"]) await rm(join(root, name), { recursive: true });
+  for (const product of ["codex", "claude-code"]) {
+    const dist = await realpath(join(root, "dist", product, "koto")), management = join(root, product + "-management"), target = join(root, product + "-target");
+    await mkdir(target); const instruction = join(target, product === "codex" ? "AGENTS.md" : "CLAUDE.md");
+    await writeFile(instruction, "# Local rules\nKeep these.\n");
+    async function run(command: string[], fields = {}) {
+      const child = Bun.spawn([process.execPath, join(dist, "cli/monorepo/monorepo.ts"), "--input-json", JSON.stringify({ command, root: management, ...fields })], { cwd: root, stdout: "pipe", stderr: "pipe" });
+      const [code, out, err] = await Promise.all([child.exited, new Response(child.stdout).text(), new Response(child.stderr).text()]);
+      expect({ code, err }, out).toEqual({ code: 0, err: "" }); return JSON.parse(out).data;
+    }
+    await run(["setup"]);
+    const plan = await run(["instructions", "plan"], { target, product }); expect(plan.canApply).toBe(true);
+    expect(await readFile(instruction, "utf8")).toBe("# Local rules\nKeep these.\n");
+    expect((await run(["instructions", "apply"], { target, product })).current).toBe(true);
+    const actual = await readFile(instruction, "utf8"); expect(actual.startsWith("# Local rules\nKeep these.\n")).toBe(true);
+    const refs = [...actual.matchAll(/\]\(<([^>]+)>\)/g)].map(m => decodeURIComponent(m[1]!));
+    expect(refs.length).toBe(5);
+    for (const ref of refs) { expect(ref.startsWith(dist + "/skills/")).toBe(true); expect(await Bun.file(ref).exists()).toBe(true); }
+    expect(actual).not.toContain(source);
+    expect((await run(["instructions", "status"], { target, product })).current).toBe(true);
+    expect((await run(["instructions", "apply"], { target, product })).action).toBe("unchanged");
+    expect(await readFile(instruction, "utf8")).toBe(actual);
+  }
 });
