@@ -22,7 +22,7 @@
 ## 新規開始
 
 1. 依頼の目的・範囲・終了条件を整理する。Tasksのlist/showで既存の同じ仕事を確認し、継続ならそのtask_idを使う。新規の場合はtask addのtitleとdescriptionへ目的・完了条件・重要な制約を記録する。ソースコードを変更する場合は規模に関係なく編集前に済ませ、その完了条件には対象リポジトリ・統合先ブランチ・PR／MRのマージ確認を含める。今回の引き渡し地点とは区別する。初めて使うTasksだけsetupで準備する。
-2. Memoryのsearch/showで関係するrule・principle・decisionと現在の仕様を読む。取得した記録の対象・適用条件・根拠を確認する。関連記録なし、未初期化、取得不能を区別し、読むだけの目的でsetupしない。未取得を制約なしと判断しない。
+2. Memoryのsearch/showで関係するrule・principle・decisionと現在の仕様を読む。通常の開発ではMemoryスキルに従って利用記録を付け、呼び出し元をdevlow、既存タスクがあればそのIDを指定する。読み取り専用の依頼では記録を省く。取得した記録の対象・適用条件・根拠を確認する。関連記録なし、未初期化、取得不能を区別し、読むだけの目的でsetupしない。未取得を制約なしと判断しない。
 3. コードの作業場所が必要ならmonorepoで対象project・repo・workspaceの登録と実体を確認する。新規準備が依頼の範囲にある場合だけsetup、project add、repo addを行う。setupはdefaultのみなので、別projectはproject addで準備する。最新の開始元が必要なときは対象repoをsyncし、workspace createを実行する。既存の指定作業場所で足りるなら新規作成を省く。
 4. 作成・照会応答のokだけでなく、各repositoryのobserved・ready・problemと編集先pathを確認する。すべての必要な作業場所を使えると分かってから、Tasksのworkspace linkでrepository_idを記録する。参照の登録だけで作業場所を準備済みと扱わない。
 5. 複数タスクならpendingの間にdependency addで同一project内の依存を記録する。条件と実際の作業開始の意思を確認してtask startする。blockedByがあれば前提を解消する。readyは記録上の候補であり、実行権限を表さない。
