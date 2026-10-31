@@ -1,5 +1,7 @@
 # kotoへの改名
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](current-state.md)を参照してください。
+
 2026-09-27。ユーザーが名称をkoto（コト）に決定した。Knowledge-Oriented Task Orchestrationの略で、OKFによる知識の継承とタスクの分割・管理を表す。設計正本は[architecture.md](architecture.md)。GitHubのリポジトリ名変更はユーザーが行う。
 
 公開作業は[Issue #20](https://github.com/sori883/koto/issues/20)で追う。0.1.4の[PR #19](https://github.com/sori883/koto/pull/19)はCI成功後にmainへ取り込んだ。利用者が更新したREADMEを含め、次のパッチ版0.1.5として改名を公開する。
@@ -14,7 +16,7 @@
 
 単純なID置換では、旧状態を未導入と判定して指示ブロックが重複し、配置済みエージェントの更新にも衝突する。kotoの管理記録がない場合だけ、同じ製品の旧管理記録を前回の配置情報として読み取る。新しい管理記録はkoto名で作り、旧記録は保全する。新旧のブロックが両方ある場合やローカル編集がある場合は停止する。
 
-移行も通常のpendingによる再開経路を使う。旧名のpendingがいずれかの製品に残っている間は更新を止め、書き込み時は新旧両方のロックを取る。旧vendorの記録は読み取りと保持に対応するが、新しいmanifestが旧名のvendorへ配置することは許可しない。操作するAI向けの手順は[setupの資料](../skills/setup/references/setup.md#agent-gearからの切り替え)に置く。
+移行も通常のpendingによる再開経路を使う。旧名のpendingがいずれかの製品に残っている間は更新を止め、書き込み時は新旧両方のロックを取る。旧vendorの記録は読み取りと保持に対応するが、新しいmanifestが旧名のvendorへ配置することは許可しない。操作するAI向けの手順は[setupの資料](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/setup/references/setup.md#agent-gearからの切り替え)に置く。
 
 ## GitHubとローカルの切り替え順序
 

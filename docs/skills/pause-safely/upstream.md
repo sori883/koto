@@ -1,10 +1,12 @@
 # checkpoint-safelyの参照元とローカライズ
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../../current-state.md)を参照してください。
+
 確認日：2026-09-20
 
 Cursorのpstackにある [Pause safely](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/playbooks/pause-safely.md) を、日本語の独立した `checkpoint-safely` スキルとして導入する。参照コミットは `032be146865d973682535de75f2287da438550bf`。
 
-元の [MITライセンス](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/LICENSE) は、配布対象の [LICENSE](../../../skills/checkpoint-safely/LICENSE) に同梱する。スキル本体は [SKILL.md](../../../skills/checkpoint-safely/SKILL.md)。この文書は開発者向けの保守資料として配布対象から分離する。
+元の [MITライセンス](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/LICENSE) は、配布対象の [LICENSE](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/checkpoint-safely/LICENSE) に同梱する。スキル本体は [SKILL.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/checkpoint-safely/SKILL.md)。この文書は開発者向けの保守資料として配布対象から分離する。
 
 ## 継承した動作
 

@@ -1,5 +1,7 @@
 # natural-japaneseのBun対応
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../../current-state.md)を参照してください。
+
 この文書は旧TypeScript版の実装記録である。2026-10-13に原版へ置き換えた。現在の構成と検証は[取込記録](upstream-import.md)を参照する。
 
 2026-09-26。ユーザーはPythonを依存に含めず、通常検査をkuromojiとBunへ移し、意味モデルによるsemanticを除く案を承認した。

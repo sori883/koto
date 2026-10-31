@@ -1,5 +1,7 @@
 # pstackの追加スキルとエージェントを採用する
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../current-state.md)を参照してください。
+
 2026-09-26。比較対象はcursor/pluginsの固定コミット `78f46dacbafc71fd7d937bfc2c26da914f1bc09b`。利用先はCodex・Claude Code・Copilotであり、Cursor専用の履歴パス、モデル名、エージェント起動API、個人の保存先を必須にしない。採用経緯と検証記録はこの文書に置き、配布物へ含めない。
 
 ## 採用範囲
@@ -34,7 +36,7 @@
 
 Codexの正本は `packaging/codex/templates/agents/*.toml`、Claude形式は `packaging/claude-code/agents/*.md`。2役の指示は両形式で一致させ、モデル・権限設定を追加していない。原版のMIT LICENSEは各配布物の `assets/pstack-agents-LICENSE`へ同梱する。
 
-Codexのcopy配置へスキルの絶対パスを焼き込むとインストール場所に依存するため、親が実際の配置から解決したパスを渡す方式にした。パスがない場合はスキル一覧またはsetupの管理指示から特定し、読めない場合を明示する。全体フローの [担当の受け渡し](../../skills/devlow/references/delegation.md)に契約を置く。
+Codexのcopy配置へスキルの絶対パスを焼き込むとインストール場所に依存するため、親が実際の配置から解決したパスを渡す方式にした。パスがない場合はスキル一覧またはsetupの管理指示から特定し、読めない場合を明示する。全体フローの [担当の受け渡し](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/delegation.md)に契約を置く。
 
 形式は[Codexのカスタムエージェント](https://developers.openai.com/codex/subagents)、[Claude Codeのサブエージェント](https://code.claude.com/docs/en/sub-agents)、[VS Codeのプラグイン仕様](https://code.visualstudio.com/docs/agent-customization/agent-plugins)を確認した。Codexは必須のname・description・developer_instructions、Claude形式はname・descriptionと本文を使う。CopilotにはClaude形式を同梱し、製品UIでの読込・起動は別の未検証事項として残す。
 
@@ -63,7 +65,7 @@ Codexのcopy配置へスキルの絶対パスを焼き込むとインストー�
 
 ユーザーは2スキルの採用と、利用時の作成に人間の承認を求めることを指定した。既存スキルの変更も同じ境界に含め、本文・description・参照資料・スクリプトの具体案を提示してから適用する。スキルの呼び出し自体、一般的な自律実行の許可、無回答、AI担当の賛成を未提示の差分の承認にしない。同じ案が既に承認済みなら重ねて確認せず、対象や内容が変わった場合は改めて確認する。
 
-草案を実際のスキルディレクトリに置いてからレビューする方式と、発見対象外で提示する方式を比較し、承認前に有効化されない後者を採用した。共通手順は [reflectの承認資料](../../skills/reflect/references/approval.md)へ置き、automate-meも参照する。既存の仕事の完了を、この追加改善の承認待ちに巻き込まない。
+草案を実際のスキルディレクトリに置いてからレビューする方式と、発見対象外で提示する方式を比較し、承認前に有効化されない後者を採用した。共通手順は [reflectの承認資料](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/reflect/references/approval.md)へ置き、automate-meも参照する。既存の仕事の完了を、この追加改善の承認待ちに巻き込まない。
 
 この承認境界はAIが従うスキル本文の手順として提供する。ファイルシステムへの書き込みをプログラムで阻止する機構は追加していない。
 

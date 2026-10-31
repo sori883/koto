@@ -1,69 +1,51 @@
 # kotoの現状
 
-kotoは、開発作業のフロー、タスク台帳、知識管理、プロジェクトへの導入をCodex・Claude Code・GitHub Copilot in VS Codeへ配布するプラグインである。CopilotはClaude形式の配布物を共用する。目的と配置方針の正本は[architecture.md](architecture.md)、導入・生成方法は[distribution.md](distribution.md)に置く。
+2026-10-31、Issue #23の作業ツリーを対象とする。対応先はCodexとClaude Codeの2製品。旧スキルと付属CLIを削除した後、ユーザーの依頼により、現在のkotoリポジトリ内に`@koto/monorepo`を新しく実装した。
 
-2026-10-30時点の作業ツリーを対象とする。ローカル版数は0.1.8で、natural-japaneseの原版への置換、yomiyasu、全スキルのプロジェクト導入を含む。これらはリモート未公開であり、手元のorigin/mainは25スキルを含む0.1.7を指している。名称・配布IDはkoto。0.1.7のexplain-before-shortenと、0.1.6の共通原則の関連リンク・新規導入後のstrict検証の修正を保持している。以下はローカル実装の状態であり、最新変更のmainへの公開やリモートCIの成功を意味しない。今回の確認は[ローカル変更の反映記録](local-plugin-update-2026-10-30.md)、詳細な検証結果は[原則の関連付け](principle-relationships.md)、[改名記録](rename-koto.md)、[配布の実装記録](distribution-implementation.md)、[Copilot対応記録](copilot-support.md)、[Babel統合の記録](babel-distribution.md)、[pstackスキルの採用記録](skills/pstack-adoption.md)、[natural-japaneseの取込記録](skills/natural-japanese/upstream-import.md)、[yomiyasuの取込記録](skills/yomiyasu/upstream-import.md)、[explain-before-shortenの取込記録](skills/explain-before-shorten/upstream-import.md)を参照する。
+## 現在の構成
 
-## 提供するもの
-
-Codex・Claude Codeには、全スキルをプロジェクトへ実ファイルで配置する`setup --scope project`を追加した。プラグイン登録は不要で、同じ製品別配布物を使う。配置後のCLI実行と、コピーしたsetupへの`--source`指定による更新を確認した。設計・検証範囲は[プロジェクト導入の記録](project-installation.md)に置く。
-
-| 構成物 | 役割・入口 |
+| 構成物 | 状態 |
 | --- | --- |
-| devlow | [全体フロー](../skills/devlow/references/workflow.md)。依頼整理・調査・設計・計画・実装・検証・レビュー・引き渡しを規模と依頼種別から選ぶ |
-| orch | [スキル](../skills/orch/SKILL.md)と専用CLI。unitの進行、確認結果、親の受け入れを分離して管理する |
-| okf-agent-memory | [スキル](../skills/okf-agent-memory/SKILL.md)と専用CLI。Markdownの知識を検索・保存・更新・関連付け・検証する |
-| setup | [スキル](../skills/setup/SKILL.md)と専用CLI。同梱文書と指示を既存のプロジェクトへ導入・更新する |
-| system-blueprint / how / why | システムの構成文書、動作の調査、設計理由の調査を担当する |
-| use-principles / checkpoint-safely | 原則の選択・適用と、中断・引き継ぎの保存を担当する |
-| blast-radius / interrogate | 影響経路と安全性の前提を確認し、独立レビューの指摘を照合する |
-| create-verification-skill / maintain-verification-skill / tdd | 利用先のアプリ専用検証スキルを作成・更新し、局所テストで不具合を再現して修正する |
-| teach / recall | 仕組みと理由を説明し、既存記録と実状態から現在地を再構成する |
-| show-me-your-work / no-comments | 判断の追記・訂正・照合と、コメントの知識をcode_refs付きOKFへ保存してから削除する手順 |
-| technical-writing / unslop / bro | 技術文書の構成、意味を保つ推敲、直前の回答の言い換え |
-| explain-before-shorten | 紹介記事の原文を保持した説明文の作成・修正スキル。口頭で伝わる説明を組み立ててから、意味・条件を保って短くする |
-| natural-japanese | 原版の日本語執筆・推敲・診断スキル。Python・uvとSudachiによる文章検査・読解負荷・構成・用語の抽出、任意の意味モデル検査を同梱する |
-| yomiyasu | 意味・条件を保つ日本語の推敲スキル。Python標準ライブラリによる表現・Markdownの検査と、推敲前後の語句・文末・文の種類の変化の検査を同梱する |
-| reflect / automate-me | 作業の学び・本人の作業方針からスキル案を作り、人間の承認後に反映する |
-| 共通知識 | [space/babel](../space/babel/index.md)の23原則。実体は利用先の`.space/babel/`へ配置する |
+| `cli/monorepo/` | Bunで動く独立したCLI。実行名は`koto-monorepo`、外部ライブラリ依存なし |
+| `skills/monorepo/` | CLIを使うAI向けの利用手順。処理はCLIへ委ねる |
+| `packaging/codex/`・`packaging/claude-code/` | 製品別のプラグイン定義とカタログ定義 |
+| `space/default/` | 共通知識の正本。既存の23原則を保持 |
+| `scripts/build.ts` | 2製品の配布物とカタログを生成・照合 |
+| `dist/codex/koto/`・`dist/claude-code/koto/` | CLI・スキル・共通知識・製品別プラグイン定義のコピー |
+| `.agents/plugins/marketplace.json`・`.claude-plugin/marketplace.json` | 各製品の配布物を参照するカタログ |
+| `tests/monorepo/` | 実際のローカルGitとCLI子プロセスによる操作・保護条件の検証 |
+| `tests/distribution/` | 生成、参照切れ、生成物照合、スキルなし構成、開発環境外でのCLI起動を検証 |
 
-計26スキルと2役のエージェントを二つの形式の配布物へ同梱し、三製品で利用する。`devlow-worker`はdevlowで担当単位を実行し、`comment-curator`はコメントを整理する。Codexではsetupが `.codex/agents/`へTOMLを配置し、Claude形式ではプラグインの `agents/`に同梱する。Claude Codeのプロジェクト導入では`.claude/agents/`へコピーする。各クライアントでの起動・実行は未確認。リポジトリの`.agents/skills/`と`.codex/agents/`は開発環境用であり、製品のエージェント定義として配布しない。hooksは追加していない。
+## monorepo CLI
 
-## 正本と実行場所
+setup、プロジェクト追加・参照、リポジトリ登録・取得・参照・同期・登録解除、複数リポジトリのWorktree作成・参照・片付け、status・doctorを実装した。CLIは人間からも直接実行でき、非対話実行とJSON入出力に対応する。
 
-| 場所 | 内容 |
-| --- | --- |
-| `skills/` | 配布するスキル・参照資料・CLIの正本。testsは開発用 |
-| `space/babel/` | 共通知識の配布用正本 |
-| `packaging/codex/`・`packaging/claude-code/` | 製品別manifest・指示テンプレート・エージェント定義 |
-| `packaging/copilot/` | 共用配布物へ組み込むCopilot用指示テンプレート |
-| `dist/` | buildで生成しGit管理する配布物。kotoのテスト・docs・node_modules・Pythonの実行キャッシュを含めない。natural-japaneseの原版fixturesは同梱 |
-| `.agents/plugins/marketplace.json`・`.claude-plugin/marketplace.json` | それぞれのdistを参照する生成済みカタログ |
-| `docs/` | 開発者向けの設計・検証記録。配布しない |
+管理情報は`.space/monorepo.json`と`.space/<project>/monorepo.json`に保存する。Bare Repositoryは`repositories/<project>/<repo>.git/`、編集場所は`workspaces/<project>/<task>/<repo>/`へ置く。プロジェクト省略時はdefault。不明な対象への自動切り替えや、プロジェクト間でのGit保存領域の共有は行わない。
 
-OKF・orch・setupのCLIはそれぞれの`skills/<skill>/scripts/`からBunで起動する。OKFのMiniSearch 7.2.0はscripts内のpackage.json・bun.lockで固定し、bootstrapが必要時に導入する。orchとsetupの外部依存は空であり、定義の確認だけを行う。natural-japaneseは原版のPythonスクリプトをuvで実行し、スクリプト内の依存定義を使う。利用先のpackage.jsonやlockへ依存を混ぜない。取込範囲と検証は[原版への置換記録](skills/natural-japanese/upstream-import.md)、旧TypeScript版は[過去の実装記録](skills/natural-japanese/implementation.md)を参照する。
+リポジトリ削除は登録解除で、Gitデータは保持する。作成途中を含む作業環境があれば登録解除を拒否する。同じ入力での再実行では作成済みの作業場所と編集を維持する。
 
-yomiyasuは原版のスキル本体・参照資料・assets・三つのPythonファイルと、MIT・Unicodeのライセンスを同梱する。検査は外部ライブラリなしで動作する。原版の単独プラグイン用マニフェストと開発用コーパスは含めない。
+片付けは`workspace remove <task> [--dry-run]`で行う。未保存・未追跡・無視対象のファイル、未送信コミット、ロックやGitの作業中状態等を検査し、通常のGitで削除する。ブランチと履歴は残し、途中失敗後は削除記録と実体を照合して再開する。[片付けの設計と検証](monorepo-cleanup-design.md)を参照する。
 
-旧`templates/AGENTS.md`と開発リポジトリの`.space/babel/`は既存資料として残すが、buildの入力にはしない。指示テンプレートの配布用正本はpackaging配下、共通知識の正本はspace配下である。
+Memory・Tasks、プロジェクト削除、利用先への共通知識とクライアント指示の配置は未実装。専用エージェント・旧setupマニフェスト・旧スキルは復元していない。[機能一覧](workspace-feature-inventory.md)の全項目が実装済みという意味ではない。[初版設計](monorepo-cli-design.md)と[CLI手順](../cli/monorepo/README.md)を参照する。
 
-## 作業記録と知識を分ける
+## 検証と公開状態
 
-標準・大規模の依頼にはtask.mdを作る。大規模な依頼は同じ作業単位をorchのunitとして登録し、各担当が自身の進捗・確認記録・提出を更新する。親は提出の証拠を照合して受け入れる。JSONが台帳の正本であり、TSVとMarkdownはexportした一覧である。小規模な会話中の依頼には新規task.mdを必須にしない。
+ローカルGitで複数プロジェクト・複数リポジトリ・並行タスク、更新取得時の編集保持、部分失敗からの再実行、登録解除後の履歴保持、パスとシンボリックリンクの拒否、ロック、不明な形式の拒否を検証する。配布物は開発リポジトリ外で実行する。実行結果は[初版設計の検証記録](monorepo-cli-design.md#検証)へ記録する。
 
-作業中の依頼、計画、仮説、試行結果は`.space/tasks/`へ保存する。OKFの`.space/babel/`には、システムの構成、採用した設計と理由、重要な変遷を残す。原則として引き渡し工程が保存要否と重複を確認し、保存と検証を行う。配布元の共通知識も同じ`.space/babel/`から検索する。setupが配置した文書の更新はハッシュで管理し、プロジェクト固有の文書や編集を上書きしない。
+ユーザー指定の`agent-monorepo`・`agent-memory`でGitHubへのHTTPS取得・更新取得を確認した。両製品の配布CLIで2タスク・4Worktreeを作成し、再実行時の編集保持、使用中リポジトリの登録解除拒否、doctor成功を確認した。詳細は[実接続の検証記録](monorepo-cli-design.md#githubへの実接続)を参照する。
 
-OKFのconceptはfrontmatter付きMarkdown一件、bundleはその集合を指す。typeはrule・principle・knowledge・procedure・decision。index.mdは目次、log.mdは文書操作の履歴であり、システムの歴史や作業ログの代わりにはならない。
+続く内容変更の許可を受け、検証用ブランチで通常のGitによるcommit・pushを2回ずつ行った。両製品のCLIで3タスク・6Worktreeを扱い、更新取得後も既存の編集とHEADを保持し、新しいタスクでは更新後の内容を使えることを確認した。検証ブランチと一時管理ルートは後片付け済み。同時書き込みの拒否と、実Gitの作成完了直後にCLIを強制終了した場合の再開も自動テストへ追加した。
 
-コメント由来の理由・制約はno-commentsが削除前に保存・内容照合する。パス・globを `code_refs`に置き、シンボル・範囲・版は本文へ記す。調査と変更の入口から関連知識を検索できるよう、how・whyと導入時の指示にも接続した。show-me-your-workの訂正は元の行を残す追記であり、orchの状態更新やOKFの履歴を置き換えない。
+片付け追加後は25件の自動テスト、型検査、両製品の配布生成が成功した。GitHub実接続でも4Worktreeの片付け、編集中ファイルの保護、ブランチ・履歴保持、続くリポジトリ登録解除まで確認した。
 
-## 動作と制約
+Codex 0.164.0のapp-serverはローカル配布物の`koto:monorepo`を有効なスキルとして読み取った。Claude Code 2.1.307でもセッション限定の配布物読み込みでmonorepo 1件を認識し、プラグインマニフェスト検査は成功した。利用中のプラグインキャッシュやユーザー設定は更新していない。
 
-- setupは前回配置した内容を照合し、既存の独自文書や指示の管理ブロック外を保持する。衝突時には適用前に停止し、途中終了はpending記録から再開する。
-- Copilot用setupは`--product copilot`で同梱manifestを選択し、`.github/copilot-instructions.md`へ配置する。省略時のCodex・Claude Codeの既定動作は維持する。
-- orchはローカルJSONを排他・原子的置換で更新する。再送を操作IDで識別し、古い試行・置き換え済みの証拠・失効した提出を現在の合格として扱わない。
-- OKFは内容と根拠の正しさを判定しない。エージェントが記録の価値と本文を判断し、CLIが検索・形式検証・ファイル操作を行う。複数ファイル全体の自動巻き戻しはない。
-- 異常終了後のロックは自動で奪わない。各CLIの資料に従い、書き手の停止を確認して復旧する。
-- 共通知識23件は、関連する原則へのリンクとその関係の説明を持ち、新規導入後のstrict/drift検証を満たす。利用先固有の孤立文書は引き続き検出し、setupが自動で関連付けたり書き換えたりしない。
+続いて、別の一時フォルダへ配布物をコピーし、Codex CLIへスキル名やコマンドを指定せず日本語で依頼した。初期化・2リポジトリの登録・作業場所の準備、未保存ファイルがある片付けの停止、保存済みの作業場所の片付けと履歴保持を確認した。[自然言語による検証記録](monorepo-codex-verification.md)を参照する。
 
-日月単位の運用、他OS、ネットワーク共有、電源断はローカルの短時間試験で確認済みにしない。orchの保持・切り替えと測定範囲は[運用資料](skills/orch/operations.md)、OKFの依存配置は[移行記録](skills/okf-agent-memory/runtime-migration.md)、setupは[実装記録](skills/setup/implementation.md)に記録する。
+Codexデスクトップ画面とClaude Codeモデルへの自然言語依頼、個別の認証方式・認証失敗時の実接続、LinuxでのCI実行は未確認。CLIの実接続、クライアント本体の読込、Codex CLIの実モデルによる操作、ローカルの生成・型検査・テストを区別する。
+
+ユーザーは今回のmonorepo機能を完成として扱い、`main`から作る`develop`への統合を指示した。実装・配布物と設計・検証記録を作業ブランチでコミットし、元の履歴を保持するマージコミットで取り込む。統合先は`develop`であり、`main`へのマージは今回の範囲に含めない。
+
+版数は0.1.8のまま。開発ブランチのGitHubへの反映とプラグインの正式リリースは区別する。公開済み0.1.8とMacに導入済みのプラグインには未反映。`@koto/monorepo`はローカルのパッケージ識別名で、NPM公開は行っていない。
+
+[配布物の生成](distribution.md)、[先行した配布整理](issue-23-packaging-reset.md)、[先行したスキル削除](issue-23-skill-pruning.md)も参照できる。過去のスキル・CLIの検証記録は、現在利用できる機能を示すものではない。

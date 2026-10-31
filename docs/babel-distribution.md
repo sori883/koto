@@ -1,5 +1,7 @@
 # 共通知識のBabel統合
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](current-state.md)を参照してください。
+
 2026-09-24。[Issue #15](https://github.com/sori883/koto/issues/15)のユーザー依頼により、共通知識・原則の導入先を`.space/babel/vendor/agent-gear/`から`.space/babel/`直下のtype別ディレクトリへ変更する。Codex・Claude Code・Copilotで同じ配置を使い、版数は0.1.2とする。設計正本は[architecture.md](architecture.md)。
 
 ## 配置と既存内容の保持

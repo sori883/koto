@@ -1,5 +1,7 @@
 # OKF Agent Memoryの参照元・移植差分・開発時の検証
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../../current-state.md)を参照してください。
+
 この文書は開発者向けの保守資料であり、スキルの配布対象に含めない。利用者向けの操作説明は `skills/okf-agent-memory/` に置き、参照元との比較・移植判断・開発時の検証記録はこの文書で管理する。
 
 確認日：2026-09-20
@@ -51,7 +53,7 @@ CLI 0.1.0は上記コミットの `pkg/okf/{parser,bundle,search,mutate,validato
 | 保存 | 未知の項目を保持。同一内容のupdateでは日時・履歴を変更しない。親の目次を祖先へたどって同期する |
 | 削除 | `delete` で文書、入出リンク、目次を整理し、削除日時・実行者・対象・更新した文書をログに記録する。文章中のリンクは表示文字を保持し、過去の履歴はID付きの文字列として残す。`--dry-run` で変更対象と新たな孤立文書を取得できる |
 | bundleの境界 | `vendor/` は独立bundleとして検索。配下のシンボリックリンクは拒否。操作中の排他とファイル単位の置換を行い、部分失敗を報告 |
-| YAML・Markdown | Bun.YAMLを使用するため重複キーの扱いはGoと異なる。リンク解析の対象や保存時の整形は [CLIの詳細](../../../skills/okf-agent-memory/references/cli.md) を参照 |
+| YAML・Markdown | Bun.YAMLを使用するため重複キーの扱いはGoと異なる。リンク解析の対象や保存時の整形は [CLIの詳細](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/okf-agent-memory/references/cli.md) を参照 |
 
 全コマンド・すべてのYAML/Markdown入力について本家と完全互換であることを保証するものではない。合意済みプロファイルと上表の差分を、この移植の契約とする。
 
@@ -92,7 +94,7 @@ OKF_REFERENCE_BIN=/tmp/okf-reference bun run test
 
 これにGoとの比較テスト2件を加えて検証する。部分失敗の権限テストはPOSIXの一般ユーザー向けであり、Windowsとroot実行ではskipする。
 
-配布物には`SKILL.md`・利用者向けの`references/`・依存定義とlockを含む`scripts/`・`LICENSE`を含め、開発用の`tests/`と本書を含めない。配布先のCLI起動時にbootstrapが固定依存をscripts内へ導入する。原著の著作権・利用条件はスキルに同梱する [LICENSE](../../../skills/okf-agent-memory/LICENSE) に保持している。MiniSearchのMITライセンスはインストールされるパッケージに同梱される。
+配布物には`SKILL.md`・利用者向けの`references/`・依存定義とlockを含む`scripts/`・`LICENSE`を含め、開発用の`tests/`と本書を含めない。配布先のCLI起動時にbootstrapが固定依存をscripts内へ導入する。原著の著作権・利用条件はスキルに同梱する [LICENSE](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/okf-agent-memory/LICENSE) に保持している。MiniSearchのMITライセンスはインストールされるパッケージに同梱される。
 
 ### 日本語検索・MiniSearchへの移行
 
