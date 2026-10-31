@@ -246,12 +246,16 @@ test("distributed Memory runs alone with the bundled version after removing sour
     await cli(["setup"]);
     await cli(["create", "decisions/auth"], { metadata: { type: "decision", title: "認証判断", description: "方式を選んだ理由" }, body: "判断の内容" });
     expect((await cli(["search", "認証"]))).toHaveLength(1);
-    const shown = await cli(["show", "decisions/auth"]);
+    expect((await cli(["search", "認証"], { recordUsage: true, usageSource: "devlow" }))).toHaveLength(1);
+    const shown = await cli(["show", "decisions/auth"], { recordUsage: true, taskId: "task-1" });
+    expect((await cli(["usage", "stats"]))).toMatchObject({ events: 2, searches: 1, shows: 1 });
+    expect((await cli(["usage", "list"], { taskId: "task-1" })).events[0].content_hash).toBe(shown.content_hash);
     await cli(["update", "decisions/auth"], { ifHash: shown.content_hash, body: "更新した理由" });
     expect((await cli(["validate"], { strict: true })).gate_passed).toBe(true);
     await cli(["delete", "decisions/auth"], { dryRun: true });
     await cli(["delete", "decisions/auth"]);
     expect((await cli(["validate"])).concept_count).toBe(0);
+    expect((await cli(["usage", "stats"])).concepts[0]).toMatchObject({ concept_id: "decisions/auth", search_results: 1, shows: 1 });
   }
 });
 

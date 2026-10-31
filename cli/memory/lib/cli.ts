@@ -11,9 +11,10 @@ import { parseDocument, parseMetadata, type Metadata } from "./frontmatter.ts";
 import { initMemory, saveConcept, relateConcepts, deleteConcept } from "./mutate.ts";
 import { validateMemory } from "./validate.ts";
 import { parseFilters } from "./filter.ts";
+import { listUsage, recordUsage, usageStats, validateUsageContext, type UsageContext } from "./usage.ts";
 
 const version = manifest.version;
-const json = (data: unknown, ok = true) => JSON.stringify({ ok, data }, null, 2);
+const json = (data: unknown, ok = true, usage?: unknown) => JSON.stringify({ ok, data, ...(usage === undefined ? {} : { usage }) }, null, 2);
 const help = `koto-memory ${version} — OKF memory
 
 Usage:
@@ -26,6 +27,8 @@ Usage:
   koto-memory show <id> --root <monorepo> [--project <name>] [--json | --raw]
   koto-memory search [query] --root <monorepo> [--project <name>] [--type <type>] [--limit <n> | --all] [--json]
   koto-memory recover --root <monorepo> [--project <name>] [--dry-run] [--json]
+  koto-memory usage list --root <monorepo> [--since <timestamp>] [--until <timestamp>] [--limit <n> | --all] [--json]
+  koto-memory usage stats --root <monorepo> [--since <timestamp>] [--until <timestamp>] [--json]
   koto-memory --input-json <object | ->
   koto-memory --help
   koto-memory --version
@@ -38,6 +41,10 @@ Usage:
 --json     JSON on stdout, including failures. Exit: 0 success, 1 input/write/validation failure, 2 read failure.
 --raw      show only: original Markdown, cannot be combined with --json.
 --relations  show only: collect inbound/outbound references; requires readable concepts.
+--record-usage  show/search: save a usage event after a successful read. Omit for read-only calls.
+--usage-source <id> / --task-id <id> / --actor <id>  Recorded read attribution, or usage list/stats filters.
+--since / --until  usage only: timezone-qualified ISO timestamps, inclusive start and exclusive end.
+usage list defaults to 20 events, capped at 100; --all returns every matching event.
 --for-path <path>  search only: match code_refs relative to --root, with hold/constraint first.
 --filter <condition>  search only, repeatable; all conditions must match.
                      field=value | field!=value | field? | !field
@@ -109,6 +116,8 @@ export async function run(argv: string[]): Promise<number> {
       relations: { type: "boolean" }, "for-path": { type: "string" }, "dry-run": { type: "boolean" },
       strict: { type: "boolean" }, drift: { type: "boolean" }, stale: { type: "boolean" }, "stale-within": { type: "string" },
       filter: { type: "string", multiple: true },
+      "record-usage": { type: "boolean" }, "usage-source": { type: "string" }, "task-id": { type: "string" },
+      since: { type: "string" }, until: { type: "string" },
     } });
     const seen = new Set<string>();
     for (const token of tokens) {
@@ -127,17 +136,36 @@ export async function run(argv: string[]): Promise<number> {
       process.stdout.write(values.json ? `${json({ version })}\n` : `${version}\n`);
       return 0;
     }
-    if (!["init", "create", "update", "show", "search", "delete", "relate", "validate", "recover"].includes(command ?? "")) throw new Error(`Unknown command: ${command ?? "(missing)"}. Use --help.`);
+    if (!["init", "create", "update", "show", "search", "delete", "relate", "validate", "recover", "usage"].includes(command ?? "")) throw new Error(`Unknown command: ${command ?? "(missing)"}. Use --help.`);
     if (values.root === undefined || !values.root.trim()) throw new Error("--root is required; specify the monorepo directory.");
     const project = values.project ?? "default";
     validateProject(project);
     const common = ["root", "project", "json"];
     const writes = ["metadata-json", "metadata-file", "type", "title", "desc", "tags", "status", "body", "body-file", "actor", "no-index", "no-log"];
+    const usageAttribution = ["usage-source", "task-id", "actor"];
     const allowed = new Set([...common, ...(command === "init" ? ["actor"] : command === "create" ? writes
-      : command === "update" ? [...writes, "unset", "sync", "if-hash"] : command === "show" ? ["raw", "relations"] : command === "search" ? ["type", "limit", "all", "for-path", "filter"]
+      : command === "update" ? [...writes, "unset", "sync", "if-hash"] : command === "show" ? ["raw", "relations", "record-usage", ...usageAttribution] : command === "search" ? ["type", "limit", "all", "for-path", "filter", "record-usage", ...usageAttribution]
+      : command === "usage" ? [...usageAttribution, "since", "until", ...(args[0] === "list" ? ["limit", "all"] : [])]
       : command === "delete" ? ["actor", "dry-run", "if-hash"] : command === "relate" ? ["desc", "actor", "no-index", "no-log", "if-hash"] : command === "recover" ? ["dry-run"] : ["strict", "drift", "stale", "stale-within"])]);
     for (const name of seen) if (!allowed.has(name)) throw new Error(`--${name} is not supported by ${command}.`);
-    if (command === "recover") {
+    const usageContext: UsageContext = {
+      ...(values.actor === undefined ? {} : { actor: values.actor }),
+      ...(values["usage-source"] === undefined ? {} : { source: values["usage-source"] }),
+      ...(values["task-id"] === undefined ? {} : { taskId: values["task-id"] }),
+    };
+    if (command === "show" || command === "search") {
+      if (!values["record-usage"] && usageAttribution.some(name => seen.has(name))) throw new Error("Read attribution requires --record-usage.");
+      if (values["record-usage"]) validateUsageContext(usageContext);
+    }
+    if (command === "usage") {
+      if (args.length !== 1 || !["list", "stats"].includes(args[0]!)) throw new Error("usage requires list or stats.");
+      if (values.limit !== undefined && !/^[1-9]\d*$/.test(values.limit)) throw new Error("--limit must be a positive integer.");
+      const filters = { ...usageContext, ...(values.since === undefined ? {} : { since: values.since }), ...(values.until === undefined ? {} : { until: values.until }) };
+      const result = args[0] === "stats" ? await usageStats(values.root, project, filters) : await listUsage(values.root, project, filters, {
+        ...(values.limit === undefined ? {} : { limit: Number(values.limit) }), ...(values.all ? { all: true } : {}),
+      });
+      process.stdout.write(`${values.json ? json(result) : JSON.stringify(result, null, 2)}\n`);
+    } else if (command === "recover") {
       if (args.length) throw new Error("recover accepts no positional arguments.");
       const result = await (await openProjectFiles(values.root, project)).recover(values["dry-run"] ?? false);
       process.stdout.write(`${values.json ? json(result) : JSON.stringify(result, null, 2)}\n`);
@@ -186,7 +214,9 @@ export async function run(argv: string[]): Promise<number> {
       if (values.raw && values.json) throw new Error("--raw and --json cannot be combined.");
       if (values.raw && values.relations) throw new Error("--raw and --relations cannot be combined.");
       const concept = await (await openProjectMemory(values.root, project)).show(id, values.relations ? { relations: true } : {});
-      process.stdout.write(values.json ? `${json({ ...concept, content_hash: contentHash(concept.raw_content) })}\n` : values.raw ? concept.raw_content
+      const hash = contentHash(concept.raw_content);
+      const usage = values["record-usage"] ? await recordUsage(values.root, project, "show", [id], usageContext, hash) : undefined;
+      process.stdout.write(values.json ? `${json({ ...concept, content_hash: hash }, true, usage)}\n` : values.raw ? concept.raw_content
         : `${concept.metadata.title}\nID: ${concept.id}\n${concept.metadata.description}\n${values.relations ? `Inbound: ${concept.inbound?.join(", ") || "none"}\nOutbound: ${concept.outbound?.join(", ") || "none"}\n` : ""}\n${concept.body}`);
     } else {
       if (values.raw) throw new Error("--raw is a show option.");
@@ -208,7 +238,8 @@ export async function run(argv: string[]): Promise<number> {
         ...(filters.length ? { filters } : {}),
       };
       const results = await (await openProjectMemory(values.root, project)).search(query, options);
-      process.stdout.write(values.json ? `${json(results)}\n` : results.length
+      const usage = values["record-usage"] ? await recordUsage(values.root, project, "search", results.map(result => result.concept_id), usageContext) : undefined;
+      process.stdout.write(values.json ? `${json(results, true, usage)}\n` : results.length
         ? results.map(result => `${result.concept_id}\t${result.title}\n${result.description}\n`).join("\n") : "No matches.\n");
     }
     return 0;

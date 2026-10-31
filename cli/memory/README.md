@@ -21,6 +21,7 @@ bun /path/to/plugin/cli/memory/memory.ts show knowledge/auth --root /path/to/wor
 | `create <id>` | 新しい知識を保存し、目次と変更ログを更新 |
 | `show <id>` | メタデータ・本文・元のMarkdown・内容のハッシュを取得 |
 | `search [query]` | 日本語・英語の語句検索、分類・属性・コード参照で絞り込み |
+| `usage list` / `usage stats` | 記録した検索・参照の履歴と集計を取得 |
 | `update <id>` | 指定した属性・本文を更新。省略項目と未知の属性を保持 |
 | `relate <source> <target>` | sourceの本文へ同一プロジェクト内の関連リンクを追加 |
 | `delete <id> --dry-run` | 削除対象、参照元の変更、孤立する知識を確認 |
@@ -68,6 +69,29 @@ bun /path/to/plugin/cli/memory/memory.ts validate --root /path/to/workspace --st
 
 通常の`validate`は形式エラーで失敗します。`--strict`は警告・リンク切れ・孤立した知識も失敗にし、`--stale`は期限切れを失敗にします。`--stale-within 7d`は間近の期限を警告しますが、それだけではstrictを失敗にしません。検証はファイルを変更しません。
 
+## 利用状況の記録
+
+`search`・`show`に`--record-usage`を付けると、検索・本文取得に成功した呼び出しの利用ログを保存します。指定を省いた呼び出し、読み取りAPI、Markdownの直接参照は記録されません。`usage list`・`usage stats`自体は読み取り専用です。
+
+```sh
+bun /path/to/plugin/cli/memory/memory.ts search "認証" --root /path/to/workspace --record-usage --usage-source devlow --actor agent:codex --task-id task-001 --json
+bun /path/to/plugin/cli/memory/memory.ts show knowledge/auth --root /path/to/workspace --record-usage --usage-source memory --json
+bun /path/to/plugin/cli/memory/memory.ts usage stats --root /path/to/workspace --json
+bun /path/to/plugin/cli/memory/memory.ts usage list --root /path/to/workspace --usage-source devlow --since 2026-11-01T00:00:00+09:00 --until 2026-12-01T00:00:00+09:00 --all --json
+```
+
+保存先は`.space/<project>/memory/usage/events/<UUID>.json`。日時、project、操作、対象の知識ID、`show`時の内容ハッシュ、実行者、呼び出し元、任意のタスクIDを残します。検索文・知識本文は複製せず、知識と変更履歴の`log.md`も変更しません。知識を削除しても過去の利用ログは残ります。
+
+`--actor`の既定値は`agent/cli`、`--usage-source`は`cli`。呼び出し元とタスクIDはプロジェクトIDと同じ命名規則です。これらは自己申告の分類であり、認証やTasksの実在確認は行いません。タスクIDは既存のものが分かる場合だけ指定でき、ログのためのタスク作成は不要です。`search`・`show`で分類を指定するには`--record-usage`も必要です。
+
+`usage list`は新しい順に既定20件、`--limit`で最大100件、`--all`で全件を返します。`total`は絞り込み後の総数です。`usage stats`は`searches`（検索回数）、`shows`（本文取得回数）、`empty_searches`（結果ゼロの検索回数）と、知識別の`search_results`（返した検索結果に含まれた回数）・`shows`を返します。検索結果の上限で返されなかった知識は数えません。`show --relations`も指定した知識だけを数えます。
+
+どちらも`--actor`・`--usage-source`・`--task-id`・`--since`・`--until`で絞り込めます。期間はタイムゾーン付きISO日時で、開始を含み、終了を含みません。記録がなければゼロ件です。`sources.usage_count`は入力属性であり、この集計とは連動しません。
+
+記録はCLIが検索・本文取得を処理した回数を表します。結果をAIが読んだことや、判断に採用したことの証明ではありません。呼び出し元を`recall`とした集計も、recall経由のMemory呼び出し数であり、recall自体の起動回数ではありません。
+
+ログの保存に失敗した呼び出しはエラーになります。中断した保存は下記のrecover手順で元のイベントを一度だけ保存します。応答を受け取れなかったイベントも復旧で残る場合があり、同じ検索・参照の再実行は別の利用として数えます。壊れたログやプロジェクトの不一致があれば集計を失敗にし、部分集計を成功として返しません。
+
 ## JSON入出力
 
 `--input-json '<JSON>'` または `--input-json -`（標準入力）を単独で使います。JSON入力時は常にJSONで返します。
@@ -83,7 +107,9 @@ bun /path/to/plugin/cli/memory/memory.ts validate --root /path/to/workspace --st
 }
 ```
 
-`command`はコマンドと位置引数の配列です。フラグに相当するフィールドは`root`・`project`・`actor`・`type`・`title`・`description`・`status`・`tags`（カンマ区切り文字列）・`body`・`metadata`・`metadataFile`・`bodyFile`・`ifHash`・`limit`（整数）・`forPath`・`staleWithin`（例`7d`）。`filter`・`unset`は文字列配列、`all`・`relations`・`sync`・`noIndex`・`noLog`・`dryRun`・`strict`・`drift`・`stale`は真偽値です。
+`command`はコマンドと位置引数の配列です。フラグに相当するフィールドは`root`・`project`・`actor`・`type`・`title`・`description`・`status`・`tags`（カンマ区切り文字列）・`body`・`metadata`・`metadataFile`・`bodyFile`・`ifHash`・`limit`（整数）・`forPath`・`staleWithin`（例`7d`）・`usageSource`・`taskId`・`since`・`until`。`filter`・`unset`は文字列配列、`all`・`relations`・`sync`・`noIndex`・`noLog`・`dryRun`・`strict`・`drift`・`stale`・`recordUsage`は真偽値です。
+
+利用記録付きの`search`・`show`では従来の`data`を保持し、トップレベルに`usage: {event_id, path}`を追加します。`show --raw`の出力は元のMarkdownのままです。
 
 成功は `{"ok":true,"data":...}`、失敗は `{"ok":false,"error":{"code":"...","message":"...","details":...}}`。検証で問題を見つけた場合は`ok:false`と検証結果の`data`を返します。終了コードは0が成功、1が入力・更新・検証の失敗、2が読取の失敗です。ハッシュ競合は`VERSION_CONFLICT`、中断した書き込みは`RECOVERY_REQUIRED`、復旧内容の競合は`RECOVERY_CONFLICT`です。
 
