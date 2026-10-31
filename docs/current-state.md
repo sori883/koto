@@ -80,9 +80,11 @@ Tasks追加後の配布物も、Codexのapp-serverがkoto:tasksを有効なス�
 
 5スキル追加後は、型検査、配布テスト9件・282 assertions、188ファイルの配布物照合、5スキルの形式検査に成功した。Codexのapp-serverとClaude Codeのセッション限定の読込は8スキルを認識した。独立した評価担当に一時フォルダの配布スキルを渡し、小さな不具合修正のタスク作成から完了記録、および古いcheckpointと現在のコード・依存関係を照合する読み取り専用の状況確認を試した。後者は確認前後の全65ファイルが同一だった。環境差を含む確認範囲は[スキル連携の検証記録](devlow-cli-integration.md#検証)に記載する。
 
+5スキルの実装コミット0a5ec5eの[GitHub Linux CI](https://github.com/sori883/koto/actions/runs/41213746200)では、Bun 1.4.2で全262テスト・1664 assertions、型検査、生成物照合が成功した。
+
 Codexデスクトップ画面とClaude Codeモデルへの自然言語依頼、個別の認証方式・認証失敗時の実接続は未確認。独立担当によるdevlow・recallの試行は、製品クライアントからの自動スキル選択や全専門手法の実行確認を意味しない。monorepoの実モデル検証を他のCLIの検証として扱わない。
 
-monorepoは`main`から作った`develop`へ履歴を残して統合済み。Tasksも`codex/tasks-cli`から履歴を残して統合済み（7cbc872）。Memoryは`codex/memory-cli`から同じ方法で統合済み（3c326b1）。5スキルは`codex/devlow-skills`から同じ方法で取り込む。`main`へのマージは今回の範囲に含めない。
+monorepoは`main`から作った`develop`へ履歴を残して統合済み。Tasksも`codex/tasks-cli`から履歴を残して統合済み（7cbc872）。Memoryは`codex/memory-cli`から同じ方法で統合済み（3c326b1）。5スキルは`codex/devlow-skills`で開発し、同じ統合方針に従う。`main`へのマージは今回の範囲に含めない。
 
 版数は0.1.8のまま。開発ブランチのGitHubへの反映とプラグインの正式リリースは区別する。公開済み0.1.8とMacに導入済みのプラグインには未反映。`@koto/monorepo`・`@koto/tasks`・`@koto/memory`はローカルのパッケージ識別名で、NPM公開は行っていない。
 
