@@ -9,9 +9,10 @@
   },
   "scripts": {
     "monorepo": "bun cli/monorepo/monorepo.ts",
+    "tasks": "bun cli/tasks/tasks.ts",
     "build": "bun scripts/build.ts",
     "build:check": "bun scripts/build.ts --check",
-    "test": "bun test tests/distribution tests/monorepo",
+    "test": "bun test tests/distribution tests/monorepo tests/tasks",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
