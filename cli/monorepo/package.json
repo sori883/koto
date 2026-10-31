@@ -1,0 +1,8 @@
+{
+  "name": "@koto/monorepo",
+  "version": "0.1.8",
+  "private": true,
+  "type": "module",
+  "bin": { "koto-monorepo": "./monorepo.ts" },
+  "engines": { "bun": ">=1.4.2" }
+}

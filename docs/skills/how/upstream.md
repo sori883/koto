@@ -1,5 +1,7 @@
 # howの参照元と日本語化
 
+以下は削除前の取込記録。2026-10-30の削除と現在の構成は[スキル整理の記録](../../issue-23-skill-pruning.md)を参照する。
+
 確認日：2026-09-21
 
 Cursorのpstack、コミット `6ed0f7a9504f577d7529064103cecce9be7dfc5e` のhowを、日本語の独立した配布スキルとして収録する。
@@ -9,7 +11,7 @@ Cursorのpstack、コミット `6ed0f7a9504f577d7529064103cecce9be7dfc5e` のhow
 - [原文の説明担当プロンプト](https://github.com/cursor/plugins/blob/6ed0f7a9504f577d7529064103cecce9be7dfc5e/pstack/skills/how/references/explainer-prompt.md)
 - [原文のMITライセンス](https://github.com/cursor/plugins/blob/6ed0f7a9504f577d7529064103cecce9be7dfc5e/pstack/LICENSE)
 
-配布物は [SKILL.md](../../../skills/how/SKILL.md)、`references/` の2ファイル、原文を保持した [LICENSE](../../../skills/how/LICENSE)。この保守資料は配布スキルの実行時依存にしない。
+配布物は [SKILL.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/how/SKILL.md)、`references/` の2ファイル、原文を保持した [LICENSE](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/how/LICENSE)。この保守資料は配布スキルの実行時依存にしない。
 
 ## 翻訳の範囲
 

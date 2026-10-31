@@ -1,6 +1,10 @@
 # system-blueprintの設計根拠と参照元
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../../current-state.md)を参照してください。
+
 確認日：2026-09-21
+
+以下は取込時の設計記録。2026-10-30にhow・why・teachを削除し、system-blueprintは対象のコードと資料を直接調べる手順へ変更した。現在の構成は[スキル整理の記録](../../issue-23-skill-pruning.md)を参照する。
 
 主責務は、既存のコードや資料から、対象システムの構成・動作・設計背景を理解できるブループリントを作成・更新すること。対象範囲の判断、調査、concept分割、保存、検証は、その目的を達成するために行う。
 
@@ -26,17 +30,17 @@
 | [pstack why](https://github.com/cursor/plugins/blob/6ed0f7a9504f577d7529064103cecce9be7dfc5e/pstack/skills/why/SKILL.md) | 採用理由を根拠から調べ、確度を区別する。別スキルを使う |
 | [acquire-codebase-knowledge](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/acquire-codebase-knowledge/SKILL.md) | 全体把握、項目別の調査、文書化、根拠の検証、既存資料の意図と実装の差の確認 |
 | [調査項目](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/acquire-codebase-knowledge/references/inquiry-checkpoints.md) | 入口、依存、データフロー、バックグラウンド処理、外部連携などの確認観点 |
-| [OKF Agent Memory](../../../skills/okf-agent-memory/SKILL.md) | knowledge・decisionの分類、検索してから更新すること、CLIでの保存・関連付け・検証 |
+| [OKF Agent Memory](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/okf-agent-memory/SKILL.md) | knowledge・decisionの分類、検索してから更新すること、CLIでの保存・関連付け・検証 |
 
 acquire-codebase-knowledgeはそのまま翻訳する対象ではない。今回の目的に合わせ、7文書の固定出力、全依存の一覧、コーディング規約・テスト環境・技術的負債の網羅的な文書化、専用スキャンスクリプトは引き継がない。システム構成の理解に必要な根拠として関連する箇所を調べる。
 
-同スキルの参照元はGitHub, Inc.のMITライセンスであり、原文の[LICENSE](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/LICENSE)を、配布物の [LICENSE](../../../skills/system-blueprint/LICENSE) に保持する。pstackを日本語化したスキルと原文のライセンスはhow・whyの配布物に含める。
+同スキルの参照元はGitHub, Inc.のMITライセンスであり、原文の[LICENSE](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/LICENSE)を、配布物の [LICENSE](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/system-blueprint/LICENSE) に保持する。pstackを日本語化したスキルと原文のライセンスはhow・whyの配布物に含める。
 
 ## 配布構成
 
-- [SKILL.md](../../../skills/system-blueprint/SKILL.md)：作成・更新の入口と完了条件。
-- [文書モデル](../../../skills/system-blueprint/references/document-model.md)：conceptの責務、分割、根拠、不明点、更新。
-- [本文ひな形](../../../skills/system-blueprint/assets/blueprint-template.md)：全体像の文書に使う本文。frontmatterはOKF CLIへのメタデータとして別に渡す。
+- [SKILL.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/system-blueprint/SKILL.md)：作成・更新の入口と完了条件。
+- [文書モデル](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/system-blueprint/references/document-model.md)：conceptの責務、分割、根拠、不明点、更新。
+- [本文ひな形](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/system-blueprint/assets/blueprint-template.md)：全体像の文書に使う本文。frontmatterはOKF CLIへのメタデータとして別に渡す。
 - 同じ親ディレクトリにhow・why・okf-agent-memoryを配置する。開発用 `.agents/skills/` やこの保守資料を利用先の実行依存にしない。
 
 ## build.tsの配布方針

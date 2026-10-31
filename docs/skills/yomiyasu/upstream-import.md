@@ -1,5 +1,7 @@
 # yomiyasuの取込記録
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../../current-state.md)を参照してください。
+
 2026-10-13のユーザー依頼により、[nanaism/yomiyasu](https://github.com/nanaism/yomiyasu)をkotoへ追加する。natural-japaneseに続く原版スキルの取り込みとして扱い、TypeScriptへの移植や本文の書き換えは行わない。
 
 ## 出典と取込範囲

@@ -1,5 +1,7 @@
 # プロジェクトへの実ファイル導入
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](current-state.md)を参照してください。
+
 2026-10-13。CodexとClaude Codeで全スキルをプロジェクトへ配置する依頼に対応する。特定スキルの選択・除外は対象外。設計方針の正本は[architecture.md](architecture.md)、利用手順は[distribution.md](distribution.md)に置く。
 
 ## 採用した構成

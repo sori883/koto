@@ -1,8 +1,10 @@
 # タスクの規模・管理手順・生成ファイルの一覧
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../../current-state.md)を参照してください。
+
 2026-09-23時点の定義を整理した一覧。対象は、kotoが利用先へ提供する開発フローである。2026-09-22の「OKFへシステムの設計と歴史を残す」という方針を反映した。現在の配布用ソース、設計済みで未実装の事項、直近の記録軽量化の提案を区別する。新しい粒度・保存形式を決定する文書ではない。
 
-根拠は[設計正本](../../architecture.md)、[全体の設計資料](../../devlow-design.md)、配布用の[全体フロー](../../../skills/devlow/references/workflow.md)と[依頼整理](../../../skills/devlow/references/intake.md)。直近の提案は[タスク記録の調査](task-records-research.md)にあり、まだ配布用ソースへ反映していない。
+根拠は[設計正本](../../architecture.md)、[全体の設計資料](../../devlow-design.md)、配布用の[全体フロー](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/workflow.md)と[依頼整理](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/intake.md)。直近の提案は[タスク記録の調査](task-records-research.md)にあり、まだ配布用ソースへ反映していない。
 
 以下の「ファイルを作る」は、利用先でエージェントが手順に従って作成・更新することを指す。工程を開始すれば全ファイルが自動生成される仕組みではない。既存のIssue・資料・PR等で内容を追える場合は参照・更新を優先し、同じ内容を新規作成しない。
 
@@ -69,7 +71,7 @@
 8. 親が統合後の実物を全体の条件と照合し、共通設計・統合箇所の必要な独立レビューを行う。子が全員完了を報告しただけでは親を完了にしない。
 9. 依頼された納品地点へ進み、確定した結果をOKFへ整理して報告する。独立して引き渡せる子の最終結果は、終了した範囲を明記して先に知識化できる。
 
-タスク管理CLIは[orch](../../../skills/orch/SKILL.md)として実装した。台帳の具体的な操作は同スキルを参照する。CLIを利用できない環境では各タスク記録を正本とし、親のplan.mdに依存・子への参照・確認時点の集約を置いて順次進める。
+タスク管理CLIは[orch](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/orch/SKILL.md)として実装した。台帳の具体的な操作は同スキルを参照する。CLIを利用できない環境では各タスク記録を正本とし、親のplan.mdに依存・子への参照・確認時点の集約を置いて順次進める。
 
 ## 3. 全規模で共通の状態・更新・終了
 
@@ -120,7 +122,7 @@ task.mdの冒頭は進行状態と成果判定、工程表は実行状態と確�
 
 標準以上の子の指示は子自身のtask.md、小規模な子は台帳または親の計画と報告で扱う。`brief.md`を一律に作る定義はない。完了報告は会話と、存在するtask.mdへ残し、`report.md`を一律に作る定義もない。
 
-設計候補を探索する条件と進め方は[設計工程](../../../skills/devlow/references/design.md)が所有する。小規模で候補を分ける場合は関連設計資料の隣を基準とし、task.mdを増やさない。読み取り専用の場合は候補・比較とも回答にまとめる。途中の候補はタスク側に保ち、採用した構造と統合理由はdecisionの保存候補としてdeliverへ渡す。
+設計候補を探索する条件と進め方は[設計工程](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/design.md)が所有する。小規模で候補を分ける場合は関連設計資料の隣を基準とし、task.mdを増やさない。読み取り専用の場合は候補・比較とも回答にまとめる。途中の候補はタスク側に保ち、採用した構造と統合理由はdecisionの保存候補としてdeliverへ渡す。
 
 ### 再開用の記録
 
@@ -128,7 +130,7 @@ task.mdの冒頭は進行状態と成果判定、工程表は実行状態と確�
 | --- | --- | --- |
 | `.space/checkpoint/<task>-resume.md` | 目的・条件・制約、日時と作業場所、保存済み状態、検証結果、未完了、次の操作、関連資料 | 規模によらず、必要な中断・引き継ぎ・明示的保存・縮約への備えでcheckpoint-safelyを使う。既存記録を更新し、指定先があれば従う |
 
-checkpointは保存時点の要約であり、最新の進捗を常時管理する台帳ではない。CLIは本文を直接生成せず、必要な情報と参照をcheckpoint-safelyへ渡す。保存・コミット・中断の具体的な条件は[同スキル](../../../skills/checkpoint-safely/SKILL.md)が所有する。
+checkpointは保存時点の要約であり、最新の進捗を常時管理する台帳ではない。CLIは本文を直接生成せず、必要な情報と参照をcheckpoint-safelyへ渡す。保存・コミット・中断の具体的な条件は[同スキル](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/checkpoint-safely/SKILL.md)が所有する。
 
 ### OKFの知識と付随する管理ファイル
 
@@ -150,7 +152,7 @@ checkpointは保存時点の要約であり、最新の進捗を常時管理す�
 | 下位ディレクトリの `index.md` | 階層に文書を保存する場合の目次。保存処理が必要な参照を管理 |
 | `log.md` | OKF文書を作成・更新等した操作履歴。タスクの進捗や作業結果の本文を入れる場所ではない |
 
-構成文書の名前は[system-blueprintの文書モデル](../../../skills/system-blueprint/references/document-model.md)、システム履歴の配置は[全体フロー](../../../skills/devlow/references/workflow.md)、知識の選別は[OKFの保存判断](../../../skills/okf-agent-memory/references/remember.md)、目次・操作履歴の生成は[OKF CLI](../../../skills/okf-agent-memory/references/cli.md)に基づく。以前の `knowledge/work-results/` は新規の標準配置にせず、既存文書は同じIDで保持・参照する。上記以外の題材でも既存のconceptを使え、全知識の個別ファイル名を事前に固定する仕様ではない。
+構成文書の名前は[system-blueprintの文書モデル](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/system-blueprint/references/document-model.md)、システム履歴の配置は[全体フロー](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/workflow.md)、知識の選別は[OKFの保存判断](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/okf-agent-memory/references/remember.md)、目次・操作履歴の生成は[OKF CLI](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/okf-agent-memory/references/cli.md)に基づく。以前の `knowledge/work-results/` は新規の標準配置にせず、既存文書は同じIDで保持・参照する。上記以外の題材でも既存のconceptを使え、全知識の個別ファイル名を事前に固定する仕様ではない。
 
 設計だけの依頼でも、引き渡し時に採用した内容と理由をdecisionへ整理できる。未実装・一部実装・実装確認済みの別を本文で示し、未実装の構成を現状のblueprintや実施済みの移行履歴にしない。途中の案・TODO・会話全文・checkpointはそのままOKFへ登録しない。テストを実行した等の操作だけならタスクの結果記録で足りる。
 
@@ -264,6 +266,6 @@ CLI利用時はtask.mdがあれば台帳を参照させ、状態を二重に管�
 
 現在のtask.mdは、進捗だけでなく依頼整理や短い設計・判断もまとめる形式である。確定したシステムの設計・歴史をOKFへ整理する方針は全体フローとひな形の案内に反映した。一方、「薄いタスク」の最小項目への変更や「終了後は通常の一覧から外す」仕組みは[調査に基づく提案](task-records-research.md)であり、まだ実装していない。
 
-task.mdを作成する規模は標準（中規模）・大規模に確定し、全体フロー・intake・ひな形へ反映した。未決なのは、ひな形をさらに軽量化する具体的な必須項目、子タスクへ分ける詳細基準、完了タスクの保持期間とアーカイブ方法。CLIのコマンド・保存・排他・復旧・表示は[orchの仕様](../../../skills/orch/references/cli.md)へ具体化した。
+task.mdを作成する規模は標準（中規模）・大規模に確定し、全体フロー・intake・ひな形へ反映した。未決なのは、ひな形をさらに軽量化する具体的な必須項目、子タスクへ分ける詳細基準、完了タスクの保持期間とアーカイブ方法。CLIのコマンド・保存・排他・復旧・表示は[orchの仕様](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/orch/references/cli.md)へ具体化した。
 
 本一覧は、現行文書・ファイルの存在・参照整合性を整理する。追加したCLIの実行・独立した利用検証の結果と制約は[orchの実装記録](../orch/implementation.md)に分けて記す。

@@ -1,5 +1,7 @@
 # 全体フローの実装・確認記録
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../../current-state.md)を参照してください。
+
 2026-09-21。[設計資料](../../devlow-design.md)に基づき、全体フローの初版と、続く依頼整理工程の実施範囲を記録する。
 
 ## 全体フロー初版の範囲
@@ -14,12 +16,12 @@
 
 | ファイル | 役割 |
 | --- | --- |
-| [SKILL.md](../../../skills/devlow/SKILL.md) | 起動条件と全体フローへの入口 |
-| [workflow.md](../../../skills/devlow/references/workflow.md) | 工程選択と実行時の共通契約。依頼整理の詳細はintake.mdへ接続 |
-| [intake.md](../../../skills/devlow/references/intake.md) | 目的・範囲・受け入れ条件・未決事項を整理し、次に着手できる工程へ渡す |
-| [task-template.md](../../../skills/devlow/assets/task-template.md) | ファイル化する依頼整理記録の出発点。必要な節だけを使う |
-| [LICENSE](../../../skills/devlow/LICENSE) | use-principlesから移した進行手順のライセンスを保持 |
-| [use-principles](../../../skills/use-principles/SKILL.md) | 検索・本文確認・適用条件の受け渡し。工程や保存を起動しない |
+| [SKILL.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/SKILL.md) | 起動条件と全体フローへの入口 |
+| [workflow.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/workflow.md) | 工程選択と実行時の共通契約。依頼整理の詳細はintake.mdへ接続 |
+| [intake.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/intake.md) | 目的・範囲・受け入れ条件・未決事項を整理し、次に着手できる工程へ渡す |
+| [task-template.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/assets/task-template.md) | ファイル化する依頼整理記録の出発点。必要な節だけを使う |
+| [LICENSE](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/LICENSE) | use-principlesから移した進行手順のライセンスを保持 |
+| [use-principles](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/use-principles/SKILL.md) | 検索・本文確認・適用条件の受け渡し。工程や保存を起動しない |
 | [導入用AGENTS.md](../../../templates/AGENTS.md) | devlowを入口にして原則参照を接続 |
 
 全体フローはスキル内の相対参照で読み、開発リポジトリの絶対パスやdocs、利用先へのフロー本文のコピーを必要としない。専門スキルへの相対リンクは同じ親ディレクトリに置く構成で解決する。存在しない工程別ファイルやtask CLIへのリンク・コマンドを追加しない。

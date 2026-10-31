@@ -1,12 +1,14 @@
 # orchの容量・履歴保持と手動アーカイブ
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../../current-state.md)を参照してください。
+
 orch初版は履歴を削除せず、作業のまとまりごとに台帳を区切って使う。完了した台帳は全履歴と証拠を保持し、次の独立した仕事では別のstoreを明示して初期化する。進行中の依存を分断するために台帳を移すことや、state.jsonの一部を切り取ることはしない。
 
-この文書は開発・運用判断の記録であり、配布するスキルには含めない。実際のコマンドと復旧条件は[CLI資料](../../../skills/orch/references/cli.md)、保存機構の確認範囲は[実装記録](implementation.md)を参照する。
+この文書は開発・運用判断の記録であり、配布するスキルには含めない。実際のコマンドと復旧条件は[CLI資料](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/orch/references/cli.md)、保存機構の確認範囲は[実装記録](implementation.md)を参照する。
 
 ## 2026-09-23の測定
 
-[測定スクリプト](../../../scripts/bench-orch.ts)は一時ディレクトリにCLIをnode_modulesなしで複製し、コピー前後のソースのハッシュを照合する。同じ一時領域へ合成の成果物・証拠・台帳を作り、登録から更新まで実際のCLIを別プロセスとして呼ぶ。state.jsonを直接生成・編集して件数を増やしていない。実プロジェクトの台帳と測定用の台帳は別である。
+[測定スクリプト](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/scripts/bench-orch.ts)は一時ディレクトリにCLIをnode_modulesなしで複製し、コピー前後のソースのハッシュを照合する。同じ一時領域へ合成の成果物・証拠・台帳を作り、登録から更新まで実際のCLIを別プロセスとして呼ぶ。state.jsonを直接生成・編集して件数を増やしていない。実プロジェクトの台帳と測定用の台帳は別である。
 
 ```sh
 bun scripts/bench-orch.ts --sizes 10,100,300 --samples 5 --out /tmp/orch-benchmark.json

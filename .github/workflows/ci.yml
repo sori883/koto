@@ -15,15 +15,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.2
-      - uses: astral-sh/setup-uv@v5
       - run: bun install --frozen-lockfile --ignore-scripts
-      - name: Prepare each CLI runtime
-        run: |
-          bun skills/okf-agent-memory/scripts/okf.ts version --json
-          bun skills/orch/scripts/task.ts --help
-          bun skills/setup/scripts/setup.ts --help
-          uv run skills/natural-japanese/scripts/lint.py --help
-          python3 skills/yomiyasu/scripts/yomiyasu_lint.py --help
       - run: bun run typecheck
       - run: bun run test
       - name: Compare every generated file, including untracked paths

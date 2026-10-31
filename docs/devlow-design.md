@@ -1,5 +1,7 @@
 # 作業規模に応じた開発フローの設計案
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](current-state.md)を参照してください。
+
 2026-09-23更新。全体フローの定義場所、工程の責務、成果物、工程を選ぶ条件を扱う設計資料。統括スキルの入口・全体フロー、依頼整理から引き渡しまで8工程の手順と、タスク・設計・計画・検証記録のひな形を配布用ソースに具体化した。大規模管理とタスク管理CLIはorchへ具体化した。配布生成と本物の開発案件での長期運用は別の確認対象とする。
 
 目的は、依頼を受けたエージェントが、必要な工程と証拠を選び、途中で担当やセッションが変わっても作業を続けられるようにすること。作業が小さいときは工程を短くまとめ、大きいときは成果物と担当を分ける。
@@ -22,19 +24,18 @@
 
 | 定義 | 正本の配置 | 定義すること | 状態 |
 | --- | --- | --- | --- |
-| 全体フロー | [skills/devlow/references/workflow.md](../skills/devlow/references/workflow.md) | 工程の接続、依頼種別・規模・リスクによる選択、共通の完了条件、成果物の役割 | 配布用ソース作成済み |
-| 全体フローの起動・進行 | [skills/devlow/SKILL.md](../skills/devlow/SKILL.md) | 同梱の全体フローを読み、今回の工程を選び、担当へ渡し、結果から次の工程を選ぶ | 配布用ソース作成済み |
+| 全体フロー | [skills/devlow/references/workflow.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/workflow.md) | 工程の接続、依頼種別・規模・リスクによる選択、共通の完了条件、成果物の役割 | 配布用ソース作成済み |
+| 全体フローの起動・進行 | [skills/devlow/SKILL.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/SKILL.md) | 同梱の全体フローを読み、今回の工程を選び、担当へ渡し、結果から次の工程を選ぶ | 配布用ソース作成済み |
 | 工程ごとの実行手順 | `skills/devlow/references/` | 各工程で入力をどう確認し、成果物をどう作り、終了をどう判断するか | intake.mdからdeliver.mdまで8工程を作成済み。横断的な管理の接続はorchestrate.mdへ具体化済み |
 | 工程成果物の記入ひな形 | `skills/devlow/assets/` | タスク記録と、独立した設計、計画、検証記録の記入枠 | task-template.md・design-template.md・plan-template.md・verification-template.mdを作成済み。checkpointのひな形は同梱しない |
-| 専門的な調査 | `skills/how/`、`skills/why/` | 現在の仕組みと設計理由を調べる具体的手順 | 既存。規模に応じた起動方法は調整対象 |
 | 現在の構成の文書化 | `skills/system-blueprint/` | 確認できた現状をBabelの文書群へ整理する | 既存 |
-| 最終結果・確定した判断の知識化 | [skills/devlow/references/deliver.md](../skills/devlow/references/deliver.md) と `skills/okf-agent-memory/SKILL.md` | 引き渡し工程が保存する内容を整理し、OKFスキルが検索・保存・更新・検証を担当する | 共通の保存条件と引き渡しの具体的手順を作成済み |
+| 最終結果・確定した判断の知識化 | [skills/devlow/references/deliver.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/deliver.md) と `skills/okf-agent-memory/SKILL.md` | 引き渡し工程が保存する内容を整理し、OKFスキルが検索・保存・更新・検証を担当する | 共通の保存条件と引き渡しの具体的手順を作成済み |
 | 原則・ルールの参照 | `skills/use-principles/` | 依頼と変更対象に適用する原則・ルールを選んで読む | 既存。フローの進行責務を分離済み |
 | タスク分割・状態管理 | `skills/orch/SKILL.md` と `scripts/task.ts` | 作業単位、依存関係、担当、状態、証拠の参照を管理する | orchスキルとCLIを作成済み |
 | checkpointの作成・更新・保存 | `skills/checkpoint-safely/SKILL.md` と同スキル内の参照資料・ひな形 | 再開に必要な要約と成果物への参照を保存する。保存先・記録形式・保存手順を所有する | 既存。通常の作業ログや判断ログの正本にはしない |
 | この設計の説明と検証記録 | `docs/devlow-design.md` | 配置と責務の理由、検討中の選択、移行事項 | この文書。配布対象外 |
 
-全体フローの本文は統括スキルの `references/workflow.md` を正本とする。`SKILL.md` やひな形へ工程選択の表を複製しない。工程ファイルは選択後の実行方法を持ち、規模による採否は `workflow.md` を参照する。how・whyの調査方法も工程ファイルへ転記しない。
+全体フローの本文は統括スキルの `references/workflow.md` を正本とする。`SKILL.md` やひな形へ工程選択の表を複製しない。工程ファイルは選択後の実行方法を持ち、規模による採否は `workflow.md` を参照する。
 
 この配置を選ぶ理由は、全体フローの変更責任が統括スキルにあり、工程手順と同じ版で配布・更新する必要があるため。複数工程から使うことだけでは、複数の独立したスキルに共通する知識とは判断しない。初期案のBabel配置では、フローを読むために利用先への文書配置とOKFを経由する依存も増えていた。スキルへの同梱により、その依存とコピーの版ずれを避ける。
 
@@ -52,7 +53,7 @@
 
 ## 3. 全体の進行
 
-実行するフロー図と分岐条件の正本は[全体フロー](../skills/devlow/references/workflow.md#3-成果物を渡して進める)に置く。依頼の種類による主な経路は次のとおり。
+実行するフロー図と分岐条件の正本は[全体フロー](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/workflow.md#3-成果物を渡して進める)に置く。依頼の種類による主な経路は次のとおり。
 
 | 依頼 | 経路と終了地点 |
 | --- | --- |
@@ -129,14 +130,14 @@
 
 | 工程ID | 定義ファイル | 入力・主な作業 | 成果物 | 次へ進む条件 |
 | --- | --- | --- | --- | --- |
-| intake | [references/intake.md](../skills/devlow/references/intake.md) | 元の依頼と既存の指示を読み、目的・範囲・完了条件・規模・実施工程を整理 | task.mdの依頼整理記録。独立して共有・レビューする場合だけrequest.mdへ分割 | 期待する結果と許可範囲が分かり、次の操作を妨げる未決事項がなく、残る未決事項の解決先が分かる |
-| investigate | [references/investigate.md](../skills/devlow/references/investigate.md) | 対象資料・コード・履歴から現状と影響を調べる。必要な問いをhow・whyへ渡す | 調査結果、再現手順、基準値、根拠。通常task.mdへまとめ、独立共有時は同じ場所のinvestigation.mdへ分割 | 次の判断に必要な事実と、未確認の限界を説明できる |
-| design | [references/design.md](../skills/devlow/references/design.md) | 現状と制約を根拠に、必要な場合は構造の異なる最低2案を独立に作り、比較・統合する。利用例から骨組みを導く | 候補、比較、統合案と理由、試作・確認の証拠。通常task.md、独立資料はdesign.md、並行担当の候補は別ファイル | 必要な探索・統合後の確認を終え、実装の形と制約が明確。設計のみなら不足を明示して納品可 |
-| plan | [references/plan.md](../skills/devlow/references/plan.md) | 設計と完了条件を検証可能な単位へ分け、依存・担当・検証と引き渡し条件を定める | 標準はtask.md、分割時と大規模の親はplan.md。子への指示、検証方法・期待値・必要な証拠と取得条件の対応 | 着手範囲の前提・担当・合否条件が確定し、循環依存や重複書き込みがない。計画のみなら不足を明示して納品可 |
-| implement | [references/implement.md](../skills/devlow/references/implement.md) | 実状態と着手条件を照合し、骨組みに沿って単位を変更・自己確認する | コード・設定・文書・テスト・差分、局所確認の証拠と未確認事項 | 検証に必要な変更がそろい、設計からの変更理由と対象の版を渡せる |
-| verify | [references/verify.md](../skills/devlow/references/verify.md) | 現在の対象を実経路や根拠で確認し、期待値と結果を比べる | 合格・不合格・未確認・対象外の判定、証拠、戻り先 | 変更を先へ進める場合は必須条件が合格。検証のみなら結果と限界を納品可 |
-| review | [references/review.md](../skills/devlow/references/review.md) | 成果物・差分・理由・証拠を照合し、指摘の修正・見送り・確認を判断する | 指摘と根拠、対応・再確認、独立性、最終判定 | 変更を先へ進める場合は必須の指摘が解消。レビューのみなら指摘と限界を納品可 |
-| deliver | [references/deliver.md](../skills/devlow/references/deliver.md) | 依頼された納品操作の実結果を確認し、確定した知識をOKFへ整理して状態・報告を更新する | 完了報告、依頼された納品物、必要なconceptと構成文書、保存・納品の確認結果 | 必要な検証・レビュー・保存・納品の状態と証拠が対応する。未完了、成功、終了した失敗を区別する |
+| intake | [references/intake.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/intake.md) | 元の依頼と既存の指示を読み、目的・範囲・完了条件・規模・実施工程を整理 | task.mdの依頼整理記録。独立して共有・レビューする場合だけrequest.mdへ分割 | 期待する結果と許可範囲が分かり、次の操作を妨げる未決事項がなく、残る未決事項の解決先が分かる |
+| investigate | [references/investigate.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/investigate.md) | 対象資料・コード・履歴から現状と影響を調べる。問いに必要な範囲を確認し、調査済みの根拠を再利用する | 調査結果、再現手順、基準値、根拠。通常task.mdへまとめ、独立共有時は同じ場所のinvestigation.mdへ分割 | 次の判断に必要な事実と、未確認の限界を説明できる |
+| design | [references/design.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/design.md) | 現状と制約を根拠に、必要な場合は構造の異なる最低2案を独立に作り、比較・統合する。利用例から骨組みを導く | 候補、比較、統合案と理由、試作・確認の証拠。通常task.md、独立資料はdesign.md、並行担当の候補は別ファイル | 必要な探索・統合後の確認を終え、実装の形と制約が明確。設計のみなら不足を明示して納品可 |
+| plan | [references/plan.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/plan.md) | 設計と完了条件を検証可能な単位へ分け、依存・担当・検証と引き渡し条件を定める | 標準はtask.md、分割時と大規模の親はplan.md。子への指示、検証方法・期待値・必要な証拠と取得条件の対応 | 着手範囲の前提・担当・合否条件が確定し、循環依存や重複書き込みがない。計画のみなら不足を明示して納品可 |
+| implement | [references/implement.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/implement.md) | 実状態と着手条件を照合し、骨組みに沿って単位を変更・自己確認する | コード・設定・文書・テスト・差分、局所確認の証拠と未確認事項 | 検証に必要な変更がそろい、設計からの変更理由と対象の版を渡せる |
+| verify | [references/verify.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/verify.md) | 現在の対象を実経路や根拠で確認し、期待値と結果を比べる | 合格・不合格・未確認・対象外の判定、証拠、戻り先 | 変更を先へ進める場合は必須条件が合格。検証のみなら結果と限界を納品可 |
+| review | [references/review.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/review.md) | 成果物・差分・理由・証拠を照合し、指摘の修正・見送り・確認を判断する | 指摘と根拠、対応・再確認、独立性、最終判定 | 変更を先へ進める場合は必須の指摘が解消。レビューのみなら指摘と限界を納品可 |
+| deliver | [references/deliver.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/deliver.md) | 依頼された納品操作の実結果を確認し、確定した知識をOKFへ整理して状態・報告を更新する | 完了報告、依頼された納品物、必要なconceptと構成文書、保存・納品の確認結果 | 必要な検証・レビュー・保存・納品の状態と証拠が対応する。未完了、成功、終了した失敗を区別する |
 
 横断処理は `references/orchestrate.md` に大規模作業の開始・集約・終了を置く。中断・引き継ぎ等で再開用の記録が必要なときはcheckpoint-safelyを使い、統括スキルに別の保存手順や再開メモのひな形を作らない。再開時は既存checkpointが参照するタスク成果物と実状態を入力に、`references/workflow.md` で再開する工程を選ぶ。orchとの接続は同じ工程を子タスクに適用し、別の実装・検証手順を作らない。
 
@@ -181,11 +182,11 @@ task.mdは標準（中規模）・大規模で作成する。新規の既定は 
 
 文書を分ける条件は、別担当が参照する、独立してレビュー・更新する、複数単位から参照する、入口の要約だけでは判断できない詳細がある、のいずれか。標準タスクでも `task.md` 一つに全工程を記録してよい。大規模の親計画は独立文書とし、子タスクから共有する。
 
-[task-template.md](../skills/devlow/assets/task-template.md)、独立した設計資料に使う[design-template.md](../skills/devlow/assets/design-template.md)、独立した計画に使う[plan-template.md](../skills/devlow/assets/plan-template.md)、独立した検証記録に使う[verification-template.md](../skills/devlow/assets/verification-template.md)を作成済み。必要な節だけを使い、短い内容は既存の記録へまとめる。レビュー・引き渡しは工程本文で必要な記録項目を示し、ひな形を一律に増やさない。checkpointのひな形は統括スキルに作らない。
+[task-template.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/assets/task-template.md)、独立した設計資料に使う[design-template.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/assets/design-template.md)、独立した計画に使う[plan-template.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/assets/plan-template.md)、独立した検証記録に使う[verification-template.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/assets/verification-template.md)を作成済み。必要な節だけを使い、短い内容は既存の記録へまとめる。レビュー・引き渡しは工程本文で必要な記録項目を示し、ひな形を一律に増やさない。checkpointのひな形は統括スキルに作らない。
 
 ### checkpoint-safelyへの受け渡し
 
-中断・担当交代・別セッションでの継続、明示的な保存の依頼など、再開用の要約が必要なときに [checkpoint-safely](../skills/checkpoint-safely/SKILL.md) を使う。通常の判断や工程結果はタスク成果物へ記録し、工程が終わるたびにcheckpointを作る運用にはしない。
+中断・担当交代・別セッションでの継続、明示的な保存の依頼など、再開用の要約が必要なときに [checkpoint-safely](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/checkpoint-safely/SKILL.md) を使う。通常の判断や工程結果はタスク成果物へ記録し、工程が終わるたびにcheckpointを作る運用にはしない。
 
 渡す情報は、タスクID、既存checkpointへの参照、今回の依頼と制約、タスク成果物・判断・証拠への参照、現在の状態、次に必要な操作。継続中の保存か、中断の依頼かも伝える。checkpoint-safelyは再開に必要な内容を要約し、成果物本文を参照する。保存先・節構成・テンプレート・保存手順・Gitへの保存条件をフロー側で複製しない。
 
@@ -246,7 +247,7 @@ CLIのコマンドやfrontmatterの手順はOKFスキルを正本とし、引き
 
 task.mdの冒頭には進行状態と成果判定、工程表には実行状態と確認結果・参照を分けて置く。詳細な判定は対象・版・条件ごとに一度だけ記し、verification.md・review.mdへ分けた場合は参照する。検証・レビューだけなら報告後に依頼は完了とでき、対象の不合格・未確認は残る。修正や必要な検証まで求められた仕事は、報告だけで完了にしない。
 
-進捗更新の実行ルールは[全体フロー](../skills/devlow/references/workflow.md)に置く。記録ごとに更新担当を一人定め、記録・台帳を持つ子が担当範囲の工程状態・検証結果・未決事項・次の操作を更新する。独立した記録を持たない小規模な子は親へ報告し、親が計画へ反映する。親は子の報告と証拠に対する受け入れ確認、依存関係、全体の集約・完了判定を更新する。子の作業完了と親の受け入れ確認を分け、親子で同じ進捗欄を上書きしない。
+進捗更新の実行ルールは[全体フロー](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/workflow.md)に置く。記録ごとに更新担当を一人定め、記録・台帳を持つ子が担当範囲の工程状態・検証結果・未決事項・次の操作を更新する。独立した記録を持たない小規模な子は親へ報告し、親が計画へ反映する。親は子の報告と証拠に対する受け入れ確認、依存関係、全体の集約・完了判定を更新する。子の作業完了と親の受け入れ確認を分け、親子で同じ進捗欄を上書きしない。
 
 更新は着手、工程や検証単位の終了、前提待ち・失敗の判明、再開・差し戻し・範囲変更、中断・担当交代・終了の節目で行う。子の起動・再開時にはタスクID、更新先と担当範囲、報告先、全体フローの更新ルールへの参照を渡す。子は更新日時と証拠を残して親へ報告し、親は確認後に集約する。書き込みできない場合や保存に失敗した場合の報告・親への更新依頼も同じ共通ルールで扱う。
 
@@ -312,7 +313,7 @@ CLIを使わないタスクでは各タスクの記録または会話内の記�
 接続の変更状況と、残る実装対象は次のとおり。
 
 - use-principlesの作業分類・進行・報告の責務は統括側へ移した。use-principlesは原則参照の結果を呼び出し元へ返す。配布用の指示はdevlowを入口にし、そこから原則参照へ接続する。
-- howは現在、狭い問いでも説明担当を起動する。whyはGit履歴・PR・リポジトリ内資料を対象に、既定では調査担当1人と統合担当1人を使い、独立した調査範囲がある場合に並行化する。小規模の確認をこれらへ無条件に渡すと工程の短縮と矛盾するため、起動条件と直接確認する範囲を調整する。原文と同じ常時並行を前提にしない。
+- 2026-10-30にhow・why・teachを削除した。調査工程では問いに必要なコード・設定・履歴を直接確認し、担当を分ける場合は確認済みの知識と未確認事項を引き継ぐ。[整理の記録](issue-23-skill-pruning.md)を参照する。
 - checkpointは既存のcheckpoint-safelyを使い、中断・引き継ぎ・明示的な継続保存等の再開情報に限定する。作業ログや判断ログの常時保存を同スキルへ追加しない。既存の記録はその保存先を参照し、自動的に移動・削除しない。
 - 最終結果と確定した判断を整理してOKFへ渡す条件は、全体フローへ記述した。工程別の詳細を作る際も、作業中の記録を丸ごと登録せず、同じ対象の知識を検索して更新・関連付けする。保存方法はOKFスキルを参照する。
 - `space/`・`packaging/` と配布生成は現状未整備。全体フローと工程手順がスキルに同梱され、相対参照で読めることを配布検証で確認する。Babelの共通知識・ルールの配置と参照は別に確認する。
@@ -322,11 +323,11 @@ CLIを使わないタスクでは各タスクの記録または会話内の記�
 ## 12. 参照した既存資料
 
 - [配布設計](architecture.md)。正本、スキル専用CLI、Babel、checkpointの配置に従った。
-- [use-principles](../skills/use-principles/SKILL.md)。現在の作業分類・原則参照・検証・報告の責務を確認した。
-- [how](../skills/how/SKILL.md)、[why](../skills/why/SKILL.md)。既存調査スキルの入力・出力と、起動方法の移行事項を確認した。
-- [system-blueprintの文書モデル](../skills/system-blueprint/references/document-model.md)。現状の構成資料と判断記録の配置を継承した。
-- [checkpoint-safely](../skills/checkpoint-safely/SKILL.md)。保存と中断の区別、既存記録の扱いを確認した。
-- [OKFスキル](../skills/okf-agent-memory/SKILL.md)、[frontmatterの定義](../skills/okf-agent-memory/references/frontmatter.md)。既存のtypeと知識の保存責務を確認した。最終結果を残すという利用方針は今回の設計による。
+- [use-principles](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/use-principles/SKILL.md)。現在の作業分類・原則参照・検証・報告の責務を確認した。
+- [how](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/how/SKILL.md)、[why](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/why/SKILL.md)。削除前の調査スキルの入力・出力と、起動方法の移行事項を確認した。
+- [system-blueprintの文書モデル](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/system-blueprint/references/document-model.md)。現状の構成資料と判断記録の配置を継承した。
+- [checkpoint-safely](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/checkpoint-safely/SKILL.md)。保存と中断の区別、既存記録の扱いを確認した。
+- [OKFスキル](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/okf-agent-memory/SKILL.md)、[frontmatterの定義](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/okf-agent-memory/references/frontmatter.md)。既存のtypeと知識の保存責務を確認した。最終結果を残すという利用方針は今回の設計による。
 - [pstackの入口](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/SKILL.md)。依頼の分類と専門手順への接続を参考にした。
 - [pstackのFeature](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/playbooks/feature.md)。作業単位と検証の区切りを参考にした。
 - [pstackのOrchestrate](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/playbooks/orchestrate.md)。大規模作業の管理、先行一単位、状態と証拠の記録を参考にした。専用CLI、モデル数、PR運用をそのまま移植する設計ではない。

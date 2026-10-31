@@ -1,5 +1,7 @@
 # 開発フローの参照元と採用範囲
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../../current-state.md)を参照してください。
+
 2026-09-23。ユーザーがpstackのarchitectにある「構造の異なる複数案を探索して統合する手順」への対応を指定したため、devlowの設計工程へ取り込んだ。8工程全体をpstackのplaybookへ置き換える変更ではない。
 
 ## 参照元
@@ -15,12 +17,12 @@
 
 | 原版の要素 | 配置と今回の扱い |
 | --- | --- |
-| Ground | [design.md](../../../skills/devlow/references/design.md)の手順1。調査済みモデルは対象・版を照合して再利用し、不足をhow、責務・層構造の理由の不足をwhyへ渡す |
+| Ground | [design.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/design.md)の手順1。調査済みモデルは対象・版を照合して再利用し、不足をhow、責務・層構造の理由の不足をwhyへ渡す |
 | Sketch | 手順2。必要な新規設計では構造の異なる最低2案。利用例を先に書き、型・シグネチャ・境界を導く。文書・スキルなら対応する構成を示す |
 | 候補比較・統合 | 手順3〜4。全候補の本文を同じ基準で評価し、利用側へ露出する複雑さと設計上の問題を確認。土台・取り込み・見送りと理由を記録し、統合後に再確認 |
 | Agree | 手順5。実装前に確認するというユーザー指定がある場合だけ待つ。既存の依頼・承認を引き継ぎ、設計のみの依頼に実装を追加しない |
-| Implement / Scrap | 設計の受け渡し・失敗時の戻り先と[全体フロー](../../../skills/devlow/references/workflow.md)、[実装工程](../../../skills/devlow/references/implement.md)に接続。同じ形の構造上の問題が繰り返されたら再調査・再探索する |
-| 設計の成果物 | [設計ひな形](../../../skills/devlow/assets/design-template.md)に利用例、骨組み、候補比較、統合理由、統合後の確認を追加 |
+| Implement / Scrap | 設計の受け渡し・失敗時の戻り先と[全体フロー](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/workflow.md)、[実装工程](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/implement.md)に接続。同じ形の構造上の問題が繰り返されたら再調査・再探索する |
+| 設計の成果物 | [設計ひな形](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/assets/design-template.md)に利用例、骨組み、候補比較、統合理由、統合後の確認を追加 |
 
 ## 意図的に調整した点
 
@@ -40,7 +42,7 @@
 
 | 参照した考え方 | 今回の対応 |
 | --- | --- |
-| 証拠に基づき単位ごとに作業する | [plan.md](../../../skills/devlow/references/plan.md)で作業結果・受け入れ条件・方法・合否条件・証拠を対応付ける。計画作成と作業完了を区別する |
+| 証拠に基づき単位ごとに作業する | [plan.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/plan.md)で作業結果・受け入れ条件・方法・合否条件・証拠を対応付ける。計画作成と作業完了を区別する |
 | ファイル、依存、担当、実際の利用結果を明示 | 各単位に変更範囲、着手前に必要な成果物と条件を置く。局所確認だけでなく、変更対象に合う実経路・統合後の確認を計画する |
 | Featureの四つの分割観点 | 先行する作業、独立して進める範囲、共有する書き込み先、分割の大きさを計画内で確認。再開用checkpointとは別の内容として扱う |
 | 計画の前提を試作で確かめる | 調査・設計で得た根拠を再利用。実現性や順序を左右する不足は該当工程へ戻す。後続だけに影響する未決事項は依存先と解決方法を示す |
@@ -49,7 +51,7 @@
 原版はPR単位の固定構造、すべてのPRへのunit・live・perfの確認、10本のlive検証、固定モデル・制御スキル、check-plan.mjsと自動監査等を含む。今回は原版全体の移植ではなく、合意した小・標準・大の規模と実行環境に合わせて次を調整した。
 
 - 小規模は会話、標準はtask.mdまたは独立したplan.md、大規模の親はplan.mdとする。保存先は既存資料を優先し、新規なら `.space/tasks/<task-id>/`。agent storeのdocsを既定先にしない。
-- [計画ひな形](../../../skills/devlow/assets/plan-template.md)は必要な節だけ使う。単位をPR・子タスクへ一律に対応させず、固定の見出し一式や一PRごとの10本の検証を要求しない。
+- [計画ひな形](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/assets/plan-template.md)は必要な節だけ使う。単位をPR・子タスクへ一律に対応させず、固定の見出し一式や一PRごとの10本の検証を要求しない。
 - 実経路の確認は対象の挙動に合わせて選び、性能測定は性能改善・性能条件がある場合に具体化する。変更前の基準、同条件の比較、新規処理の絶対基準を区別し、無関係な検証を追加しない。
 - 自動的なgoal・定期実行・外部操作、固定のモデル・ツール・PR方式は導入しない。未導入のpstackスクリプトで計画を検証できるとは扱わない。
 - 進捗の更新・親の受け入れ確認・CLIなしの管理は、既存の全体フローを参照する。計画工程でCLIの保存形式やTSVファイル名は決めない。
@@ -67,10 +69,10 @@
 
 | 配布用の工程 | 採用した内容 |
 | --- | --- |
-| [implement.md](../../../skills/devlow/references/implement.md) | 実状態と所有範囲の確認、採用した骨組みへの具体化、原因と対応する小さな変更、差分・局所結果を検証へ渡す |
-| [verify.md](../../../skills/devlow/references/verify.md) | 対象の版・差分・環境と証拠の対応、実経路の確認、合格・不合格・未確認・対象外の区別、影響する結果の再検証 |
-| [review.md](../../../skills/devlow/references/review.md) | 独立性の明示、成果物と根拠に基づく指摘、修正・見送り・確認の区別、修正と再検証を確認した判定 |
-| [deliver.md](../../../skills/devlow/references/deliver.md) | 依頼の終了地点の確認、具体的な納品の準備、許可された操作の実結果確認、確定した知識の保存、状態と報告の更新 |
+| [implement.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/implement.md) | 実状態と所有範囲の確認、採用した骨組みへの具体化、原因と対応する小さな変更、差分・局所結果を検証へ渡す |
+| [verify.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/verify.md) | 対象の版・差分・環境と証拠の対応、実経路の確認、合格・不合格・未確認・対象外の区別、影響する結果の再検証 |
+| [review.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/review.md) | 独立性の明示、成果物と根拠に基づく指摘、修正・見送り・確認の区別、修正と再検証を確認した判定 |
+| [deliver.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/deliver.md) | 依頼の終了地点の確認、具体的な納品の準備、許可された操作の実結果確認、確定した知識の保存、状態と報告の更新 |
 
 既存の規模・承認・記録方針に合わせ、原版から次を調整した。
 

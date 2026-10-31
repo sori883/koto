@@ -1,6 +1,8 @@
 # orch CLIの設計
 
-2026-09-23作成。レビューの4点を採用した設計。実装状況は[orchの実装記録](../orch/implementation.md)を参照する。[利用方法・責務・配置・実装範囲](orchestrator-design.md)と一緒に読む。本プロジェクト向けのコマンド体系であり、具体的な入力は[配布用CLI仕様](../../../skills/orch/references/cli.md)に定める。
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../../current-state.md)を参照してください。
+
+2026-09-23作成。レビューの4点を採用した設計。実装状況は[orchの実装記録](../orch/implementation.md)を参照する。[利用方法・責務・配置・実装範囲](orchestrator-design.md)と一緒に読む。本プロジェクト向けのコマンド体系であり、具体的な入力は[配布用CLI仕様](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/orch/references/cli.md)に定める。
 
 ## 1. 呼び出しと共通規則
 

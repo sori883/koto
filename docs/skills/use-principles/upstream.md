@@ -1,5 +1,7 @@
 # 開発原則と運用ルールの参照元
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../../current-state.md)を参照してください。
+
 確認日：2026-09-21。原則の移植記録は2026-09-20、全体フローの責務分離は2026-09-21。
 
 Cursorのpstack、参照コミット `032be146865d973682535de75f2287da438550bf` の[23原則](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/docs/guide/08-principles.md)と[poteto-mode](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/SKILL.md)を基に、日本語の開発規約として配布する。
@@ -10,7 +12,7 @@ Cursorのpstack、参照コミット `032be146865d973682535de75f2287da438550bf` 
 - 各原則は `type: principle`、`governance: context` とし、原文への固定リンクを `sources` に残す。descriptionに参照する場面と判断の指針を記し、本文には詳細な適用条件と例外を保持する。
 - `.space/babel/rules/` に追加するルールは `type: rule`、`governance: constraint` を明示する。具体的に守る行動・禁止事項・承認条件を記し、原則の本文を複製しない。
 - 各原則はtype検索とdescriptionから選んで参照する。適用手順を重複して記すルール文書や、場面と参照先の対応表は同梱しない。
-- [原則参照スキル](../../../skills/use-principles/SKILL.md)に、候補の検索、本文の確認、適用結果の受け渡しを置く。作業の進行・委譲・検証・記録・報告は[全体フロー](../../../skills/devlow/references/workflow.md)へ分離した。
+- [原則参照スキル](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/use-principles/SKILL.md)に、候補の検索、本文の確認、適用結果の受け渡しを置く。作業の進行・委譲・検証・記録・報告は[全体フロー](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/workflow.md)へ分離した。
 - [配布用AGENTS.md](../../../templates/AGENTS.md)を利用先の入口とする。kotoのルートにある開発用 `AGENTS.md` へ配布ルールを追加しない。`okf-agent-memory` 自体は分野に依存しない記憶管理のままにする。
 - 原著の[MITライセンス](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/LICENSE)を、OKF bundleと原則参照スキルそれぞれの `LICENSE` に同梱する。進行手順を移したdevlowにも同じLICENSEを保持する。
 

@@ -1,5 +1,7 @@
 # 開発ワークフローの修正設計：依頼の完了・対象の判定・知識の保存を分ける
 
+この文書は構成整理前の開発・検証記録です。現在の配布構成は[現状資料](../../current-state.md)を参照してください。
+
 2026-09-23作成・反映。レビューで見つかった4点に対する設計。会話を読んでいない人が、変更後の使い方と修正範囲を理解するための資料である。全体フロー・各工程・タスクと計画のひな形へ反映済み。確認範囲は[実装・確認記録](implementation.md)に記す。
 
 例えば、レビューでバグを見つけて報告した場合、「レビューの依頼は完了」「確認した対象は要修正」が同時に成立する。この区別を工程の進み方と記録欄へ反映し、確定した設計や知識を保存する責任も明確にする。
@@ -122,7 +124,7 @@ devlowは、開発を依頼されたAIが、必要な作業を選び、結果を
 
 候補には「何を残すか・対象・理由・根拠・確定度」が分かる短い記述を添え、既存のtask.mdやdesign.mdから渡す。候補台帳や専用ファイルは増やさない。
 
-`deliver`は、実際の操作を[OKFスキル](../../../skills/okf-agent-memory/SKILL.md)の手順で行う。既存の同じ対象の文書を調べ、更新か新規作成かを選ぶ。保存後は内容と形式を確認し、文書の識別子と確認結果をタスク側へ返す。保存方法を各工程へ複製しない。
+`deliver`は、実際の操作を[OKFスキル](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/okf-agent-memory/SKILL.md)の手順で行う。既存の同じ対象の文書を調べ、更新か新規作成かを選ぶ。保存後は内容と形式を確認し、文書の識別子と確認結果をタスク側へ返す。保存方法を各工程へ複製しない。
 
 設計だけで終わる依頼でも、採用が決まった設計はdecisionへ保存できる。その際は「未実装」と記し、現在の構成を説明する文書や、実施済みの歴史にはしない。大規模な仕事では、独立して引き渡せる単位ごとに保存でき、親タスクの完了まで待たせない。同じ知識を扱う複数タスクには保存担当を一人決める。
 
@@ -153,16 +155,16 @@ devlowは、開発を依頼されたAIが、必要な作業を選び、結果を
 
 | ファイル | 修正する内容 |
 | --- | --- |
-| [references/workflow.md](../../../skills/devlow/references/workflow.md) | 経路の分岐、状態と判定の定義、保存担当、計画時点の表現の正本 |
-| [assets/task-template.md](../../../skills/devlow/assets/task-template.md) | 冒頭の進行状態と成果判定、工程表の列分離、条件別結果への参照 |
-| [references/intake.md](../../../skills/devlow/references/intake.md) | 依頼の終了条件と確認対象の条件を区別して、記録を初期化する案内 |
-| [references/investigate.md](../../../skills/devlow/references/investigate.md)・[design.md](../../../skills/devlow/references/design.md) | 読み取りと保存候補の受け渡し、blueprintの例外 |
-| [references/plan.md](../../../skills/devlow/references/plan.md)・[assets/plan-template.md](../../../skills/devlow/assets/plan-template.md) | 方法・期待値・必要な証拠・取得条件の予定を記す表現、保存候補の受け渡し |
-| [references/implement.md](../../../skills/devlow/references/implement.md) | 実装状態と取得済みの確認結果を引き渡す責任 |
-| [references/verify.md](../../../skills/devlow/references/verify.md)・[review.md](../../../skills/devlow/references/review.md) | 報告のみの終了経路、作業完了と対象の評価の区別、修正へ進む条件 |
-| [references/deliver.md](../../../skills/devlow/references/deliver.md) | 保存責任と例外の確認、依頼の種類に応じた最終状態の記録 |
+| [references/workflow.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/workflow.md) | 経路の分岐、状態と判定の定義、保存担当、計画時点の表現の正本 |
+| [assets/task-template.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/assets/task-template.md) | 冒頭の進行状態と成果判定、工程表の列分離、条件別結果への参照 |
+| [references/intake.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/intake.md) | 依頼の終了条件と確認対象の条件を区別して、記録を初期化する案内 |
+| [references/investigate.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/investigate.md)・[design.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/design.md) | 読み取りと保存候補の受け渡し、blueprintの例外 |
+| [references/plan.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/plan.md)・[assets/plan-template.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/assets/plan-template.md) | 方法・期待値・必要な証拠・取得条件の予定を記す表現、保存候補の受け渡し |
+| [references/implement.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/implement.md) | 実装状態と取得済みの確認結果を引き渡す責任 |
+| [references/verify.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/verify.md)・[review.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/review.md) | 報告のみの終了経路、作業完了と対象の評価の区別、修正へ進む条件 |
+| [references/deliver.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/references/deliver.md) | 保存責任と例外の確認、依頼の種類に応じた最終状態の記録 |
 
-[verification-template.md](../../../skills/devlow/assets/verification-template.md)は、すでに対象・版・判定・証拠を持つため、その構成を再利用する。実装時に用語と参照の整合を確認する。
+[verification-template.md](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/devlow/assets/verification-template.md)は、すでに対象・版・判定・証拠を持つため、その構成を再利用する。実装時に用語と参照の整合を確認する。
 
 共通規則はworkflow.mdに集め、各工程とテンプレートは参照する。実装時は[全体設計資料](../../devlow-design.md)と[タスク管理の一覧](task-management-inventory.md)の該当説明も合わせ、[実装・確認記録](implementation.md)へ実施範囲を追記する。基本の配置・配布方針は[architecture.md](../../architecture.md)を維持する。
 
@@ -183,7 +185,7 @@ devlowは、開発を依頼されたAIが、必要な作業を選び、結果を
 
 小規模な会話中の依頼にはtask.mdを新規作成しないが、状態と判定の区別は同じように回答へ適用する。読み取り専用なら規模を問わずファイルを作成しない。タスク管理CLIを使う場合は進行状態の正本を台帳にし、task.mdから参照する。本設計ではCLIの保存形式、状態の内部コード、TSVは定義しない。
 
-中断からの再開に必要な要約は、従来どおり[checkpoint-safely](../../../skills/checkpoint-safely/SKILL.md)に任せる。工程終了のたびにcheckpointを作る運用は追加しない。
+中断からの再開に必要な要約は、従来どおり[checkpoint-safely](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/skills/checkpoint-safely/SKILL.md)に任せる。工程終了のたびにcheckpointを作る運用は追加しない。
 
 ## 8. 実装の順序と完了の確認
 
