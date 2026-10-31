@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { afterEach, beforeEach, expect, test } from "bun:test";
 import { cp, mkdtemp, mkdir, readFile, rm, writeFile, symlink } from "node:fs/promises";
 import { join, resolve } from "node:path";
@@ -252,4 +253,27 @@ test("distributed Memory runs alone with the bundled version after removing sour
     await cli(["delete", "decisions/auth"]);
     expect((await cli(["validate"])).concept_count).toBe(0);
   }
+});
+
+
+test("licensed development skills ship with complete notices and resolvable bundled dependencies", async () => {
+  const source = resolve(import.meta.dir, "../..");
+  const provenance = JSON.parse(await readFile(join(source, "docs/devlow-restoration-source.json"), "utf8"));
+  const names = ["devlow", "recall", "tdd", "blast-radius", "interrogate"];
+  for (const name of [...names, "monorepo", "tasks", "memory"]) await cp(join(source, "skills", name), join(root, "skills", name), { recursive: true });
+  for (const name of ["monorepo", "tasks", "memory"]) await cp(join(source, "cli", name), join(root, "cli", name), { recursive: true });
+  await build(root);
+  for (const name of names) {
+    const notice = await readFile(join(source, "skills", name, "LICENSE"));
+    expect(createHash("sha256").update(notice).digest("hex")).toBe(provenance.skills[name][`skills/${name}/LICENSE`]);
+    for (const product of ["codex", "claude-code"]) {
+      const dist = join(root, "dist", product, "koto");
+      expect(await readFile(join(dist, "skills", name, "LICENSE"))).toEqual(notice);
+      expect(await readFile(join(dist, "skills", name, "SKILL.md"))).toEqual(await readFile(join(source, "skills", name, "SKILL.md")));
+      expect(await Bun.file(join(dist, "docs/devlow-restoration-source.json")).exists()).toBe(false);
+    }
+  }
+  const tdd = await readFile(join(source, "skills/tdd/SKILL.md"));
+  expect(createHash("sha256").update(tdd).digest("hex")).toBe(provenance.skills.tdd["skills/tdd/SKILL.md"]);
+  expect(await checkBuild(root)).toEqual([]);
 });

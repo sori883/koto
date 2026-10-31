@@ -1,0 +1,41 @@
+{
+  "sourceCommit": "77b4d4f87a4c575ccb4b243f2a62acd17cd446a2",
+  "skills": {
+    "devlow": {
+      "skills/devlow/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/devlow/SKILL.md": "f791f4d316e7d387b28427e85a8d0f877b91bff63a2f15959b30ec6bcf2e459d",
+      "skills/devlow/assets/design-template.md": "68cc25115c0c584cc8fa2644e024bd9c54eb767507057ecc1a037c65402f35b4",
+      "skills/devlow/assets/plan-template.md": "ace6f18da5fece63353b2befc2ac676dec0abf6430e04f63b396500096a60f00",
+      "skills/devlow/assets/task-template.md": "fb4809e5402f016dc125c4a9bde93ab41976e55394475cb6044a06046605c1a0",
+      "skills/devlow/assets/verification-template.md": "027eb7d25c097b61cf9ebfe5988001b1f25104461045e48b1d438f870ffbbf0f",
+      "skills/devlow/references/delegation.md": "7cdaad9c579f1841ddb32c1b87af92fd078cd5719921f7712e245c4e776f0adc",
+      "skills/devlow/references/deliver.md": "86f59cea8b0901e1490840b30a6e1e0df23848dff337401e39160416a4c94b42",
+      "skills/devlow/references/design.md": "f46b1946e09e1233bc9756c13793f2e1c812dfbd901d345b64b4235c4763f505",
+      "skills/devlow/references/implement.md": "7169664bcd107a6f2e93a6463950605cea4064310a58c09fc96d8fd5c3720af1",
+      "skills/devlow/references/intake.md": "f805c3848d7d4c49a86c9f6654ae99312f1284ce23a38e4907a2555856e86b0e",
+      "skills/devlow/references/investigate.md": "13ae2bc4afa7a1b416363f06b81c741f9506128ad9a2b0658ce05af69fbe32a6",
+      "skills/devlow/references/orchestrate.md": "3f79aca44e01491eb574180d2f139fc0e70d3a0b192007ac84ed217ed85af588",
+      "skills/devlow/references/plan.md": "cc4584b07606a9c7f1f0114da96ffd8c7187754af1b2aa4919110f3668e4d492",
+      "skills/devlow/references/review.md": "a3732602665bc631e81365b63e7a50e5b09f62cb48e0eaf12f56ce75ae7bf289",
+      "skills/devlow/references/verify.md": "d30d8b77953c132509c90d2e3e7b3ef53fd94d20007bb29b763ee1036670582a",
+      "skills/devlow/references/workflow.md": "521504957fd2ebaed37bb87445542071f62fd1130b4a57d7cf85f0ad54584cdb"
+    },
+    "recall": {
+      "skills/recall/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/recall/SKILL.md": "8a3197e897e490c58f4ec346945e0731f3b030259a37cd0c10e82c6bec7a958e"
+    },
+    "tdd": {
+      "skills/tdd/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/tdd/SKILL.md": "f2c09ca1e4d337b1324457e7ea252e58db6b94465351b4674848a35a378d06ff"
+    },
+    "blast-radius": {
+      "skills/blast-radius/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/blast-radius/SKILL.md": "64d067a8a0809d86e31e8fe621f5636cee4c225336ac30a8422887a34d67d522"
+    },
+    "interrogate": {
+      "skills/interrogate/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/interrogate/SKILL.md": "5cfb2f489cf198ac18cd2d7744c8ac8e888115ba67555d6eec00fa12f2b45334",
+      "skills/interrogate/references/reviewer-prompt.md": "e66f152b63c3be31d11d6aba30a0400fa6bd79cb51ea6e62d09da1559efc4cf0"
+    }
+  }
+}

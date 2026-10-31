@@ -1,6 +1,6 @@
 # 配布物の生成と検証
 
-対応する配布形式はCodexとClaude Codeの2つ。現在の配布物はmonorepo・Tasks・Memory CLI、それぞれの利用手順のスキル、プラグイン定義、共通知識で構成する。以前のsetupによるプラグイン導入・更新機能は復元せず、各CLIのsetupは自身の管理領域を準備する。
+対応する配布形式はCodexとClaude Codeの2つ。現在の配布物はmonorepo・Tasks・Memory CLI、それぞれの利用手順とdevlow・recall・tdd・blast-radius・interrogateの計8スキル、プラグイン定義、共通知識で構成する。以前のsetupによるプラグイン導入・更新機能は復元せず、各CLIのsetupは自身の管理領域を準備する。
 
 ## 正本と生成先
 
@@ -17,10 +17,12 @@
 | `skills/tasks/` | 両製品の`dist/<製品>/koto/skills/tasks/` |
 | `cli/memory/` | 両製品の`dist/<製品>/koto/cli/memory/` |
 | `skills/memory/` | 両製品の`dist/<製品>/koto/skills/memory/` |
+| `skills/devlow/`・`skills/recall/` | 両製品の同名スキル。工程資料・ひな形・LICENSEを含む |
+| `skills/tdd/`・`skills/blast-radius/`・`skills/interrogate/` | 両製品の同名スキル。参照資料・LICENSEを含む |
 
 ルートの`package.json`のversionを両製品と同梱CLIのパッケージ定義へ反映する。生成先はGitで管理し、手編集しない。カタログはそれぞれ同じリポジトリの製品別配布物を指す。CLIは入口・lib・パッケージ定義・利用手順だけを配布し、入口へ実行権限を付ける。
 
-`skills/`がない状態でも生成できる。スキルがない場合は、存在しないディレクトリをプラグインの`skills`項目に指定しない。今後スキルを追加した場合は、既存の生成処理が`SKILL.md`を持つディレクトリと配布対象の付属ファイルを取り込む。
+`skills/`がない状態でも生成できる。スキルがない場合は、存在しないディレクトリをプラグインの`skills`項目に指定しない。追加したスキルは、既存の生成処理が`SKILL.md`を持つディレクトリと配布対象の付属ファイルを取り込む。再利用した5スキルのLICENSEは元の著作権表示・許諾文をバイト単位で維持し、両製品へコピーする。再利用元のコミット・ハッシュと変更記録は配布しないdocsへ置く。詳細は[スキル連携の記録](devlow-cli-integration.md)を参照する。
 
 ## 開発時の操作
 

@@ -8,9 +8,9 @@ koto（コト）は **Knowledge-Oriented Task Orchestration** の略であり、
 
 2026-10-31のユーザー指示により、対応先をCodex・Claude Codeの2製品に限定する。Copilot対応は削除する。製品ごとに配布物とカタログを生成し、ソースとともにGitで管理する。続くユーザー指示により、今回のmonorepo機能は`main`から作る`develop`へ統合する。元のコミット履歴を保持するマージコミットを使い、スカッシュや履歴の書き換えは行わない。
 
-ユーザーが削除した旧スキルと付属CLI、削除済みスキルを呼ぶエージェントと指示テンプレート、setup用マニフェストは復元しない。続く依頼で、新しいmonorepo・Tasks・Memory CLIとそれぞれの利用手順を持つスキルを追加する。スキルのない構成でも配布物を生成できる機能は維持し、既存の共通知識は保持する。
+ユーザーが削除した旧スキルと付属CLI、削除済みスキルを呼ぶエージェントと指示テンプレート、setup用マニフェストは一括して復元しない。続く依頼で、新しいmonorepo・Tasks・Memory CLIとそれぞれの利用手順を持つスキルを追加する。さらにユーザーがMITライセンスでの再利用を了承したため、devlow・recall・tdd・blast-radius・interrogateの5スキルを既存資産から取り込み、現在の3つのCLIに合わせる。著作権表示と許諾文を保持し、出典と変更記録はdocsへ置く。スキルのない構成でも配布物を生成できる機能は維持し、既存の共通知識は保持する。
 
-以前のdevlow・OKF・orch・setup等の設計と検証は開発履歴としてdocsに残すが、現行機能や再実装の指示として扱わない。以前の[配布設計](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/docs/architecture.md)と、[今回の整理](issue-23-packaging-reset.md)を区別する。新しい機能・配置への移行は依頼された範囲で進める。
+以前のdevlow・OKF・orch・setup等の設計と検証は開発履歴としてdocsに残すが、その記録だけを現行機能や再実装の指示として扱わない。以前の[配布設計](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/docs/architecture.md)、[配布整理](issue-23-packaging-reset.md)、[今回のスキル連携](devlow-cli-integration.md)を区別する。新しい機能・配置への移行は依頼された範囲で進める。
 
 ## 統合ワークスペースの構想
 
@@ -54,6 +54,16 @@ Tasksのdevelop統合後、ユーザーはMemoryの開発を指示し、試作�
 
 更新にはプロジェクト単位の排他と内容のハッシュ照合を用意する。複数ファイルの更新予定を先に残し、失敗後は既存の変更と照合して続きから復旧する。コード参照の存在検査も選択したプロジェクト内に限定する。人間の確認記録を自動生成せず、形式検証と知識の正しさを区別する。詳細は[Memory CLIの設計](memory-cli-design.md)に定める。Memoryもdevelopから作業ブランチを切り、検証後に履歴を残してdevelopへ統合する。
 
+### 開発フローと専門スキル
+
+devlowは、依頼の終了地点に合わせて工程を選び、monorepo・Tasks・Memoryの利用順序と結果の受け渡しを定める。開始、継続、中断、再開、完了、依頼された片付けを扱い、各CLIの処理・保存規則を重複実装しない。最新の進捗はTasks、実際の作業場所はmonorepo、長期的な知識はMemoryが所有する。
+
+recallは、現在のTasks、過去のcheckpoint、実際のコードやGit、必要なMemoryを読み取り専用で照合する。現在地と残件、再開条件を返し、続行の依頼があればdevlowが次の操作を選ぶ。checkpointを最新状態とみなしたり、状態確認だけで初期化・再開・片付けを行ったりしない。
+
+各工程の詳細は参照資料へ分ける。tddは局所的な不具合の再現と修正、blast-radiusは変更の影響調査、interrogateは許可された独立担当によるレビューを担う。全スキルを毎回必須にせず、変更と検証の必要性に応じて選ぶ。固定名の専用エージェントや特定モデルは必須にしない。
+
+旧orch CLI、旧OKF CLI、setupスキル、他の削除済みスキルとエージェントはこの追加に含めない。Gitのcommit・push・merge・PR操作は依頼された範囲で既存ツールを使う。3つのCLIの独立性、プロジェクト境界、利用者が許可した範囲を維持する。
+
 ### 実現方法と利用環境
 
 2026-10-31の追加指示により、機械的に判定・実行できる初期設定と管理操作はCLI中心に作る。対象と設定が明示された後の、初期化、プロジェクト管理、リポジトリ登録・取得・更新取得・削除、Worktree作成、状態確認はCLIが担当する。複数リポジトリを扱う際の処理順序、一部失敗、排他制御、再実行もCLIが管理する。実際のGit処理は既存Gitを呼び出す。
@@ -88,6 +98,8 @@ Git操作の補助はWorkspaceの機能に含めない。commit・push・merge�
 | `skills/tasks/` | Tasks CLIを使うAI向け手順の正本 |
 | `cli/memory/` | `@koto/memory`の実装・パッケージ定義・利用者向け手順の正本 |
 | `skills/memory/` | Memory CLIを使うAI向け手順の正本 |
+| `skills/devlow/`・`skills/recall/` | 開発フローと作業の現在地を再構成する手順の正本 |
+| `skills/tdd/`・`skills/blast-radius/`・`skills/interrogate/` | 必要な工程で使う専門手順の正本 |
 | `scripts/build.ts` | 正本から配布物とカタログを生成する開発用の入口 |
 | `dist/<製品>/koto/` | 生成物。Gitで管理し、手編集しない |
 | ルートの`package.json`・`bun.lock` | 生成・検証の開発依存と配布版数 |
