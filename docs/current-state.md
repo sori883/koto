@@ -66,7 +66,7 @@ Codex 0.164.0のapp-serverはローカル配布物の`koto:monorepo`を有効な
 
 monorepoをdevelopへ統合したコミット83902faでは、[GitHubのLinux CI](https://github.com/sori883/koto/actions/runs/41190574787)も成功した。Tasks追加後はローカルの全36テスト・754 assertions、型検査が成功した。Tasks専用9件と配布検証2件を追加し、両製品の配布物だけでTasks単独の操作と、モノレポと組み合わせた準備から片付けまでを確認した。
 
-Memory追加後は全261件・1627 assertionsと型検査・配布物照合が成功し、両製品のMemory単独実行と三つのCLIの併用を確認した。Codexはkoto:memoryをenabledとして認識し、Claude Codeは3スキルを認識した。詳細は[Memoryの検証記録](memory-cli-design.md#検証)を参照する。
+Memory追加後は全261件・1627 assertionsと型検査・配布物照合が成功し、両製品のMemory単独実行と三つのCLIの併用を確認した。Codexはkoto:memoryをenabledとして認識し、Claude Codeは3スキルを認識した。実装コミットe2db5c7の[GitHub Linux CI](https://github.com/sori883/koto/actions/runs/41196383068)も成功した。詳細は[Memoryの検証記録](memory-cli-design.md#検証)を参照する。
 
 Tasks追加後の配布物も、Codexのapp-serverがkoto:tasksを有効なスキルとして読み取り、Claude Codeのセッション限定の読込ではmonorepo・tasksの2件を認識した。
 

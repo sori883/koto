@@ -49,7 +49,7 @@ JSON互換の独自属性を保持します。更新時はYAMLの値と本文を
 
 更新では`--unset <key>`を繰り返して任意属性を削除できます。`--sync`は変更のない知識についても目次・ログを修復します。`--no-index`・`--no-log`は目次やログの更新を省く指定で、`--sync`とは併用できません。
 
-`show`の`content_hash`を `update`・`relate`・`delete` の`--if-hash`に渡すと、読んだ後に変更されている場合は`VERSION_CONFLICT`で停止します。`relate`ではsource、`delete --dry-run`でも削除対象のハッシュを返します。ハッシュの指定を省くと、実行時の内容を基に操作します。
+`show`の`content_hash`を `update`・`relate`・`delete` の`--if-hash`に渡すと、読んだ後に変更されている場合は`VERSION_CONFLICT`で停止します。`relate`の照合対象はsourceです。`delete --dry-run`も削除対象のハッシュを返します。ハッシュの指定を省くと、実行時の内容を基に操作します。
 
 ## 検索と検証
 

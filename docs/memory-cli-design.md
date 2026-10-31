@@ -60,4 +60,4 @@ Memory単体では224件・785 assertionsが成功した。元の試作には実
 
 Codex 0.164.0のapp-serverによるplugin/readでは、配布物のkoto:memory・koto:tasks・koto:monorepoをすべてenabledとして認識した。Claude Code 2.1.307のセッション限定plugin-dir読込でもmemory・monorepo・tasksの3スキルを認識した。skill-creatorの形式検証も成功。元の試作19ファイルのSHA-256は読み始めた時点と一致した。
 
-Memoryの実モデルによる自然言語操作、デスクトップ画面の操作、導入済みプラグインの更新は今回行っていない。ローカルの実行環境はBun 1.4.4。GitHub CIのBun 1.4.2での結果は別途記録する。
+Memoryの実モデルによる自然言語操作、デスクトップ画面の操作、導入済みプラグインの更新は今回行っていない。ローカルの実行環境はBun 1.4.4。実装コミットe2db5c788ade9da59628a0d0cc30a011c158e537では、[GitHubのLinux CI](https://github.com/sori883/koto/actions/runs/41196383068)もBun 1.4.2で成功した。
