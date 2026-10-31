@@ -19,7 +19,7 @@
 
 ## 新規開始
 
-1. 依頼の目的・範囲・終了条件を整理する。Tasksのlist/showで既存の同じ仕事を確認し、継続ならそのtask_idを使う。新規の場合はtask addのtitleとdescriptionへ目的・完了条件・重要な制約を記録する。初めて使うTasksだけsetupで準備する。
+1. 依頼の目的・範囲・終了条件を整理する。Tasksのlist/showで既存の同じ仕事を確認し、継続ならそのtask_idを使う。新規の場合はtask addのtitleとdescriptionへ目的・完了条件・重要な制約を記録する。変更を伴う場合は規模に関係なく編集前に済ませる。Gitで管理する変更では対象リポジトリ・統合先ブランチ・PR／MRのマージ確認を含め、今回の引き渡し地点と区別する。初めて使うTasksだけsetupで準備する。
 2. Memoryのsearch/showで関係するrule・principle・decisionと現在の仕様を読む。取得した記録の対象・適用条件・根拠を確認する。関連記録なし、未初期化、取得不能を区別し、読むだけの目的でsetupしない。未取得を制約なしと判断しない。
 3. コードの作業場所が必要ならmonorepoで対象project・repo・workspaceの登録と実体を確認する。新規準備が依頼の範囲にある場合だけsetup、project add、repo addを行う。setupはdefaultのみなので、別projectはproject addで準備する。最新の開始元が必要なときは対象repoをsyncし、workspace createを実行する。既存の指定作業場所で足りるなら新規作成を省く。
 4. 作成・照会応答のokだけでなく、各repositoryのobserved・ready・problemと編集先pathを確認する。すべての必要な作業場所を使えると分かってから、Tasksのworkspace linkでrepository_idを記録する。参照の登録だけで作業場所を準備済みと扱わない。
@@ -34,6 +34,12 @@
 状態・依存・完了の最新値はTasksを照会し、資料には判断理由・検証結果と対象の版を残す。Memoryへは確定し再利用する価値がある知識を保存する。作業ログ全文や同じ進捗を両方へ複製しない。知識の更新はshowのcontent_hashを使い、versionやハッシュが古い場合は読み直す。
 
 Tasksの更新ごとに一意なoperation-idと現在のif-versionを渡す。応答が不明なら同じ操作ID・同じ入力を再送し、返された過去の応答を次の更新の最新状態と扱わない。複数の担当が同じタスクを変更する場合は更新責任者へ集約する。
+
+## PR／MRの紐付けと待ち
+
+Git操作とPR／MRの作成・確認には、既存Gitや利用先のホスティングサービスのCLI等を使う。対象ブランチの既存PR／MRを確認し、同じ変更なら再利用する。作成・更新後にURL、対象リポジトリ、変更元と統合先を読み返し、Tasksのartifact addへURLと説明を登録する。PR／MRの説明にはproject_idとtask_id、目的・変更内容・検証結果を記す。内部記録の全文やローカルの絶対パスを公開する必要はない。
+
+レビューやマージを待つ段階で引き渡す場合は、最新のtask showを取得してtask setでwaitingにし、reasonとnextに待っている条件・次の確認を残す。追加修正は同じタスクをstartして進める。PR／MRの更新だけではTasksの状態は変わらない。状況の確認だけを依頼された場合は更新せず、続行の依頼ではPR／MRの最新状態と完了条件を確認して再開する。
 
 ## 中断
 
@@ -65,7 +71,9 @@ checkpoint出力だけが失敗しdetails.savedがtrueなら、正本には保�
 
 依頼の完了条件、現在の対象に対する検証・レビュー、依存先の有効性、必要な成果物と納品を確認する。必要な知識はMemoryの重複確認・保存・読戻し・検証を終え、Tasksからconceptへの参照を残す。保存先は選択したproject内とし、別projectへ暗黙に共有しない。
 
-task completeには実際のresultを渡す。報告だけが成果物のレビュー・調査なら、対象の不合格や未確認をresultに残す。実装・検証まで必要な仕事では、未達を報告しただけでcompleteしない。Gitのcommit・push・merge・PRは、依頼に含まれた範囲で既存GitやGitHub CLIを使い、結果を別に確認する。
+Gitで管理する変更タスクでは[PR／MRの完了条件](workflow.md#変更タスク)を確認する。ホスティングサービスで必要なPR／MRのマージ状態・統合先・マージ結果のコミットを読み返し、検証がどの版を対象にしたか、統合後に必要な確認が残っていないかを照合する。取得不能や未確認を成功に置き換えない。waiting／pausedなら依存先と再開条件を確認してstartし、runningからcompleteする。
+
+task completeには実際のresultを渡す。変更タスクのresultにはPR／MR、マージ結果、検証の対象と結果、明示された例外があればその条件を残す。報告だけが成果物のレビュー・調査なら、対象の不合格や未確認をresultに残す。実装・検証まで必要な仕事では、未達を報告しただけでcompleteしない。Gitのcommit・push・merge・PR／MRは、依頼と既存の承認に含まれた範囲で実施する。
 
 片付けが依頼範囲に含まれる場合だけ、作業と担当の停止を確かめてmonorepoのworkspace remove --dry-runへ進む。プレビューはリモート追跡情報を更新するため、recall等の読み取り専用調査では実行しない。canRemoveと全件の保護条件を確認してremoveする。止まった場合はTasksの完了を根拠に保護条件を迂回せず、片付けの未完了を報告する。
 
