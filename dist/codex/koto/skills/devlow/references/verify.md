@@ -61,7 +61,7 @@
 
 ## 成果物
 
-条件と判定、対象の版・環境、方法・期待値・実測結果・証拠、未確認事項をまとめる。標準以上は通常task.mdへ記し、独立した記録が必要なら同じ場所の `verification.md` に分ける。新規の既定は `.space/<project>/tasks/<task-id>/verification.md`。[検証記録のひな形](../assets/verification-template.md)を必要な範囲で使う。
+条件と判定、対象の版・環境、方法・期待値・実測結果・証拠、未確認事項をまとめる。検証だけならTasksやtask.mdを自動で作らず、回答や依頼された資料へ残す。タスク化した仕事で独立した記録が必要ならtask.mdや同じ場所の `verification.md` を使う。その場合の新規の既定は `.space/<project>/tasks/<task-id>/verification.md`。[検証記録のひな形](../assets/verification-template.md)を必要な範囲で使う。
 
 証拠を保存する場合は既存CI等を参照し、独立したファイルが必要なら同じ場所の `evidence/` に置く。小規模は会話、読み取り専用なら記録も回答内にまとめる。未取得の画像・ログ・数値への参照を作らない。
 
