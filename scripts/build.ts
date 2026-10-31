@@ -63,10 +63,12 @@ export async function distribution(root: string): Promise<Files> {
     }
   }
   for (const [path, body] of await filesAt(join(root, "space/default"))) common.set(`space/default/${path}`, body);
-  const cli = await filesAt(join(root, "cli/monorepo"), true);
-  for (const [path, body] of cli) {
-    if (!["monorepo.ts", "package.json", "README.md"].includes(path) && !path.startsWith("lib/")) continue;
-    common.set(`cli/monorepo/${path}`, path === "package.json" ? json({ ...JSON.parse(body.toString()), version }) : body);
+  for (const name of ["monorepo", "tasks"]) {
+    const cli = await filesAt(join(root, "cli", name), true);
+    for (const [path, body] of cli) {
+      if (![name + ".ts", "package.json", "README.md"].includes(path) && !path.startsWith("lib/")) continue;
+      common.set("cli/" + name + "/" + path, path === "package.json" ? json({ ...JSON.parse(body.toString()), version }) : body);
+    }
   }
   const result: Files = new Map();
   for (const product of products) {
@@ -115,7 +117,8 @@ export async function build(root: string): Promise<number> {
   try {
     for (const [path, body] of files) {
       await mkdir(dirname(join(stage, path)), { recursive: true });
-      await writeFile(join(stage, path), body, { mode: path.endsWith("/cli/monorepo/monorepo.ts") ? 0o755 : 0o644 });
+      const executable = ["monorepo", "tasks"].some(name => path.endsWith("/cli/" + name + "/" + name + ".ts"));
+      await writeFile(join(stage, path), body, { mode: executable ? 0o755 : 0o644 });
     }
     try { await rename(join(root, "dist"), backup); moved = true; } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }
     try { await rename(join(stage, "dist"), join(root, "dist")); }

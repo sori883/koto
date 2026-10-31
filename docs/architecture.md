@@ -8,13 +8,13 @@ koto（コト）は **Knowledge-Oriented Task Orchestration** の略であり、
 
 2026-10-31のユーザー指示により、対応先をCodex・Claude Codeの2製品に限定する。Copilot対応は削除する。製品ごとに配布物とカタログを生成し、ソースとともにGitで管理する。続くユーザー指示により、今回のmonorepo機能は`main`から作る`develop`へ統合する。元のコミット履歴を保持するマージコミットを使い、スカッシュや履歴の書き換えは行わない。
 
-ユーザーが削除した旧スキルと付属CLI、削除済みスキルを呼ぶエージェントと指示テンプレート、setup用マニフェストは復元しない。続く依頼で、新しいmonorepo CLIとその利用手順だけを持つスキルを追加する。スキルのない構成でも配布物を生成できる機能は維持し、既存の共通知識は保持する。
+ユーザーが削除した旧スキルと付属CLI、削除済みスキルを呼ぶエージェントと指示テンプレート、setup用マニフェストは復元しない。続く依頼で、新しいmonorepo・Tasks CLIとそれぞれの利用手順を持つスキルを追加する。スキルのない構成でも配布物を生成できる機能は維持し、既存の共通知識は保持する。
 
 以前のdevlow・OKF・orch・setup等の設計と検証は開発履歴としてdocsに残すが、現行機能や再実装の指示として扱わない。以前の[配布設計](https://github.com/sori883/koto/blob/77b4d4f87a4c575ccb4b243f2a62acd17cd446a2/docs/architecture.md)と、[今回の整理](issue-23-packaging-reset.md)を区別する。新しい機能・配置への移行は依頼された範囲で進める。
 
 ## 統合ワークスペースの構想
 
-2026-10-30に共有された方針を基準とし、Memory・Tasks・Workspaceを独立した責務のツールとして開発する。当初はすべて別リポジトリを想定していたが、2026-10-31のユーザー指示により、Workspaceは現在のkotoリポジトリ内で所有・開発する。Memory・Tasksの別リポジトリ方針は維持する。共通Coreや中央の統合CLIを必須にせず、AIエージェントが必要なツールを個別に利用する。
+2026-10-30に共有された方針を基準とし、Memory・Tasks・Workspaceを独立した責務のツールとして開発する。当初はすべて別リポジトリを想定していたが、2026-10-31のユーザー指示により、Workspaceに続いてTasksも現在のkotoリポジトリ内で所有・開発する。Memoryの別リポジトリ方針は維持する。共通Coreや中央の統合CLIを必須にせず、AIエージェントが必要なツールを個別に利用する。
 
 | ツール | 責務 |
 | --- | --- |
@@ -28,7 +28,7 @@ koto（コト）は **Knowledge-Oriented Task Orchestration** の略であり、
 
 各ツールに用意するCLIは非対話実行とJSON入出力に対応し、特定の言語やAI製品に依存しない構成を目指す。Workspaceの初期設定・管理操作はCLIを中心に実装し、スキルは利用手順、AIは依頼の解釈と結果の説明を担う。パスの境界、シンボリックリンク、認証情報、並行更新、異常終了、再実行時のデータ保護を考慮する。CLIの対象選択と実際のアクセス認可を区別し、必要な隔離は実行環境側でも行う。
 
-Workspaceのパッケージ名は`@koto/monorepo`、実行コマンドは`koto-monorepo`とする。CLIの正本は`cli/monorepo/`に置き、スキルから独立して直接実行できる。Memory・Tasksの実装と正式名称は別途決める。既存の利用先データを暗黙に移動・削除しない。
+Workspaceのパッケージ名は`@koto/monorepo`、実行コマンドは`koto-monorepo`とする。Tasksは`@koto/tasks`、実行コマンドは`koto-tasks`とする。正本はそれぞれ`cli/monorepo/`・`cli/tasks/`に置き、スキルから独立して直接実行できる。Memoryの実装と正式名称は別途決める。既存の利用先データを暗黙に移動・削除しない。
 
 ### モノレポ管理から着手する
 
@@ -37,6 +37,14 @@ Workspaceのパッケージ名は`@koto/monorepo`、実行コマンドは`koto-m
 リポジトリ削除は登録解除として実装し、Git管理領域は残す。作成途中を含む作業環境や、Git上のWorktreeがあれば拒否する。続くユーザー指示により、Worktree整理を追加する。対象タスクの全Worktreeを事前検査し、未保存・未追跡・無視対象のファイル、リモートで保存を確認できないコミット、Gitの作業中状態やロックがあれば停止する。削除は既存Gitに委ね、強制削除をせず、ブランチとGit管理領域を保持する。途中失敗後の再実行に対応する。Memoryの知識操作とTasksのタスク管理は、それぞれ独立したツールの責務を維持する。setupはWorkspaceの管理情報と保存先だけを作り、共通知識・他ツールのデータ・クライアント指示は配置しない。詳細は[CLIの設計](monorepo-cli-design.md)で定める。
 
 プロジェクト追加も管理機能に含める。setupで用意するdefaultと、後から追加するプロジェクトは同じ管理規則に従う。方針に含まれる機能と追加候補、未確定の範囲は[機能一覧](workspace-feature-inventory.md)に整理し、一覧全体を初期版の実装範囲とは扱わない。
+
+### Tasksの追加
+
+monorepoの初版完成後、ユーザーはTasksの開発を指示した。BunのCLIとし、旧orchの設計・実装を参考にする。外部依存を少なくするが、依存ゼロを絶対条件にはしない。実装難易度と保守負担を比較し、判断が難しい依存の採否は相談する。旧orchの担当権限・通知・承認等を一括して復元する指示とは扱わない。
+
+Tasksはタスク・依存関係・進捗・成果物参照・チェックポイントを所有する。正本は`.space/<project>/tasks/state.json`。チェックポイントは正本へ保存したスナップショットを`.space/<project>/checkpoint/<task>/<id>.json`にも出力し、出力だけが失敗しても同じ操作から再開できるようにする。操作IDによる再送、versionによる古い更新の拒否、プロジェクト単位の排他、依存先の版の照合を行う。
+
+TasksとWorkspaceは管理ファイルや実装モジュールを共有せず、同じproject_id・task_id・repository_idを参照する。タスクの完了、成果物の検証、Worktreeの削除は別々の結果として扱う。Tasksの変更は`develop`から作業ブランチを切り、検証後に履歴を残して`develop`へマージする。[Tasks CLIの設計](tasks-cli-design.md)を参照する。
 
 ### 実現方法と利用環境
 
@@ -68,6 +76,8 @@ Git操作の補助はWorkspaceの機能に含めない。commit・push・merge�
 | `space/default/` | 保持する共通知識・原則の正本 |
 | `cli/monorepo/` | `@koto/monorepo`の実装・パッケージ定義・利用者向け手順の正本 |
 | `skills/monorepo/` | CLIを使うAI向け手順の正本 |
+| `cli/tasks/` | `@koto/tasks`の実装・パッケージ定義・利用者向け手順の正本 |
+| `skills/tasks/` | Tasks CLIを使うAI向け手順の正本 |
 | `scripts/build.ts` | 正本から配布物とカタログを生成する開発用の入口 |
 | `dist/<製品>/koto/` | 生成物。Gitで管理し、手編集しない |
 | ルートの`package.json`・`bun.lock` | 生成・検証の開発依存と配布版数 |
@@ -85,7 +95,7 @@ Git操作の補助はWorkspaceの機能に含めない。commit・push・merge�
 | Codex | `.agents/plugins/marketplace.json` | `dist/codex/koto/` |
 | Claude Code | `.claude-plugin/marketplace.json` | `dist/claude-code/koto/` |
 
-buildは製品別定義と共通ソースを組み合わせ、ルートの版数を各配布物・カタログ・同梱CLIのパッケージ定義へ反映する。monorepo CLIは両製品の`cli/monorepo/`へ、スキルは`skills/monorepo/`へコピーする。CLIに開発環境の依存パッケージを要求しない。スキルがない場合はプラグイン定義からskillsパスを省く。旧setupのマニフェストは生成しない。
+buildは製品別定義と共通ソースを組み合わせ、ルートの版数を各配布物・カタログ・同梱CLIのパッケージ定義へ反映する。monorepo・Tasks CLIは両製品の`cli/monorepo/`・`cli/tasks/`へ、スキルはそれぞれの`skills/`配下へコピーする。CLIに開発環境の依存パッケージを要求しない。スキルがない場合はプラグイン定義からskillsパスを省く。旧setupのマニフェストは生成しない。
 
 スキルを追加した場合は、本文と必要な付属資料・実行ファイルを配布する。テスト、開発資料、利用先の記録、node_modules、実行時キャッシュは含めない。生成時に配布内のMarkdownリンクを確認し、シンボリックリンクを拒否する。
 

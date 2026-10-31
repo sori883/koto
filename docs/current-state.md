@@ -1,6 +1,6 @@
 # kotoの現状
 
-2026-10-31、Issue #23の作業ツリーを対象とする。対応先はCodexとClaude Codeの2製品。旧スキルと付属CLIを削除した後、ユーザーの依頼により、現在のkotoリポジトリ内に`@koto/monorepo`を新しく実装した。
+2026-10-31、developへ統合する開発内容を対象とする。対応先はCodexとClaude Codeの2製品。旧スキルと付属CLIを削除した後、ユーザーの依頼により、現在のkotoリポジトリ内に`@koto/monorepo`、続いて`@koto/tasks`を実装した。
 
 ## 現在の構成
 
@@ -8,12 +8,15 @@
 | --- | --- |
 | `cli/monorepo/` | Bunで動く独立したCLI。実行名は`koto-monorepo`、外部ライブラリ依存なし |
 | `skills/monorepo/` | CLIを使うAI向けの利用手順。処理はCLIへ委ねる |
+| `cli/tasks/` | Bunで動く独立したTasks CLI。実行名は`koto-tasks`、外部実行時ライブラリ依存なし |
+| `skills/tasks/` | タスク・依存・成果物・引き継ぎを記録するAI向け手順 |
 | `packaging/codex/`・`packaging/claude-code/` | 製品別のプラグイン定義とカタログ定義 |
 | `space/default/` | 共通知識の正本。既存の23原則を保持 |
 | `scripts/build.ts` | 2製品の配布物とカタログを生成・照合 |
 | `dist/codex/koto/`・`dist/claude-code/koto/` | CLI・スキル・共通知識・製品別プラグイン定義のコピー |
 | `.agents/plugins/marketplace.json`・`.claude-plugin/marketplace.json` | 各製品の配布物を参照するカタログ |
 | `tests/monorepo/` | 実際のローカルGitとCLI子プロセスによる操作・保護条件の検証 |
+| `tests/tasks/` | タスク操作、競合、再送、依存の失効、記録の保持と保存失敗の検証 |
 | `tests/distribution/` | 生成、参照切れ、生成物照合、スキルなし構成、開発環境外でのCLI起動を検証 |
 
 ## monorepo CLI
@@ -26,7 +29,15 @@ setup、プロジェクト追加・参照、リポジトリ登録・取得・参
 
 片付けは`workspace remove <task> [--dry-run]`で行う。未保存・未追跡・無視対象のファイル、未送信コミット、ロックやGitの作業中状態等を検査し、通常のGitで削除する。ブランチと履歴は残し、途中失敗後は削除記録と実体を照合して再開する。[片付けの設計と検証](monorepo-cleanup-design.md)を参照する。
 
-Memory・Tasks、プロジェクト削除、利用先への共通知識とクライアント指示の配置は未実装。専用エージェント・旧setupマニフェスト・旧スキルは復元していない。[機能一覧](workspace-feature-inventory.md)の全項目が実装済みという意味ではない。[初版設計](monorepo-cli-design.md)と[CLI手順](../cli/monorepo/README.md)を参照する。
+Memory、プロジェクト削除、利用先への共通知識とクライアント指示の配置は未実装。専用エージェント・旧setupマニフェスト・旧スキルは復元していない。[機能一覧](workspace-feature-inventory.md)の全項目が実装済みという意味ではない。[初版設計](monorepo-cli-design.md)と[CLI手順](../cli/monorepo/README.md)を参照する。
+
+## Tasks CLI
+
+タスクの作成・一覧・詳細・更新、着手・待ち・中断・完了・中止・新しい試行への再開、同一プロジェクト内の依存、作業場所と成果物への参照、チェックポイント、履歴・状態・整合性確認を実装した。CLIだけでも実行でき、monorepoやGitの導入は必要ない。
+
+正本は`.space/<project>/tasks/state.json`。操作IDと当時の応答を一緒に保存して二重更新を防ぎ、versionで古い判断による上書きを拒否する。依存先の版を開始時に固定し、先行タスクのやり直しや推移的な依存の失効を後続の開始・再開・完了へ反映する。
+
+チェックポイントは正本のスナップショットを`.space/<project>/checkpoint/<task>/<id>.json`へ出力する。出力だけ失敗した場合は保存済みであることを返し、同じ操作の再送で完了できる。成果物や作業場所は参照を記録するもので、ファイルの保存・検証・Git操作は行わない。詳細は[Tasksの設計と検証](tasks-cli-design.md)と[利用手順](../cli/tasks/README.md)を参照する。
 
 ## 検証と公開状態
 
@@ -42,9 +53,13 @@ Codex 0.164.0のapp-serverはローカル配布物の`koto:monorepo`を有効な
 
 続いて、別の一時フォルダへ配布物をコピーし、Codex CLIへスキル名やコマンドを指定せず日本語で依頼した。初期化・2リポジトリの登録・作業場所の準備、未保存ファイルがある片付けの停止、保存済みの作業場所の片付けと履歴保持を確認した。[自然言語による検証記録](monorepo-codex-verification.md)を参照する。
 
-Codexデスクトップ画面とClaude Codeモデルへの自然言語依頼、個別の認証方式・認証失敗時の実接続、LinuxでのCI実行は未確認。CLIの実接続、クライアント本体の読込、Codex CLIの実モデルによる操作、ローカルの生成・型検査・テストを区別する。
+monorepoをdevelopへ統合したコミット83902faでは、[GitHubのLinux CI](https://github.com/sori883/koto/actions/runs/41190574787)も成功した。Tasks追加後はローカルの全36テスト・754 assertions、型検査が成功した。Tasks専用9件と配布検証2件を追加し、両製品の配布物だけでTasks単独の操作と、モノレポと組み合わせた準備から片付けまでを確認した。
 
-ユーザーは今回のmonorepo機能を完成として扱い、`main`から作る`develop`への統合を指示した。実装・配布物と設計・検証記録を作業ブランチでコミットし、元の履歴を保持するマージコミットで取り込む。統合先は`develop`であり、`main`へのマージは今回の範囲に含めない。
+Tasks追加後の配布物も、Codexのapp-serverがkoto:tasksを有効なスキルとして読み取り、Claude Codeのセッション限定の読込ではmonorepo・tasksの2件を認識した。
+
+Codexデスクトップ画面とClaude Codeモデルへの自然言語依頼、個別の認証方式・認証失敗時の実接続は未確認。Tasksへの自然言語依頼は今回のCLI検証とは別であり、monorepoの実モデル検証をTasksの検証として扱わない。
+
+monorepoは`main`から作った`develop`へ履歴を残して統合済み。Tasksもユーザーの指示により`develop`から`codex/tasks-cli`を切り、検証後に元の履歴を保持するマージコミットで取り込む。`main`へのマージは今回の範囲に含めない。
 
 版数は0.1.8のまま。開発ブランチのGitHubへの反映とプラグインの正式リリースは区別する。公開済み0.1.8とMacに導入済みのプラグインには未反映。`@koto/monorepo`はローカルのパッケージ識別名で、NPM公開は行っていない。
 
