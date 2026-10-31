@@ -38,13 +38,26 @@ bun run memory -- search "認証" --root /path/to/my-workspace --json
 
 [Memory CLIの利用手順](cli/memory/README.md)と[Memoryスキル](skills/memory/SKILL.md)を両製品へ同梱します。保存先は`.space/<project>/memory/`で、TasksやWorkspaceのデータは変更しません。
 
-利用先への共通知識や指示ファイルの配置は未実装です。旧スキル・付属CLIは削除済みで、共通知識の正本は`space/default/`に保持しています。
+3つのCLIを組み合わせて進めるための開発スキルも同梱します。
+
+| スキル | 役割 |
+| --- | --- |
+| [devlow](skills/devlow/SKILL.md) | 開発の工程を選び、monorepo・Tasks・Memoryで開始から中断・再開・完了まで進める |
+| [recall](skills/recall/SKILL.md) | タスク・checkpoint・実際のコードを照合して、現在地と次の操作を説明する |
+| [tdd](skills/tdd/SKILL.md) | 局所テストで再現できる不具合を、失敗を確認してから直す |
+| [blast-radius](skills/blast-radius/SKILL.md) | 変更の影響範囲と安全性に関わる前提を調べる |
+| [interrogate](skills/interrogate/SKILL.md) | 利用可能な独立担当のレビューを照合し、指摘の採否を判断する |
+
+例えば「この管理ルートのdefaultで、タスクtask-001の修正とテストまで進めて」はdevlow、「task-001はどこまで進んだか、確認だけして」はrecallで扱います。専門スキルは必要な工程で使い、毎回すべてを呼ぶ構成にはしていません。上の5スキルは既存のMITライセンスの資産を再利用し、各ディレクトリと配布物に著作権表示・許諾文を保持しています。
+
+利用先への共通知識や指示ファイルの配置は未実装です。旧付属CLIと他の削除済みスキルは復元せず、共通知識の正本は`space/default/`に保持しています。
 
 - [現在の構成・検証状況](docs/current-state.md)
 - [目的と配布設計](docs/architecture.md)
 - [monorepo CLIの設計](docs/monorepo-cli-design.md)
 - [Tasks CLIの設計](docs/tasks-cli-design.md)
 - [Memory CLIの設計](docs/memory-cli-design.md)
+- [開発スキルの連携と再利用元](docs/devlow-cli-integration.md)
 - [配布物の生成と検証](docs/distribution.md)
 
-作業ブランチ上の変更です。公開済み0.1.8と導入済みのプラグインには未反映で、NPMへの公開も行っていません。
+develop向けの開発内容です。公開済み0.1.8と導入済みのプラグインには未反映で、NPMへの公開も行っていません。
