@@ -39,6 +39,8 @@ setup、プロジェクト追加・参照、リポジトリ登録・取得・参
 
 指示更新専用12テストと両製品の配布物だけによる実行で、更新・旧形式の移行・途中失敗後の再実行・既存編集と境界の保護を確認した。今回の配布物は192ファイル。型検査と生成物照合も成功した。
 
+実装コミットa7d8c3dの[GitHub Linux CI](https://github.com/sori883/koto/actions/runs/41221775333)では、Bun 1.4.2で全275テスト・1914 assertions、型検査、全生成物照合が成功した。
+
 プロジェクト削除、利用先への共通知識の配置は未実装。専用エージェント・旧setupマニフェスト・今回追加した5つ以外の旧スキルは復元していない。[機能一覧](workspace-feature-inventory.md)の全項目が実装済みという意味ではない。[初版設計](monorepo-cli-design.md)と[CLI手順](../cli/monorepo/README.md)を参照する。
 
 ## Tasks CLI
