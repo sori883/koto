@@ -50,7 +50,17 @@ bun run memory -- search "認証" --root /path/to/my-workspace --json
 
 例えば「この管理ルートのdefaultで、タスクtask-001の修正とテストまで進めて」はdevlow、「task-001はどこまで進んだか、確認だけして」はrecallで扱います。専門スキルは必要な工程で使い、毎回すべてを呼ぶ構成にはしていません。上の5スキルは既存のMITライセンスの資産を再利用し、各ディレクトリと配布物に著作権表示・許諾文を保持しています。
 
-利用先への共通知識や指示ファイルの配置は未実装です。旧付属CLIと他の削除済みスキルは復元せず、共通知識の正本は`space/default/`に保持しています。
+利用先の`AGENTS.md`・`CLAUDE.md`には、monorepoの指示更新機能で現在のスキルへの入口を設定できます。既存の文章を残してkotoの管理部分だけを更新し、独自編集があれば停止します。
+
+```sh
+bun run monorepo -- instructions plan --root /path/to/my-workspace --target /path/to/existing-repo --product codex --json
+bun run monorepo -- instructions apply --root /path/to/my-workspace --target /path/to/existing-repo --product codex --json
+bun run monorepo -- instructions status --root /path/to/my-workspace --target /path/to/existing-repo --product codex --json
+```
+
+Claude Codeには`--product claude-code`を使います。配置先と管理プロジェクトを確認し、詳しくは[指示ファイルの追加・更新](cli/monorepo/README.md#指示ファイルの追加更新)を参照してください。旧setupの記録と一致する指示も更新できます。
+
+共通知識の利用先への配置は未実装です。旧付属CLIと他の削除済みスキルは復元せず、共通知識の正本は`space/default/`に保持しています。
 
 - [現在の構成・検証状況](docs/current-state.md)
 - [目的と配布設計](docs/architecture.md)
@@ -58,6 +68,7 @@ bun run memory -- search "認証" --root /path/to/my-workspace --json
 - [Tasks CLIの設計](docs/tasks-cli-design.md)
 - [Memory CLIの設計](docs/memory-cli-design.md)
 - [開発スキルの連携と再利用元](docs/devlow-cli-integration.md)
+- [指示ファイル更新の設計と検証](docs/instruction-setup-design.md)
 - [配布物の生成と検証](docs/distribution.md)
 
 develop向けの開発内容です。公開済み0.1.8と導入済みのプラグインには未反映で、NPMへの公開も行っていません。

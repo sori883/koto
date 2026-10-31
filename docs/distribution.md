@@ -1,6 +1,6 @@
 # 配布物の生成と検証
 
-対応する配布形式はCodexとClaude Codeの2つ。現在の配布物はmonorepo・Tasks・Memory CLI、それぞれの利用手順とdevlow・recall・tdd・blast-radius・interrogateの計8スキル、プラグイン定義、共通知識で構成する。以前のsetupによるプラグイン導入・更新機能は復元せず、各CLIのsetupは自身の管理領域を準備する。
+対応する配布形式はCodexとClaude Codeの2つ。現在の配布物はmonorepo・Tasks・Memory CLI、それぞれの利用手順とdevlow・recall・tdd・blast-radius・interrogateの計8スキル、プラグイン定義、共通知識、利用先の指示テンプレートで構成する。各CLIのsetupは自身の管理領域を準備する。旧setupの指示ファイル追加更新はmonorepoのinstructionsへ引き継ぎ、スキル・知識のコピーやプラグイン設定の変更は含めない。
 
 ## 正本と生成先
 
@@ -19,6 +19,7 @@
 | `skills/memory/` | 両製品の`dist/<製品>/koto/skills/memory/` |
 | `skills/devlow/`・`skills/recall/` | 両製品の同名スキル。工程資料・ひな形・LICENSEを含む |
 | `skills/tdd/`・`skills/blast-radius/`・`skills/interrogate/` | 両製品の同名スキル。参照資料・LICENSEを含む |
+| `templates/AGENTS.md` | 両製品の`templates/AGENTS.md`。instructionsがAGENTS.md／CLAUDE.mdへ適用する共有本文 |
 
 ルートの`package.json`のversionを両製品と同梱CLIのパッケージ定義へ反映する。生成先はGitで管理し、手編集しない。カタログはそれぞれ同じリポジトリの製品別配布物を指す。CLIは入口・lib・パッケージ定義・利用手順だけを配布し、入口へ実行権限を付ける。
 
