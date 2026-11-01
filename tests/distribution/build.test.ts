@@ -268,7 +268,7 @@ test("licensed development skills ship with complete notices and resolvable bund
   const source = resolve(import.meta.dir, "../..");
   const provenance = JSON.parse(await readFile(join(source, "docs/devlow-restoration-source.json"), "utf8"));
   const names = ["devlow", "recall", "tdd", "blast-radius", "interrogate"];
-  for (const name of [...names, "monorepo", "tasks", "memory", "opsflow"]) await cp(join(source, "skills", name), join(root, "skills", name), { recursive: true });
+  await cp(join(source, "skills"), join(root, "skills"), { recursive: true });
   for (const name of ["monorepo", "tasks", "memory"]) await cp(join(source, "cli", name), join(root, "cli", name), { recursive: true });
   await build(root);
   for (const name of names) {

@@ -15,6 +15,7 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.2
+      - uses: astral-sh/setup-uv@v5
       - run: bun install --frozen-lockfile --ignore-scripts
       - run: bun run typecheck
       - run: bun run test
