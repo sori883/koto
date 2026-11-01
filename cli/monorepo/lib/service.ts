@@ -1,7 +1,7 @@
 import { readFile, readdir, rmdir } from "node:fs/promises";
 import { dirname, join, relative, resolve, sep } from "node:path";
 import { directory, exists, locked, readJson, rootPath, safePath, saveJson } from "./files.ts";
-import { changes, git, refName, remoteUrl, worktrees } from "./git.ts";
+import { changes, git, refName, remoteUrl, storedOriginUrl, worktrees } from "./git.ts";
 import { emptyProject, identifier, MonorepoError, requireThat, validateProject, validateRoot } from "./model.ts";
 import type { Owner, Project, Repository, RootState, Workspace, Worktree } from "./model.ts";
 import { instructions } from "./instructions.ts";
@@ -87,8 +87,7 @@ export class Monorepo {
     const path = await this.checkOwner(project, repo);
     await this.checkStorage(path);
     requireThat((await git([`--git-dir=${path}`, "rev-parse", "--is-bare-repository"], this.root)).output.trim() === "true", "INVALID_REPOSITORY", "Expected a bare repository.");
-    const origin = await git([`--git-dir=${path}`, "remote", "get-url", "origin"], this.root);
-    requireThat(origin.output.trim() === repo.url, "CONFLICT", "Git origin differs from the registered source.");
+    requireThat(await storedOriginUrl(path, this.root) === repo.url, "CONFLICT", "Git origin differs from the registered source.");
     return path;
   }
   private async checkStorage(path: string): Promise<void> {
@@ -103,9 +102,9 @@ export class Monorepo {
       path = await this.checkOwner(project, repo);
       await this.checkStorage(path);
       await git(["init", "--bare", "--template=", path], this.root);
-      const origin = await git([`--git-dir=${path}`, "remote", "get-url", "origin"], this.root, true);
-      if (origin.code !== 0) await git([`--git-dir=${path}`, "remote", "add", "origin", repo.url], this.root);
-      else requireThat(origin.output.trim() === repo.url, "CONFLICT", "Git origin differs from the registered source.");
+      const origin = await storedOriginUrl(path, this.root);
+      if (origin === undefined) await git([`--git-dir=${path}`, "remote", "add", "origin", repo.url], this.root);
+      else requireThat(origin === repo.url, "CONFLICT", "Git origin differs from the registered source.");
     } else path = await this.checkBare(project, repo);
     await git([`--git-dir=${path}`, "fetch", "--no-tags", "origin", "+refs/heads/*:refs/remotes/origin/*"], this.root);
     const refs = (await git([`--git-dir=${path}`, "ls-remote", "--symref", "origin", "HEAD"], this.root)).output;
@@ -265,9 +264,22 @@ export class Monorepo {
     }
     return { id: workspace.id, project: project.id, removing: !!workspace.removal, ready: !workspace.removal && repositories.every(entry => entry.phase === "ready" && entry.observed === "ready"), repositories };
   }
+  private async checkGitWriteLocks(bare: string, gitDirectory: string) {
+    const otherWorktrees = join(bare, "worktrees");
+    const inspect = async (directory: string): Promise<void> => {
+      for (const entry of await readdir(await safePath(this.root, directory), { withFileTypes: true })) {
+        const path = join(directory, entry.name);
+        requireThat(!entry.name.endsWith(".lock"), "GIT_WRITE_LOCKED", "Git metadata has a write lock. Confirm its writer has stopped before removing this workspace.", { lockPath: path });
+        if (entry.isDirectory() && path !== otherWorktrees) await inspect(path);
+      }
+    };
+    await inspect(bare);
+    await inspect(gitDirectory);
+  }
   private async cleanWorktree(project: Project, workspace: Workspace, entry: Worktree) {
     const observed = await this.checkWorktree(project, workspace, entry), path = observed.path;
     requireThat(!observed.locked, "WORKTREE_LOCKED", "Git has locked this worktree. Resolve its active use before removing it.");
+    await this.checkGitWriteLocks(observed.bare, observed.gitDirectory);
     for (const operation of ["MERGE_HEAD", "CHERRY_PICK_HEAD", "REVERT_HEAD", "REBASE_HEAD", "BISECT_START", "rebase-apply", "rebase-merge", "sequencer"]) {
       requireThat(!await exists(await safePath(this.root, observed.gitDirectory, operation)), "GIT_OPERATION_IN_PROGRESS", "A Git operation is still in progress.", { operation });
     }
@@ -277,7 +289,9 @@ export class Monorepo {
     requireThat(!staged.split("\0").some(line => line.startsWith("160000 ")), "SUBMODULE_WORKTREE", "Worktrees containing submodules are not removed by this command.");
     const modified = changes((await git(["-C", path, "-c", "core.untrackedCache=false", "-c", "core.ignoreStat=false", "status", "--porcelain=v1", "-z", "--untracked-files=all", "--ignored=matching", "--ignore-submodules=none"], this.root)).output);
     requireThat(modified.length === 0, "UNSAVED_FILES", "The worktree contains modified, untracked or ignored files.", { changes: modified });
-    return (await git(["-C", path, "rev-parse", "HEAD"], this.root)).output.trim();
+    const head = (await git(["-C", path, "rev-parse", "HEAD"], this.root)).output.trim();
+    await this.checkGitWriteLocks(observed.bare, observed.gitDirectory);
+    return head;
   }
   private async inspectRemoval(project: Project, workspace: Workspace, entry: Worktree): Promise<RemovalCheck> {
     const result: RemovalCheck = {
