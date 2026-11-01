@@ -1,4 +1,4 @@
-import { lstat, open, realpath, rm } from "node:fs/promises";
+import { lstat, mkdir, open, realpath, rm, rmdir } from "node:fs/promises";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import type { Manifest, State, Pending, Result, Entry, Operation, Product, Scope } from "./model.ts";
@@ -9,6 +9,28 @@ import { mergeIndex } from "./index.ts";
 
 interface Context { project: string; pluginRoot: string; manifest: Manifest; manifestHash: string; statePath: string; pendingPath: string; lockPaths: string[] }
 const digest = (value: Buffer | null) => value === null ? null : hash(value);
+const memoryRoot = ".space/default/memory";
+const writesMemory = (manifest: Manifest) => manifest.files.some(entry => entry.destination.startsWith(`${memoryRoot}/`));
+async function exists(project: string, relative: string): Promise<boolean> {
+  try { await lstat(await safePath(project, relative)); return true; }
+  catch (error) { if ((error as NodeJS.ErrnoException).code === "ENOENT") return false; throw error; }
+}
+async function lockMemory(project: string): Promise<() => Promise<void>> {
+  await safeMkdir(project, memoryRoot);
+  const path = await safePath(project, `${memoryRoot}/.okf-write-lock`);
+  try { await mkdir(path); }
+  catch (error) { if ((error as NodeJS.ErrnoException).code === "EEXIST") throw new SetupError("LOCKED", "Memory is being updated; retry after the writer finishes"); throw error; }
+  const owner = await lstat(path);
+  const ownerText = JSON.stringify({ pid: process.pid, token: randomUUID(), started_at: new Date().toISOString(), writer: "setup" });
+  const file = await open(join(path, "owner.json"), "wx", 0o600);
+  try { await file.writeFile(ownerText); await file.sync(); } finally { await file.close(); }
+  return async () => {
+    const current = await lstat(path);
+    if (current.isSymbolicLink() || owner.ino !== current.ino || owner.dev !== current.dev || (await readOptional(project, `${memoryRoot}/.okf-write-lock/owner.json`))?.toString() !== ownerText) throw new SetupError("LOCKED", "Memory lock ownership changed; preserve the lock for inspection");
+    await rm(join(path, "owner.json"));
+    await rmdir(path);
+  };
+}
 function markers(m: Manifest) {
   const prefix = m.plugin === "agent-gear" ? "agent-gear" : "koto";
   return { start: `<!-- ${prefix}:setup:${m.plugin}:${m.product}:start -->`, end: `<!-- ${prefix}:setup:${m.plugin}:${m.product}:end -->` };
@@ -62,12 +84,20 @@ async function installedState(project: string, manifest: Manifest): Promise<Stat
   }
   return { schemaVersion: 1, plugin: manifest.plugin, product: manifest.product, version: manifest.version, entries: [] };
 }
-async function plan(ctx: Context): Promise<{ result: Result; pending: Pending; stateBytes: Buffer | null }> {
+async function plan(ctx: Context, ownMemoryLock = false): Promise<{ result: Result; pending: Pending; stateBytes: Buffer | null }> {
   const { manifest: m, project, pluginRoot } = ctx;
   const stateBytes = await readOptional(project, ctx.statePath);
   const state = await installedState(project, m);
   if (state.scope === "project" && m.scope !== "project") throw new SetupError("INPUT", "This project uses project scope; pass --scope project to preserve local skill references");
   const result: Result = { plugin: m.plugin, product: m.product, version: m.version, scope: m.scope ?? "plugin", project, actions: [], conflicts: [], pending: false, locked: (await Promise.all(ctx.lockPaths.map(path => readOptional(project, path)))).some(raw => raw !== null) };
+  if (writesMemory(m)) {
+    if (!ownMemoryLock && await exists(project, `${memoryRoot}/.okf-write-lock`)) result.locked = true;
+    if (await exists(project, `${memoryRoot}/.memory-pending.json`)) result.conflicts.push({ destination: `${memoryRoot}/.memory-pending.json`, reason: "Recover the interrupted Memory write before setup" });
+    try {
+      await lstat(await safePath(project, ".space/babel"));
+      result.conflicts.push({ destination: ".space/babel", reason: "Existing knowledge must be explicitly migrated to .space/default/memory before setup; no knowledge is moved or discarded automatically" });
+    } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }
+  }
   for (const plugin of setupPlugins(m.plugin).slice(1)) for (const product of Object.keys(instructionFiles) as Product[]) {
     const path = `.space/setup/${plugin}-${product}.pending.json`;
     if (await readOptional(project, path)) {
@@ -92,14 +122,15 @@ async function plan(ctx: Context): Promise<{ result: Result; pending: Pending; s
   let legacyStates: State[] | undefined;
   for (const entry of m.files) {
     const source = await readOptional(pluginRoot, entry.source); if (!source) throw new SetupError("SOURCE", `Missing source: ${entry.source}`);
-    const current = await readOptional(project, entry.destination), previous = state.entries.find(e => e.destination === entry.destination);
+    const current = await readOptional(project, entry.destination), previous = state.entries.find(e => e.destination === entry.destination)
+      ?? state.entries.find(e => e.destination.startsWith(".space/babel/") && e.destination.replace(".space/babel/", ".space/default/memory/") === entry.destination);
     let currentManaged: string | null;
     try { currentManaged = managedHash(current, entry, m); }
     catch (error) { if (!(error instanceof SetupError) || error.code !== "BLOCK_CONFLICT") throw error; result.conflicts.push({ destination: entry.destination, reason: error.message }); continue; }
     let desired = source, desiredManaged: string;
     if (entry.mode === "managed-block") {
       const local = m.scope === "project";
-      const text = source.toString("utf8").replaceAll("{{SKILL_ROOT}}", local ? projectSkillRoot(m.product)! : join(pluginRoot, "skills")).replaceAll("{{BABEL_BUNDLE}}", local ? ".space/babel" : join(project, ".space/babel")).replaceAll("{{VENDOR_BUNDLE}}", local ? `.space/babel/vendor/${m.plugin}` : join(project, ".space/babel/vendor", m.plugin));
+      const text = source.toString("utf8").replaceAll("{{SKILL_ROOT}}", local ? projectSkillRoot(m.product)! : join(pluginRoot, "skills")).replaceAll("{{MEMORY_ROOT}}", local ? ".space/default/memory" : join(project, ".space/default/memory")).replaceAll("{{VENDOR_BUNDLE}}", local ? `.space/default/memory/vendor/${m.plugin}` : join(project, ".space/default/memory/vendor", m.plugin));
       const { start, end } = markers(m);
       if (setupPlugins(m.plugin).some(plugin => { const pair = markers({ ...m, plugin }); return text.includes(pair.start) || text.includes(pair.end); })) throw new SetupError("SOURCE", "Template contains managed block markers");
       const managed = `${start}\n${text.trimEnd()}\n${end}`, old = block(current, m), outside = current?.toString("utf8") ?? "";
@@ -116,7 +147,7 @@ async function plan(ctx: Context): Promise<{ result: Result; pending: Pending; s
     const shared = entry.mode === "merge-index" || entry.mode === "seed";
     if (previous && (previous.mode !== entry.mode || !shared && currentManaged !== previous.hash && currentManaged !== desiredManaged)) result.conflicts.push({ destination: entry.destination, reason: "Local edit or deletion differs from both the last installed and incoming content" });
     else if (!previous && !shared && currentManaged !== null && currentManaged !== desiredManaged) result.conflicts.push({ destination: entry.destination, reason: "Existing content is not managed by this installation" });
-    if (!previous && entry.mode === "copy" && entry.destination.startsWith(".space/babel/") && !entry.destination.startsWith(".space/babel/vendor/")) {
+    if (!previous && entry.mode === "copy" && entry.destination.startsWith(".space/default/memory/") && !entry.destination.startsWith(".space/default/memory/vendor/")) {
       if (!legacyStates) {
         legacyStates = [state];
         for (const product of Object.keys(instructionFiles) as Product[]) {
@@ -125,10 +156,10 @@ async function plan(ctx: Context): Promise<{ result: Result; pending: Pending; s
         }
       }
       for (const plugin of setupPlugins(m.plugin)) {
-        const legacyPath = entry.destination.replace(".space/babel/", `.space/babel/vendor/${plugin}/`);
-        const legacy = legacyStates.flatMap(s => s.entries.filter(e => e.destination === legacyPath));
+        const legacyPath = entry.destination.replace(".space/default/memory/", `.space/default/memory/vendor/${plugin}/`);
+        const legacy = legacyStates.flatMap(s => s.entries.filter(e => e.destination.replace(/^\.space\/babel\//, ".space/default/memory/") === legacyPath));
         const legacyHash = digest(await readOptional(project, legacyPath));
-        if ((legacy.length || legacyHash !== null) && legacyHash !== desiredManaged && !legacy.some(e => e.hash === legacyHash)) result.conflicts.push({ destination: legacyPath, reason: "Legacy vendor document has local edits or was deleted; reconcile it with the Babel destination before updating" });
+        if ((legacy.length || legacyHash !== null) && legacyHash !== desiredManaged && !legacy.some(e => e.hash === legacyHash)) result.conflicts.push({ destination: legacyPath, reason: "Legacy vendor document has local edits or was deleted; reconcile it with the Memory destination before updating" });
       }
     }
     const action = current === null ? "create" : current.equals(desired) ? "unchanged" : "update";
@@ -147,6 +178,7 @@ export async function runSetup(options: { command: "plan" | "apply" | "status"; 
   await safeMkdir(ctx.project, ".space/setup");
   const locks: { path: string; file: Awaited<ReturnType<typeof open>> }[] = [];
   const completed: string[] = [];
+  let releaseMemory: (() => Promise<void>) | undefined;
   try {
     for (const relative of ctx.lockPaths) {
       const path = await safePath(ctx.project, relative);
@@ -154,7 +186,8 @@ export async function runSetup(options: { command: "plan" | "apply" | "status"; 
       locks.push({ path, file });
       await file.writeFile(JSON.stringify({ pid: process.pid, token: randomUUID(), at: new Date().toISOString() })); await file.sync();
     }
-    const prepared = await plan(ctx), { result, pending } = prepared;
+    if (writesMemory(ctx.manifest)) releaseMemory = await lockMemory(ctx.project);
+    const prepared = await plan(ctx, !!releaseMemory), { result, pending } = prepared;
     if (result.conflicts.length) throw new SetupError("CONFLICT", "Setup conflict; no destination files were written", result);
     if (!result.pending) await atomicWrite(ctx.project, ctx.pendingPath, jsonBytes(pending));
     for (const op of pending.operations) {
@@ -169,5 +202,8 @@ export async function runSetup(options: { command: "plan" | "apply" | "status"; 
   } catch (error) {
     if (locks.length === ctx.lockPaths.length && await readOptional(ctx.project, ctx.pendingPath)) throw new SetupError("PARTIAL", `Apply interrupted; preserve the pending record and rerun apply. ${error instanceof Error ? error.message : String(error)}`, { completed, cause: error instanceof SetupError ? error.code : "IO" });
     throw error;
-  } finally { for (const lock of locks.reverse()) { await lock.file.close(); await rm(lock.path, { force: true }); } }
+  } finally {
+    try { await releaseMemory?.(); }
+    finally { for (const lock of locks.reverse()) { await lock.file.close(); await rm(lock.path, { force: true }); } }
+  }
 }

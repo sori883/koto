@@ -34,7 +34,7 @@
 
 必要な確認を、原因を切り分けやすい順で実施する。実操作や保存を伴う確認は依頼と権限の範囲で行う。読み取り専用の依頼は根拠の照合で確認し、書き込みや実行が必要な検証を済ませたことにしない。
 
-既存のプロジェクト用verifyスキルがあれば、今回の対象・版・条件に適合する手順を使う。再利用可能な検証手順の作成も依頼範囲なら [create-verification-skill](../../create-verification-skill/SKILL.md)、既存手順とアプリのずれを直す場合は [maintain-verification-skill](../../maintain-verification-skill/SKILL.md)へ渡す。単発の検証だけの依頼でスキル作成・更新を追加しない。
+既存のプロジェクト用verifyスキルがあれば、今回の対象・版・条件に適合する手順を使う。手順の作成・更新も依頼範囲なら、[create-verification-skill](../../create-verification-skill/SKILL.md)または[maintain-verification-skill](../../maintain-verification-skill/SKILL.md)へ対象と既存の記録を渡す。単発の検証だけの依頼でスキル作成・更新を追加しない。
 
 実行方法、期待値、実際の結果、対象の版・環境、証拠への参照を残す。プロセスが起動した、終了コードが0だったという事実が、利用者の求める最終状態まで示すかを確認する。
 
@@ -61,7 +61,7 @@
 
 ## 成果物
 
-条件と判定、対象の版・環境、方法・期待値・実測結果・証拠、未確認事項をまとめる。標準以上は通常task.mdへ記し、独立した記録が必要なら同じ場所の `verification.md` に分ける。新規の既定は `.space/tasks/<task-id>/verification.md`。[検証記録のひな形](../assets/verification-template.md)を必要な範囲で使う。
+条件と判定、対象の版・環境、方法・期待値・実測結果・証拠、未確認事項をまとめる。検証だけならTasksやtask.mdを自動で作らず、回答や依頼された資料へ残す。タスク化した仕事で独立した記録が必要ならtask.mdや同じ場所の `verification.md` を使う。その場合の新規の既定は `.space/<project>/tasks/<task-id>/verification.md`。[検証記録のひな形](../assets/verification-template.md)を必要な範囲で使う。
 
 証拠を保存する場合は既存CI等を参照し、独立したファイルが必要なら同じ場所の `evidence/` に置く。小規模は会話、読み取り専用なら記録も回答内にまとめる。未取得の画像・ログ・数値への参照を作らない。
 

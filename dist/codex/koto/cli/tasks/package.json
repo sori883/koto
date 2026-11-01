@@ -1,0 +1,12 @@
+{
+  "name": "@koto/tasks",
+  "version": "0.1.8",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "koto-tasks": "./tasks.ts"
+  },
+  "engines": {
+    "bun": ">=1.4.2"
+  }
+}

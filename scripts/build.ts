@@ -60,7 +60,15 @@ export async function distribution(root: string): Promise<Files> {
       for (const [path, body] of await filesAt(join(directory, part))) common.set(`skills/${name}/${part}${path ? `/${path}` : ""}`, body);
     }
   }
-  for (const [path, body] of await filesAt(join(root, "space/babel"))) common.set(`space/babel/${path}`, body);
+  for (const [path, body] of await filesAt(join(root, "space/default"))) common.set(`space/default/${path}`, body);
+  for (const name of ["memory", "tasks"]) {
+    for (const [path, body] of await filesAt(join(root, "cli", name), true)) {
+      if (path === "package.json") {
+        const pkg = JSON.parse(body.toString()); pkg.version = version;
+        common.set(`cli/${name}/${path}`, json(pkg));
+      } else common.set(`cli/${name}/${path}`, body);
+    }
+  }
   const result: Files = new Map();
   for (const product of products) {
     const source = join(root, "packaging", product);
@@ -76,7 +84,7 @@ export async function distribution(root: string): Promise<Files> {
     }
     const setupFiles: Entry[] = [];
     for (const path of [...files.keys()].sort()) {
-      if (path.startsWith("space/babel/")) setupFiles.push({ source: path, destination: `.${path}`, mode: posix.basename(path) === "index.md" ? "merge-index" : ["space/babel/log.md", "space/babel/LICENSE"].includes(path) ? "seed" : "copy" });
+      if (path.startsWith("space/default/")) setupFiles.push({ source: path, destination: `.space/default/memory/${path.slice("space/default/".length)}`, mode: posix.basename(path) === "index.md" ? "merge-index" : ["space/default/log.md", "space/default/LICENSE"].includes(path) ? "seed" : "copy" });
       if (product === "codex" && path.startsWith("templates/agents/")) setupFiles.push({ source: path, destination: `.codex/agents/${path.slice("templates/agents/".length)}`, mode: "copy" });
     }
     for (const target of product === "claude-code" ? ["claude-code", "copilot"] as const : ["codex"] as const) {
@@ -88,6 +96,7 @@ export async function distribution(root: string): Promise<Files> {
         const projectFiles = [...targetFiles];
         for (const path of [...files.keys()].sort()) {
           if (path.startsWith("skills/")) projectFiles.push({ source: path, destination: `${projectSkillRoots[product]}/${path.slice("skills/".length)}`, mode: "copy" });
+          if (path.startsWith("cli/")) projectFiles.push({ source: path, destination: `${posix.dirname(projectSkillRoots[product])}/${path}`, mode: "copy" });
           if (product === "claude-code" && path.startsWith("agents/")) projectFiles.push({ source: path, destination: `.claude/${path}`, mode: "copy" });
         }
         files.set("setup-manifest.project.json", json({ schemaVersion: 1, plugin: name, product, version, scope: "project", files: projectFiles }));

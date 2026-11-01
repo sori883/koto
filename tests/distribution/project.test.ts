@@ -50,10 +50,11 @@ test("both products install real project files, survive relocation, and update t
     expect(instructions).not.toContain(root);
     const moved = join(root, `moved-${product}`); await rename(project, moved); project = moved;
     const movedSource = `${source}-moved`; await rename(source, movedSource); source = movedSource;
-    const okf = join(project, skillRoot, "okf-agent-memory/scripts/okf.ts");
-    const search = await run(okf, ["search", "--type", "principle", "--all", "--json"], project);
-    expect(search.length).toBeGreaterThan(0);
-    await run(join(project, skillRoot, "orch/scripts/task.ts"), ["init", "--store", join(project, ".space/tasks", product, ".orch"), "--project", project, "--actor", "parent", "--session", product, "--operation-id", product, "--json"], project);
+    const cliRoot = join(project, skillRoot, "../cli");
+    const search = await run(join(cliRoot, "memory/memory.ts"), ["search", "--root", project, "--type", "principle", "--all", "--json"], project);
+    expect(search.data.length).toBeGreaterThan(0);
+    await run(join(cliRoot, "tasks/tasks.ts"), ["setup", "--root", project, "--json"], project);
+    expect(await Bun.file(join(cliRoot, "memory/node_modules/package.json")).exists()).toBe(false);
     const localSetup = join(project, skillRoot, "setup/scripts/setup.ts");
     const localArgs = ["--project", project, "--scope", "project", "--source", source, "--json"];
     const status = await run(localSetup, ["status", ...localArgs], project);
