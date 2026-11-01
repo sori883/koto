@@ -268,7 +268,7 @@ test("licensed development skills ship with complete notices and resolvable bund
   const source = resolve(import.meta.dir, "../..");
   const provenance = JSON.parse(await readFile(join(source, "docs/devlow-restoration-source.json"), "utf8"));
   const names = ["devlow", "recall", "tdd", "blast-radius", "interrogate"];
-  for (const name of [...names, "monorepo", "tasks", "memory"]) await cp(join(source, "skills", name), join(root, "skills", name), { recursive: true });
+  for (const name of [...names, "monorepo", "tasks", "memory", "opsflow"]) await cp(join(source, "skills", name), join(root, "skills", name), { recursive: true });
   for (const name of ["monorepo", "tasks", "memory"]) await cp(join(source, "cli", name), join(root, "cli", name), { recursive: true });
   await build(root);
   for (const name of names) {
@@ -307,7 +307,8 @@ test("both distributed instruction updaters work after removing their source che
     expect((await run(["instructions", "apply"], { target, product })).current).toBe(true);
     const actual = await readFile(instruction, "utf8"); expect(actual.startsWith("# Local rules\nKeep these.\n")).toBe(true);
     const refs = [...actual.matchAll(/\]\(<([^>]+)>\)/g)].map(m => decodeURIComponent(m[1]!));
-    expect(refs.length).toBe(5);
+    expect(refs).toContain(join(dist, "skills/opsflow/SKILL.md"));
+    expect(new Set(refs).size).toBe(6);
     for (const ref of refs) { expect(ref.startsWith(dist + "/skills/")).toBe(true); expect(await Bun.file(ref).exists()).toBe(true); }
     expect(actual).not.toContain(source);
     expect((await run(["instructions", "status"], { target, product })).current).toBe(true);

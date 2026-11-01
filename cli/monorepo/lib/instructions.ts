@@ -73,7 +73,7 @@ async function context(root: string, rootId: string, project: string, target: st
 }
 async function rendered(ctx: Context, newline: string) {
   const values: Record<string, string> = { CONTEXT: JSON.stringify({ root: ctx.root, project: ctx.project, target: ctx.target }, null, 2) };
-  for (const name of ["devlow", "recall", "monorepo", "tasks", "memory", "tdd", "blast-radius", "interrogate"]) {
+  for (const name of ["devlow", "opsflow", "recall", "monorepo", "tasks", "memory", "tdd", "blast-radius", "interrogate"]) {
     const path = await safePath(ctx.source, "skills", name, "SKILL.md");
     requireThat((await optional(ctx.source, path)) !== null, "MISSING_SOURCE", `The koto source is missing the ${name} skill.`);
     values[name.toUpperCase().replaceAll("-", "_")] = path.split(sep).map(encodeURIComponent).join("/");
