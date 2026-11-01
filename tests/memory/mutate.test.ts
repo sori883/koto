@@ -9,7 +9,7 @@ import { WriteError } from "../../cli/memory/lib/files.ts";
 
 let root: string;
 const cliPath = resolve(import.meta.dir, "../../cli/memory/memory.ts");
-const metadata: Metadata = { type: "knowledge", title: "認証", description: "認証方式の説明" };
+const metadata: Metadata = { scope: "shared", type: "knowledge", title: "認証", description: "認証方式の説明" };
 const path = (relative: string, project = "default") => join(root, ".space", project, "memory", relative);
 const read = (relative: string, project = "default") => readFile(path(relative, project), "utf8");
 async function put(relative: string, content: string) {
@@ -108,7 +108,7 @@ describe("memory mutations", () => {
   test("update can repair a parseable concept missing required metadata", async () => {
     await initMemory(root);
     await put("knowledge/auth.md", "---\ntype: knowledge\ntitle: 認証\n---\n本文");
-    await update({ description: "補った説明" });
+    await update({ description: "補った説明", scope: "shared" });
     expect((await (await openProjectMemory(root)).show("knowledge/auth")).metadata.description).toBe("補った説明");
   });
 
@@ -235,7 +235,7 @@ describe("write CLI", () => {
     await initMemory(root); await mkdir(path("knowledge/nested"));
     await chmod(path("knowledge"), 0o555);
     let result;
-    try { result = await cli(["create", "knowledge/nested/auth", "--type", "knowledge", "--title", "認証", "--desc", "説明"]); }
+    try { result = await cli(["create", "knowledge/nested/auth", "--type", "knowledge", "--scope", "shared", "--title", "認証", "--desc", "説明"]); }
     finally { await chmod(path("knowledge"), 0o755); }
     expect(result.code).toBe(1);
     expect(result.data.details.written_paths).toEqual(["knowledge/nested/auth.md", "knowledge/nested/index.md"]);
@@ -249,7 +249,7 @@ describe("write CLI", () => {
   test("external input rejects invalid UTF-8, oversized files and FIFOs", async () => {
     await initMemory(root);
     const input = join(root, "input");
-    const args = ["create", "knowledge/auth", "--type", "knowledge", "--title", "認証", "--desc", "説明", "--body-file", input];
+    const args = ["create", "knowledge/auth", "--type", "knowledge", "--scope", "shared", "--title", "認証", "--desc", "説明", "--body-file", input];
     await writeFile(input, Buffer.from([0xff]));
     expect((await cli(args)).code).toBe(1);
     await writeFile(input, "a".repeat(16 * 1024 * 1024 + 1));
@@ -276,7 +276,7 @@ describe("write CLI", () => {
 
   test.each(["type: knowledge\ntitle: YAML\ndescription: YAML説明\n", "---\ntype: knowledge\ntitle: Markdown\ndescription: Markdown説明\n---\nignored body"])("metadata-file accepts mappings/frontmatter: %s", async raw => {
     await initMemory(root); await writeFile(join(root, "meta"), raw);
-    expect((await cli(["create", "knowledge/auth", "--metadata-file", join(root, "meta")])).code).toBe(0);
+    expect((await cli(["create", "knowledge/auth", "--metadata-file", join(root, "meta"), "--scope", "shared"])).code).toBe(0);
     expect(parseDocument(await read("knowledge/auth.md")).body).toBe("");
   });
 
@@ -294,7 +294,7 @@ describe("write CLI", () => {
 
   test("concurrent child processes cannot create the same ID twice", async () => {
     await initMemory(root);
-    const args = ["create", "knowledge/auth", "--type", "knowledge", "--title", "認証", "--desc", "説明"];
+    const args = ["create", "knowledge/auth", "--type", "knowledge", "--scope", "shared", "--title", "認証", "--desc", "説明"];
     const results = await Promise.all([cli(args), cli(args)]);
     expect(results.map(result => result.code).sort()).toEqual([0, 1]);
     expect(results.find(result => result.code === 1)?.data.details.written_paths).toEqual([]);

@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: shared
 title: 不具合を再現して根本原因を直す
 description: 不具合や異常な挙動を調査・修正するとき、先に再現し、観測した証拠から原因を追って症状だけを隠す修正を避ける。
 governance: context

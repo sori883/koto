@@ -1,3 +1,5 @@
+import { parseScope, type MemoryScope } from "./scope.ts";
+
 export const conceptTypes = ["rule", "principle", "knowledge", "procedure", "decision"] as const;
 export const governanceValues = ["context", "constraint", "hold"] as const;
 const fields = ["title", "tags", "description", "id", "body"] as const;
@@ -16,6 +18,7 @@ export type Governance = (typeof governanceValues)[number];
 export type SearchField = (typeof fields)[number];
 
 export interface SearchDocument {
+  readonly scope?: MemoryScope;
   readonly id: string;
   readonly type: ConceptType;
   readonly title: string;
@@ -32,6 +35,7 @@ export interface SearchOptions {
 }
 
 export interface SearchResult {
+  scope?: MemoryScope;
   concept_id: string;
   type: ConceptType;
   title: string;
@@ -111,6 +115,7 @@ function snapshot(document: SearchDocument): SearchDocument {
     id: document.id, type: document.type, title: document.title,
     description: document.description, body: document.body,
     governance: document.governance ?? "context",
+    ...(document.scope === undefined ? {} : { scope: parseScope(document.scope) }),
     ...(document.tags === undefined ? {} : { tags: [...document.tags] }),
   };
 }
@@ -130,6 +135,7 @@ function result(document: SearchDocument, score: number, matched: (SearchField |
     concept_id: document.id, type: document.type, title: document.title,
     description: document.description, governance: document.governance ?? "context",
     score: Math.round(score * 100) / 100, matched_on: matched,
+    ...(document.scope === undefined ? {} : { scope: document.scope }),
     ...(document.tags === undefined ? {} : { tags: [...document.tags] }),
   };
 }

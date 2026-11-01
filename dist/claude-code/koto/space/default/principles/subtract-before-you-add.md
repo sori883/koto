@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: 追加する前に不要なものを取り除く
 description: 機能追加・リファクタリング・書き換えの順序を決めるとき、不要なコードや指示を先に除き、観測された用途に必要な構造を作る。
 governance: context

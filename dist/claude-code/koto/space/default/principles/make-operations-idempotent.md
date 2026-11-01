@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: shared
 title: 再実行で同じ最終状態へ収束させる
 description: 停止・再起動・再試行が起こり得るコマンド、起動終了処理、ループを設計するとき、重複実行や途中失敗からも同じ最終状態へ収束させる。
 governance: context

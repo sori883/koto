@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: shared
 title: 必要な情報に絞ってコンテキストを保つ
 description: 大量の出力・長い文書・反復した読み込み・並行作業で情報が増えるとき、必要な情報に絞り、主担当には根拠へ戻れる要点を集める。
 governance: context

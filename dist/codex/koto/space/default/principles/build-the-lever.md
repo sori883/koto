@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: shared
 title: 作業や検証を再実行できる道具を作る
 description: 自明な少数の編集を超える編集・移行・分析・検証を行うとき、同じ作業や確認を再実行できる最小の道具を作る。
 governance: context

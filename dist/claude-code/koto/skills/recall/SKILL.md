@@ -16,6 +16,8 @@ Memoryのsearch/showも通常は利用記録を付けずに読む。ユーザー
 
 「最近」だけなら直近7日を調査の入口として明示する。期間より前に始まった実行中・中断中の対象タスクを切り捨てない。全期間の指定を勝手に短縮せず、対象外のプロジェクトや会話を探索しない。完全な引き継ぎがあれば実状態との照合を優先し、足りる情報を掘り直さない。
 
+タスクの説明、checkpoint、今回の依頼から開発・運用の種類と現在の工程を確認する。Tasksにscopeという属性を想定しない。開発ではMemoryの`--scope dev`、運用では`--scope ops`で共有を含む知識を読み、関連する未分類もMemoryスキルの手順で確認する。種類が分からなければ不明と報告し、説明やcheckpointを推測で書き換えない。
+
 ## 記録と実状態を照合する
 
 1. Tasksのtask showを読み、現在のstate・version・attempt・blockedBy・completionCurrentを確認する。必要なhistory、artifact list、checkpoint list/showを取得する。checkpointのsnapshotは保存時点の値であり、最新のtask showより優先しない。replayed応答やcompletedの件数だけで現在の有効な完了を決めない。

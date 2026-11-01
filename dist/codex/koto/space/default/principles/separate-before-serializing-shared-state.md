@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: shared
 title: 共有状態を分離してから排他制御を考える
 description: 複数の処理主体が同じファイル・ブランチ・キー・状態を書き換える可能性があるとき、共有の除去を先に検討し、必要な共有だけを構造的に直列化する。
 governance: context

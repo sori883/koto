@@ -11,6 +11,7 @@ import { parseDocument, parseMetadata, type Metadata } from "./frontmatter.ts";
 import { initMemory, saveConcept, relateConcepts, deleteConcept } from "./mutate.ts";
 import { validateMemory } from "./validate.ts";
 import { parseFilters } from "./filter.ts";
+import { parseScope } from "./scope.ts";
 import { listUsage, recordUsage, usageStats, validateUsageContext, type UsageContext } from "./usage.ts";
 
 const version = manifest.version;
@@ -19,7 +20,7 @@ const help = `koto-memory ${version} — OKF memory
 
 Usage:
   koto-memory init --root <monorepo> [--project <name>] [--actor <id>] [--json]
-  koto-memory create <id> --root <monorepo> --type <type> --title <title> --desc <description> [options]
+  koto-memory create <id> --root <monorepo> --type <type> --scope <scope> --title <title> --desc <description> [options]
   koto-memory update <id> --root <monorepo> [options]
   koto-memory delete <id> --root <monorepo> [--dry-run] [--json]
   koto-memory relate <source-id> <target-id> --root <monorepo> [--desc <relationship>] [--json]
@@ -41,6 +42,8 @@ Usage:
 --json     JSON on stdout, including failures. Exit: 0 success, 1 input/write/validation failure, 2 read failure.
 --raw      show only: original Markdown, cannot be combined with --json.
 --relations  show only: collect inbound/outbound references; requires readable concepts.
+--scope <shared|dev|ops>  create/update: stored purpose; search: shared plus the selected purpose.
+New concepts and updates require scope. Legacy unclassified concepts remain readable.
 --record-usage  show/search: save a usage event after a successful read. Omit for read-only calls.
 --usage-source <id> / --task-id <id> / --actor <id>  Recorded read attribution, or usage list/stats filters.
 --since / --until  usage only: timezone-qualified ISO timestamps, inclusive start and exclusive end.
@@ -60,7 +63,7 @@ create/update options:
 --metadata-file <path>  JSON, YAML mapping or Markdown frontmatter; flags override fields.
 --metadata-json <object>  Inline JSON metadata; mutually exclusive with --metadata-file.
 --if-hash <sha256>  update, delete or relate: reject if the current source differs from show.content_hash.
---type / --title / --desc / --tags / --status  Metadata fields; tags are comma-separated.
+--type / --scope / --title / --desc / --tags / --status  Metadata fields; tags are comma-separated.
 --body <text> | --body-file <path>  Body text; update preserves it when omitted.
 --actor <id>  generated.by and log actor; default agent/cli. generated.at is automatic.
 --no-index / --no-log  Skip index or log updates.
@@ -69,7 +72,7 @@ update only:
 --sync         Repair index/log references even for unchanged content.
                Cannot be combined with --no-index or --no-log.
 
-Quote multiword queries and filter expressions. Without query, search requires --type, --for-path or --filter.
+Quote multiword queries and filter expressions. Without query, search requires --type, --for-path, --filter or --scope.
 JSON input: {"command":["search","query"],"root":"/workspace","project":"default"}.
 Use --input-json - for stdin. JSON output is {ok,data} or {ok:false,error:{code,message,details}}.
 Interrupted writes require recover; failures can include already saved/deleted written_paths.
@@ -107,6 +110,7 @@ export async function run(argv: string[]): Promise<number> {
     const { values, positionals, tokens } = parseArgs({ args: argv, strict: true, allowPositionals: true, tokens: true, options: {
       root: { type: "string" }, project: { type: "string" }, json: { type: "boolean" },
       type: { type: "string" }, limit: { type: "string" }, all: { type: "boolean" }, raw: { type: "boolean" },
+      scope: { type: "string" },
       help: { type: "boolean", short: "h" }, version: { type: "boolean" },
       "metadata-json": { type: "string" }, "if-hash": { type: "string" },
       "metadata-file": { type: "string" }, title: { type: "string" }, desc: { type: "string" },
@@ -141,10 +145,10 @@ export async function run(argv: string[]): Promise<number> {
     const project = values.project ?? "default";
     validateProject(project);
     const common = ["root", "project", "json"];
-    const writes = ["metadata-json", "metadata-file", "type", "title", "desc", "tags", "status", "body", "body-file", "actor", "no-index", "no-log"];
+    const writes = ["metadata-json", "metadata-file", "type", "title", "desc", "tags", "status", "body", "body-file", "actor", "no-index", "no-log", "scope"];
     const usageAttribution = ["usage-source", "task-id", "actor"];
     const allowed = new Set([...common, ...(command === "init" ? ["actor"] : command === "create" ? writes
-      : command === "update" ? [...writes, "unset", "sync", "if-hash"] : command === "show" ? ["raw", "relations", "record-usage", ...usageAttribution] : command === "search" ? ["type", "limit", "all", "for-path", "filter", "record-usage", ...usageAttribution]
+      : command === "update" ? [...writes, "unset", "sync", "if-hash"] : command === "show" ? ["raw", "relations", "record-usage", ...usageAttribution] : command === "search" ? ["type", "limit", "all", "for-path", "filter", "record-usage", "scope", ...usageAttribution]
       : command === "usage" ? [...usageAttribution, "since", "until", ...(args[0] === "list" ? ["limit", "all"] : [])]
       : command === "delete" ? ["actor", "dry-run", "if-hash"] : command === "relate" ? ["desc", "actor", "no-index", "no-log", "if-hash"] : command === "recover" ? ["dry-run"] : ["strict", "drift", "stale", "stale-within"])]);
     for (const name of seen) if (!allowed.has(name)) throw new Error(`--${name} is not supported by ${command}.`);
@@ -192,7 +196,7 @@ export async function run(argv: string[]): Promise<number> {
         const raw = await inputFile(values["metadata-file"]);
         metadata = /^\uFEFF?---[\t ]*\r?\n/.test(raw) ? parseDocument(raw).metadata : parseMetadata(raw);
       }
-      for (const [flag, key] of [["type", "type"], ["title", "title"], ["desc", "description"], ["status", "status"]] as const) {
+      for (const [flag, key] of [["type", "type"], ["title", "title"], ["desc", "description"], ["status", "status"], ["scope", "scope"]] as const) {
         if (values[flag] !== undefined) metadata[key] = values[flag];
       }
       if (values.tags !== undefined) metadata.tags = values.tags.split(",").map(tag => tag.trim()).filter(Boolean);
@@ -225,12 +229,14 @@ export async function run(argv: string[]): Promise<number> {
       const type = conceptTypes.find(value => value === values.type);
       if (values.type !== undefined && !type) throw new Error("Unknown --type. Use rule, principle, knowledge, procedure or decision.");
       const filters = parseFilters(values.filter ?? []);
-      if (!query.trim() && type === undefined && values["for-path"] === undefined && !filters.length) throw new Error("search requires a query, --type, --for-path or --filter.");
+      const scope = values.scope === undefined ? undefined : parseScope(values.scope);
+      if (!query.trim() && type === undefined && values["for-path"] === undefined && !filters.length && scope === undefined) throw new Error("search requires a query, --type, --for-path, --filter or --scope.");
       if (values.limit !== undefined) {
         if (!/^[1-9]\d*$/.test(values.limit) || !Number.isSafeInteger(Number(values.limit))) throw new Error("--limit must be a positive safe integer.");
       }
       if (values.all && values.limit !== undefined) throw new Error("--all and --limit cannot be combined.");
       const options: MemorySearchOptions = {
+        ...(scope === undefined ? {} : { scope }),
         ...(type === undefined ? {} : { type }),
         ...(values.limit === undefined ? {} : { limit: Number(values.limit) }),
         ...(values.all ? { all: true } : {}),

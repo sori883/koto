@@ -39,6 +39,7 @@ export async function validateMemory(root: string, project = "default", options:
   const existence = new Map<string, boolean>();
   for (const concept of documents.concepts.values()) {
     const { metadata: m, path } = concept;
+    if (m.scope === undefined) result.warnings.push(`${path}: scope is missing; classify as shared, dev or ops.`);
     let valid = true;
     try { searchDocument(concept); } catch (error) { valid = false; result.errors.push(`${path}: ${error instanceof Error ? error.message : String(error)}`); }
     if (timestamp(m.stale_after)) {

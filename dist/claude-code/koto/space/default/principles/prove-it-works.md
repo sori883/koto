@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: shared
 title: 成果物の実際の動作を確かめる
 description: 作業の完了を報告するときや他の担当者の成果を受け入れるとき、実際の成果物・値・動作を確認し、間接的な指標や自己申告だけを成功の根拠にしない。
 governance: context

@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: 検証を境界へ集めて内部の責務を分ける
 description: 入力検証・エラー処理・CLIや通信の接続部分を設計するとき、検証と型への変換をシステム境界に集約し、内部の業務ロジックを純粋な処理に保つ。
 governance: context

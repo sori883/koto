@@ -15,7 +15,7 @@ async function call(command: string[], options = {}) {
 }
 async function seed(project = "default") {
   await initMemory(root, project);
-  await saveConcept("create", root, project, "knowledge/auth", { type: "knowledge", title: "Authentication", description: "Token rules" }, "Private content that must not enter usage logs.");
+  await saveConcept("create", root, project, "knowledge/auth", { scope: "shared", type: "knowledge", title: "Authentication", description: "Token rules" }, "Private content that must not enter usage logs.");
 }
 beforeEach(async () => { root = await mkdtemp(join(tmpdir(), "koto-memory-usage-")); await seed(); });
 afterEach(async () => { await rm(root, { recursive: true, force: true }); });

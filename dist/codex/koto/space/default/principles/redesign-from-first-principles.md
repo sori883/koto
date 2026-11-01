@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: 新しい要件を前提に設計し直す
 description: 既存設計へ新しい要件を組み込むとき、その要件が最初から存在した場合の構造を考えて段階的に反映する。
 governance: context

@@ -1,5 +1,6 @@
 import { YAML } from "bun";
 import { conceptTypes, governanceValues, type SearchDocument } from "./search.ts";
+import { parseScope } from "./scope.ts";
 
 export type JsonValue = null | string | number | boolean | JsonValue[] | { [key: string]: JsonValue };
 export type Metadata = Record<string, JsonValue>;
@@ -74,6 +75,7 @@ export function timestamp(value: unknown): boolean {
 
 export function searchDocument(concept: Concept): SearchDocument {
   const m = concept.metadata;
+  const scope = m.scope === undefined ? undefined : parseScope(m.scope);
   const type = conceptTypes.find(value => value === m.type);
   if (!type) throw new Error("type: expected rule, principle, knowledge, procedure or decision.");
   if (concept.id.split("/")[0] !== typeDirectories[type]) throw new Error("type does not match the ID directory.");
@@ -129,5 +131,6 @@ export function searchDocument(concept: Concept): SearchDocument {
     }
   }
   return { id: concept.id, type, title: m.title, description: m.description, body: concept.body, governance,
+    ...(scope === undefined ? {} : { scope }),
     ...(tags === undefined ? {} : { tags }) };
 }

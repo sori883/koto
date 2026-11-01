@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: 修正が繰り返し失敗したら前提を疑う
 description: 同じ前提を共有する修正が同じ検証で2回以上失敗したら、前提と偏りの所在を調べてから次の修正へ進む。
 governance: context

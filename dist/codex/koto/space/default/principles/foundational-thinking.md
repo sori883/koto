@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: ロジックより先にデータと基盤を整える
 description: 中心となる型・データ構造・共有状態や基盤と機能の順序を決めるとき、ロジックの前にデータとアクセス方法を整える。
 governance: context

@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: 最小の変更と複雑さで解決する
 description: リファクタリングや変更量を評価し、抽象化・層・引数の受け渡しを追加するとき、削除と単純化を優先して問題を解決する最小の変更を選ぶ。
 governance: context

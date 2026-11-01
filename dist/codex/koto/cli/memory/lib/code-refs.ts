@@ -72,7 +72,7 @@ export function searchForPath(concepts: Concept[], target: string, query: string
     const refs = concept.metadata.code_refs as string[] | undefined, document = documents[i];
     if (!document || options.type !== undefined && document.type !== options.type || !refs?.some(ref => matchCodeRef(ref, target))) continue;
     const text = scores.get(concept.id);
-    result.push({ concept_id: concept.id, title: document.title, description: document.description, type: document.type, governance: document.governance ?? "context", score: (text?.score ?? 0) + (refs.some(ref => clean(ref) === target) ? 2 : 0), matched_on: ["code_refs", ...(text?.matched_on ?? [])], code_refs: [...refs], ...(document.tags ? { tags: [...document.tags] } : {}) });
+    result.push({ concept_id: concept.id, title: document.title, description: document.description, type: document.type, governance: document.governance ?? "context", score: (text?.score ?? 0) + (refs.some(ref => clean(ref) === target) ? 2 : 0), matched_on: ["code_refs", ...(text?.matched_on ?? [])], code_refs: [...refs], ...(document.tags ? { tags: [...document.tags] } : {}), ...(document.scope === undefined ? {} : { scope: document.scope }) });
   }
   result.sort((a, b) => rank[a.governance] - rank[b.governance] || b.score - a.score || (a.concept_id < b.concept_id ? -1 : a.concept_id > b.concept_id ? 1 : 0));
   return options.all ? result : result.slice(0, Math.min(options.limit ?? 10, 100));

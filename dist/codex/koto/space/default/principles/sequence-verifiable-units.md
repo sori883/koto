@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: shared
 title: 検証できる小さな単位で作業を進める
 description: 複数箇所の修正・移行・反復する編集やコミット・PRの順序を組み立てるとき、作業を確認可能な小さな単位へ分け、各単位の検証後に次へ進む。
 governance: context

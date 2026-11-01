@@ -6,10 +6,11 @@ import { createSearchIndex, resultLimit, type SearchOptions, type SearchResult }
 import { buildGraph, unsupportedLinks, visibleLines } from "./references.ts";
 import { codePath, searchForPath, type PathSearchResult } from "./code-refs.ts";
 import { matchesFilters, type MetadataFilter } from "./filter.ts";
+import { parseScope, type MemoryScope } from "./scope.ts";
 
 export class MemoryReadError extends Error {}
 export class ConceptNotFoundError extends Error {}
-export interface MemorySearchOptions extends SearchOptions { forPath?: string; filters?: readonly MetadataFilter[] }
+export interface MemorySearchOptions extends SearchOptions { forPath?: string; filters?: readonly MetadataFilter[]; scope?: MemoryScope }
 export interface ProjectMemory {
   show(id: string, options?: { relations?: boolean }): Promise<Concept & { inbound?: string[]; outbound?: string[] }>;
   search(query: string, options?: MemorySearchOptions): Promise<(SearchResult | PathSearchResult)[]>;
@@ -65,28 +66,31 @@ export async function openProjectMemory(root: string, project = "default"): Prom
       },
       async search(query: string, input: MemorySearchOptions = {}) {
         try {
-          const { filters = [], forPath, ...options } = input;
+          const { filters = [], forPath, scope: requestedScope, ...options } = input;
+          const scope = requestedScope === undefined ? undefined : parseScope(requestedScope);
+          const selected = filters.length > 0 || scope !== undefined;
           const limit = resultLimit(options);
           const documents = await loadAll();
-          const selection: SearchOptions = filters.length ? { ...(options.type === undefined ? {} : { type: options.type }), all: true } : options;
+          const selection: SearchOptions = selected ? { ...(options.type === undefined ? {} : { type: options.type }), all: true } : options;
           let results: (SearchResult | PathSearchResult)[];
           if (forPath !== undefined) results = searchForPath(documents, await codePath(root, forPath, project), query, selection);
           else {
             const searchable = documents.map(concept => {
               try { return searchDocument(concept); } catch (error) { throw new Error(`${concept.path}: ${error instanceof Error ? error.message : String(error)}`); }
             });
-            if (filters.length && !query.trim() && options.type === undefined) {
+            if (selected && !query.trim() && options.type === undefined) {
               const rank = { hold: 0, constraint: 1, context: 2 };
-              results = searchable.map(document => ({ concept_id: document.id, type: document.type, title: document.title, description: document.description, governance: document.governance ?? "context", score: 0, matched_on: [], ...(document.tags ? { tags: [...document.tags] } : {}) }))
+              results = searchable.map(document => ({ concept_id: document.id, type: document.type, title: document.title, description: document.description, governance: document.governance ?? "context", score: 0, matched_on: [], ...(document.tags ? { tags: [...document.tags] } : {}), ...(document.scope === undefined ? {} : { scope: document.scope }) }))
                 .sort((a, b) => rank[a.governance] - rank[b.governance] || (a.concept_id < b.concept_id ? -1 : a.concept_id > b.concept_id ? 1 : 0));
             } else results = createSearchIndex(searchable).search(query, selection);
           }
-          if (!filters.length) return results;
-          const matching = new Set(documents.filter(concept => matchesFilters(concept.metadata, filters)).map(concept => concept.id));
+          if (!selected) return results;
+          const matching = new Set(documents.filter(concept => matchesFilters(concept.metadata, filters)
+            && (scope === undefined || concept.metadata.scope === "shared" || concept.metadata.scope === scope)).map(concept => concept.id));
           return results.filter(result => matching.has(result.concept_id)).slice(0, limit)
             .map((result): SearchResult | PathSearchResult => "code_refs" in result
-              ? { ...result, matched_on: [...result.matched_on, "filter"] }
-              : { ...result, matched_on: [...result.matched_on, "filter"] });
+              ? { ...result, matched_on: [...result.matched_on, ...(filters.length ? ["filter"] : [])] }
+              : { ...result, matched_on: [...result.matched_on, ...(filters.length ? ["filter" as const] : [])] });
         }
         catch (error) { throw new MemoryReadError(error instanceof Error ? error.message : String(error), { cause: error }); }
       },
