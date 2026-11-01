@@ -1,6 +1,6 @@
 # kotoの現状
 
-2026-11-01、developへ統合する開発内容を対象とする。対応先はCodexとClaude Codeの2製品。旧スキルと付属CLIを削除した後、ユーザーの依頼により、現在のkotoリポジトリ内に`@koto/monorepo`、続いて`@koto/tasks`・`@koto/memory`を実装した。さらにMITライセンスでの再利用を了承された5スキルを、3つのCLIに接続して追加した。
+2026-11-01、developへ統合する開発内容を対象とする。対応先はCodexとClaude Codeの2製品。旧スキルと付属CLIを削除した後、ユーザーの依頼により、現在のkotoリポジトリ内に`@koto/monorepo`、続いて`@koto/tasks`・`@koto/memory`を実装した。開発フロー等の5スキル、opsflowに続いて、説明・文章・専門手順の16スキルを現在のCLIへ接続して再導入した。計25スキルを配布する。
 
 ## 現在の構成
 
@@ -14,6 +14,7 @@
 | `skills/memory/` | 知識の検索・記録・更新・検証にCLIを使うAI向け手順 |
 | `skills/devlow/`・`skills/opsflow/`・`skills/recall/` | 3つのCLIを使う開発・運用フローと、記録・実態の照合による現在地の復元 |
 | `skills/tdd/`・`skills/blast-radius/`・`skills/interrogate/` | 不具合の再現と修正、影響調査、独立レビューの専門手順 |
+| 説明・文章・専門手順の16スキル | [再導入一覧](specialist-skills-restoration.md)。現在のMemory・Tasksへ接続し、必要な工程から呼ぶ |
 | `templates/AGENTS.md` | コード変更前のTasks登録と現在のスキルへ案内する指示。monorepoのinstructions操作で利用先へ適用 |
 | `packaging/codex/`・`packaging/claude-code/` | 製品別のプラグイン定義とカタログ定義 |
 | `space/default/` | 共通知識の正本。既存の23原則を保持 |
@@ -41,7 +42,7 @@ setup、プロジェクト追加・参照、リポジトリ登録・取得・参
 
 実装コミットa7d8c3dの[GitHub Linux CI](https://github.com/sori883/koto/actions/runs/41221775333)では、Bun 1.4.2で全275テスト・1914 assertions、型検査、全生成物照合が成功した。
 
-プロジェクト削除、利用先への共通知識の配置は未実装。専用エージェント・旧setupマニフェスト・今回追加した5つ以外の旧スキルは復元していない。[機能一覧](workspace-feature-inventory.md)の全項目が実装済みという意味ではない。[初版設計](monorepo-cli-design.md)と[CLI手順](../cli/monorepo/README.md)を参照する。
+プロジェクト削除、利用先への共通知識の配置は未実装。専用エージェント・旧setupマニフェストと、役割を移管した旧5スキルは復元していない。[機能一覧](workspace-feature-inventory.md)の全項目が実装済みという意味ではない。[初版設計](monorepo-cli-design.md)と[CLI手順](../cli/monorepo/README.md)を参照する。
 
 ## Tasks CLI
 
@@ -67,11 +68,11 @@ setup、プロジェクト追加・参照、リポジトリ登録・取得・参
 
 ## 開発フローと専門スキル
 
-devlowは工程の選択と受け渡し、3つのCLIを使った開始・中断・再開・完了・片付けを案内する。recallは現在のTasks、保存時点のcheckpoint、コードとGit、関連するMemoryを読み取り専用で照合する。tdd・blast-radius・interrogateは必要な工程だけで使う。opsflowは対象とMarkdown手順の確認、状態変更前のタスク登録、結果確認、中断・再開を案内する。説明とcheckpointに作業の種類と継続先を残し、recallから両フローへ戻れる。純粋な運用は実状態の成功条件で完了とし、開発も必要なら同じタスクで両方の完了条件を維持する。手順のひな形を含む計9スキルを両製品へ同梱する。
+devlowは工程の選択と受け渡し、3つのCLIを使った開始・中断・再開・完了・片付けを案内する。recallは現在のTasks、保存時点のcheckpoint、コードとGit、関連するMemoryを読み取り専用で照合する。tdd・blast-radius・interrogateは必要な工程だけで使う。opsflowは対象とMarkdown手順の確認、状態変更前のタスク登録、結果確認、中断・再開を案内する。説明とcheckpointに作業の種類と継続先を残し、recallから両フローへ戻れる。純粋な運用は実状態の成功条件で完了とし、開発も必要なら同じタスクで両方の完了条件を維持する。この9スキルに専門16スキルを加え、計25スキルを両製品へ同梱する。
 
 ソースコードを変更する仕事は規模に関係なく編集前にTasksへ登録し、PR／MRと相互参照する。調査途中でコード変更へ移る場合も対象とし、コードや運用対象の状態を変更しない調査などは自動でタスク化しない。完了は原則、必要な検証と全PR／MRのマージ確認後とし、ユーザーの明示的な完了指定も受け付ける。その場合も未マージ・未検証の実状態を残す。devlow、recallと利用先向け指示へ反映した運用であり、Tasks CLIがGitやホスティングサービスへ接続して強制する機能ではない。
 
-旧mainの5スキルと工程資料を再利用し、現在の保存先とCLIへ接続した。各LICENSEの著作権表示と許諾文は元のまま保持し、出典・変更経緯・検証記録は[開発資料](devlow-cli-integration.md)へ置いた。旧orch・OKFのCLI、固定エージェント、他の削除済みスキルには依存しない。
+旧mainの5スキルと工程資料を再利用し、現在の保存先とCLIへ接続した。各LICENSEの著作権表示と許諾文は元のまま保持し、出典・変更経緯・検証記録は[開発資料](devlow-cli-integration.md)へ置いた。旧orch・OKFのCLIと固定エージェントには依存しない。続く専門16スキルの適合・出典・検証範囲は[再導入記録](specialist-skills-restoration.md)を参照する。
 
 ## 検証と公開状態
 

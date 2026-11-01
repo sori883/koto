@@ -32,7 +32,7 @@ bun run tasks -- task show task-001 --root /path/to/my-workspace --json
 
 ```sh
 bun run memory -- setup --root /path/to/my-workspace --json
-bun run memory -- create knowledge/auth --root /path/to/my-workspace --type knowledge --title "認証方式" --desc "採用した理由" --body "根拠を記録する。" --json
+bun run memory -- create knowledge/auth --root /path/to/my-workspace --type knowledge --scope dev --title "認証方式" --desc "採用した理由" --body "根拠を記録する。" --json
 bun run memory -- search "認証" --root /path/to/my-workspace --json
 ```
 
@@ -43,12 +43,25 @@ bun run memory -- search "認証" --root /path/to/my-workspace --json
 | スキル | 役割 |
 | --- | --- |
 | [devlow](skills/devlow/SKILL.md) | 開発の工程を選び、monorepo・Tasks・Memoryで開始から中断・再開・完了まで進める |
+| [opsflow](skills/opsflow/SKILL.md) | 運用の対象と手順を確認し、実行・結果確認・中断・再開を進める |
 | [recall](skills/recall/SKILL.md) | タスク・checkpoint・実際のコードを照合して、現在地と次の操作を説明する |
 | [tdd](skills/tdd/SKILL.md) | 局所テストで再現できる不具合を、失敗を確認してから直す |
 | [blast-radius](skills/blast-radius/SKILL.md) | 変更の影響範囲と安全性に関わる前提を調べる |
 | [interrogate](skills/interrogate/SKILL.md) | 利用可能な独立担当のレビューを照合し、指摘の採否を判断する |
 
-例えば「この管理ルートのdefaultで、タスクtask-001の修正とテストまで進めて」はdevlow、「task-001はどこまで進んだか、確認だけして」はrecallで扱います。専門スキルは必要な工程で使い、毎回すべてを呼ぶ構成にはしていません。上の5スキルは既存のMITライセンスの資産を再利用し、各ディレクトリと配布物に著作権表示・許諾文を保持しています。
+例えば「この管理ルートのdefaultで、タスクtask-001の修正とテストまで進めて」はdevlow、「task-001はどこまで進んだか、確認だけして」はrecallで扱います。専門スキルは必要な工程で使い、毎回すべてを呼ぶ構成にはしていません。MITで再利用するスキルは、各ディレクトリと配布物に著作権表示・許諾文を保持しています。
+
+さらに次の16スキルを含め、合計25スキルを同梱します。
+
+| 用途 | スキル |
+| --- | --- |
+| 仕組みと理由の説明 | [bro](skills/bro/SKILL.md)、[how](skills/how/SKILL.md)、[why](skills/why/SKILL.md)、[teach](skills/teach/SKILL.md) |
+| 文書作成・推敲 | [technical-writing](skills/technical-writing/SKILL.md)、[unslop](skills/unslop/SKILL.md)、[natural-japanese](skills/natural-japanese/SKILL.md)、[yomiyasu](skills/yomiyasu/SKILL.md)、[explain-before-shorten](skills/explain-before-shorten/SKILL.md) |
+| 作業スタイル・スキルの改善 | [automate-me](skills/automate-me/SKILL.md)、[reflect](skills/reflect/SKILL.md) |
+| 判断ログ・コメント・構成文書 | [show-me-your-work](skills/show-me-your-work/SKILL.md)、[no-comments](skills/no-comments/SKILL.md)、[system-blueprint](skills/system-blueprint/SKILL.md) |
+| 検証手順の作成・更新 | [create-verification-skill](skills/create-verification-skill/SKILL.md)、[maintain-verification-skill](skills/maintain-verification-skill/SKILL.md) |
+
+natural-japaneseの機械診断にはuv・Python 3.10以上とスクリプトが指定するSudachi依存を使います。大型の意味解析モデルは任意です。yomiyasuの補助スクリプトはPython標準ライブラリで動きます。3つのCLIの実行時依存は増やしていません。
 
 利用先の`AGENTS.md`・`CLAUDE.md`には、monorepoの指示更新機能で現在のスキルへの入口を設定できます。既存の文章を残してkotoの管理部分だけを更新し、独自編集があれば停止します。
 
@@ -60,7 +73,7 @@ bun run monorepo -- instructions status --root /path/to/my-workspace --target /p
 
 Claude Codeには`--product claude-code`を使います。配置先と管理プロジェクトを確認し、詳しくは[指示ファイルの追加・更新](cli/monorepo/README.md#指示ファイルの追加更新)を参照してください。旧setupの記録と一致する指示も更新できます。
 
-共通知識の利用先への配置は未実装です。旧付属CLIと他の削除済みスキルは復元せず、共通知識の正本は`space/default/`に保持しています。
+共通知識の利用先への配置は未実装です。役割を移管したuse-principles・checkpoint-safely・okf-agent-memory・orch・setupと旧付属CLIは復元せず、共通知識の正本は`space/default/`に保持しています。
 
 - [現在の構成・検証状況](docs/current-state.md)
 - [目的と配布設計](docs/architecture.md)
@@ -68,6 +81,7 @@ Claude Codeには`--product claude-code`を使います。配置先と管理プ�
 - [Tasks CLIの設計](docs/tasks-cli-design.md)
 - [Memory CLIの設計](docs/memory-cli-design.md)
 - [開発スキルの連携と再利用元](docs/devlow-cli-integration.md)
+- [専門16スキルの再導入と検証](docs/specialist-skills-restoration.md)
 - [指示ファイル更新の設計と検証](docs/instruction-setup-design.md)
 - [配布物の生成と検証](docs/distribution.md)
 

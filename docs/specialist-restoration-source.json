@@ -1,0 +1,118 @@
+{
+  "commit": "77b4d4f87a4c575ccb4b243f2a62acd17cd446a2",
+  "skills": {
+    "automate-me": {
+      "skills/automate-me/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/automate-me/SKILL.md": "6a9d8a0ccdf68d03b41e1cb17156171e038f9b54d6e1d89c099f5d9519b3bdc3"
+    },
+    "bro": {
+      "skills/bro/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/bro/SKILL.md": "540e44b5a8ca2a361e07fa97bfd106a471f96b58db8ae5f92b6a792b1e5308a2"
+    },
+    "create-verification-skill": {
+      "skills/create-verification-skill/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/create-verification-skill/SKILL.md": "10a17ae244dd8cbab0afa65223489aafba7f304510d5de479ed8edc632b4cc62",
+      "skills/create-verification-skill/assets/feature-template.md": "7630f96b4db337096169d21ecf031e8db6f37dc671a0aa7c92be46779837a9ea"
+    },
+    "explain-before-shorten": {
+      "skills/explain-before-shorten/SKILL.md": "bb96bfb03fad06636c2977f3bc3792c733afe4bbf486bc96af2b0cbfbc77f19e"
+    },
+    "how": {
+      "skills/how/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/how/SKILL.md": "ac0004c6cc65cc35ff3e4c6b7a0de951b24e7800e80cba1e34d1f03cffbd40ef",
+      "skills/how/references/explainer-prompt.md": "1f05df2c6bba3d40f7428c36322c8e10d56d9f5408fa0d537b06ccee3b36f79a",
+      "skills/how/references/explorer-prompt.md": "6041f3da3c1b9387550bf24caa9e4635a5c93366dce9cd8445b360392cd1b3b8"
+    },
+    "maintain-verification-skill": {
+      "skills/maintain-verification-skill/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/maintain-verification-skill/SKILL.md": "659a13e401f9bcb5ad7667f650c4f4ac528d504e9378b5b352192b12c2da207f"
+    },
+    "natural-japanese": {
+      "skills/natural-japanese/LICENSE": "fb3dd814f7b2807de2a812446c61643cf235e731bbf8cf908c0a5962d8917121",
+      "skills/natural-japanese/SKILL.md": "0f662a6ab4955b9146a138a38b73a619b27fa1448ef71e27fcc57f67d3ad0267",
+      "skills/natural-japanese/assets/style-profile-template.md": "d43a199e1399c73a41f332c45c5cf2321457fd49391b0a5bec23e52ef6fb5541",
+      "skills/natural-japanese/references/diagnose.md": "e3c80cdeada823d34d003f83df1e9cbc0e07fbdf109b5c8f7a796a889a00d5a4",
+      "skills/natural-japanese/references/doctypes/guide.md": "4b9db16365ea305c71eb9a59faedfc73620fd93d09721dc29292951994ba239d",
+      "skills/natural-japanese/references/doctypes/memo.md": "d74be03c71e992f4c070fe42249e1cfc6faa87efc7438c6f5aa2659d831e17f5",
+      "skills/natural-japanese/references/doctypes/minutes.md": "de38887be3def7cd35e1b1ffbdf10c21a9c4601fb528f3022f14512df3bc8129",
+      "skills/natural-japanese/references/doctypes/report.md": "28f0cd6cef86fda5cb0bc236b9d1bb1d3d09892aacf5f813bec4f7c4cd84ea8f",
+      "skills/natural-japanese/references/doctypes/slide.md": "1ca8db97566ad053cdb0115a72e12099f94648c5ba3a3d0bd6d33bf91c7f59d8",
+      "skills/natural-japanese/references/eval-rubric.md": "77a49a4d0f70a51d4e595dec3ab236543b404edab5c6ccafb57c3f1f68d4ae65",
+      "skills/natural-japanese/references/examples.md": "bc37c36ebda975351e2949f05990b7202737a3f5b1f95f53584158e9a6d1e99d",
+      "skills/natural-japanese/references/forbidden-patterns.md": "0cce2ad7f053611a8c983ebf86f55631e019bbf752cc815c04077b229a557b1f",
+      "skills/natural-japanese/references/genre-notes.md": "d5b2f7ecda12649efc26ef4a716fe6b2d4c03568b674dc5a06842f90cf6e8a6f",
+      "skills/natural-japanese/references/manual-checklist.md": "19eda8c3098e941c593bb3d4018b9b1f284f3c184db140c799623a07e91c487c",
+      "skills/natural-japanese/references/readability-antipatterns.md": "10418600db75d12da4ba7ca6d76cc9d0bc60e305ae4e75fa90f28c2aa76317b0",
+      "skills/natural-japanese/references/readability-principles.md": "6a495446fe6828968371d24a1b628d28a37842ae0fd0e4f11162b57a7f9c4d70",
+      "skills/natural-japanese/references/revision-guide.md": "27641d1a2aa5b41821d3da186ddf4139dc091c5dd8fb20544d814675b863433a",
+      "skills/natural-japanese/references/translationese.md": "09b3da1ebf4c663be9cb0bf9ed5bade476ba10804509e6ca6dc22dc15129f827",
+      "skills/natural-japanese/references/writing-constitution.md": "457b83afa64fa0da95a9daa25a8140e203fc4a3e87b2ff2c2839e0c8aad7ffdb",
+      "skills/natural-japanese/scripts/calibrate.py": "7409007f511524fafe7eaf026f8d693a0829d0bc0845b9e35092ea61deb411d8",
+      "skills/natural-japanese/scripts/fixtures/ai-smelly.md": "c84979246c11005139ba35afe4e6c5f0a716cf2f8d7e9ac647efffe1b1c5c558",
+      "skills/natural-japanese/scripts/fixtures/natural.md": "218c4e52cf0e231ba8c9192fc8f23b49de40d0b3463419a6697dea787862572e",
+      "skills/natural-japanese/scripts/lint.py": "576fb564126b6a81feadc88969a0ec8fb8fc7a755899e5b90fe91981e644881a",
+      "skills/natural-japanese/scripts/outline.py": "9b0478364f76c6aeed2befc8f4ee1aa4aa1ec6789eca45fb7b9958ccaed7ca80",
+      "skills/natural-japanese/scripts/semantic.py": "c14909618677ee66c6f67a0cc81bc9ced9951f2ffd9727182e5e0de6b2d1d667",
+      "skills/natural-japanese/scripts/terms.py": "304acb82d8d8cb8a2f45b5efc1110f407e2316d23c13bfc8734670fc1ac81e19",
+      "skills/natural-japanese/scripts/textcore.py": "ea363ed8611256afb07b0ce83b478c2d559a910d00bfa152d9244f60025da1f2"
+    },
+    "no-comments": {
+      "skills/no-comments/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/no-comments/SKILL.md": "ad3c32e4be5fae5bded9e791efda679fe6a57d80dc128eb2af35b0a17510a480"
+    },
+    "reflect": {
+      "skills/reflect/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/reflect/SKILL.md": "c827064d89f7e531462eb4d21942f7a62cbf46c8649441478225cb9152d8030f",
+      "skills/reflect/references/approval.md": "8b02cb1d94791ac995c84d6d54b52420791f0f39bc78b73661981fa2d5b719e1"
+    },
+    "show-me-your-work": {
+      "skills/show-me-your-work/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/show-me-your-work/SKILL.md": "4fea23a1da072932d9a6a75855e479a890ecbdd64e77421729e826e7531f6f29",
+      "skills/show-me-your-work/assets/decision-log-template.tsv": "c5b9c5d8cd584f8562540b3cd936e559a37dfb0c8689cff48ca44ba0ffcd15e0",
+      "skills/show-me-your-work/references/log-format.md": "aaf01cfa92047bee2f96bf66c121a780d791ac11b2d3f6e2645ada0295a02332"
+    },
+    "system-blueprint": {
+      "skills/system-blueprint/LICENSE": "e32449d23085399adc1222f7a17408b730550258e51627c153cb108ca9955823",
+      "skills/system-blueprint/SKILL.md": "531415da056f3510634516c68bde760f76fc73fcfe10f3d3bbddda020b70b8bd",
+      "skills/system-blueprint/assets/blueprint-template.md": "456298617c5927256498c508c3462eed2f7a91c76fa80ea7b88cdf5200d1550b",
+      "skills/system-blueprint/references/document-model.md": "f8a5bb17e2444477873848b0559131ff6b06a3617dc979c29517c38bf903609b"
+    },
+    "teach": {
+      "skills/teach/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/teach/SKILL.md": "03a1678c249fff74621a4596ff0dc58a47c8640996e69d4e129e5063300d89cd"
+    },
+    "technical-writing": {
+      "skills/technical-writing/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/technical-writing/SKILL.md": "8b70e455f7e143349ae92b7c36cc6de7f3c5ac58a199a75cd35458d7ad80c349"
+    },
+    "unslop": {
+      "skills/unslop/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/unslop/SKILL.md": "885d50b5f3575f1882307b8ab5d2c72e5620026758eed9149416bbe1e4087a15"
+    },
+    "why": {
+      "skills/why/LICENSE": "bc957ca6bee02792566a1a028d105e02e247c6e77cf057061674273da77b200e",
+      "skills/why/SKILL.md": "22ae5e263cdf58b81ed8a4a347e67d156c248a5b184cda5afc63c8ce952ee42e",
+      "skills/why/references/epistemics.md": "87c4ea6e276819dd1e427034a492b33c20bc714e4c03b3d1c4a48ed16383c16d",
+      "skills/why/references/investigator-prompt.md": "caa6d4ccee67bd480da42c578ecf0357965f8b88d67eb1bddc3a08d4bd7ead87",
+      "skills/why/references/source-playbook.md": "a6cf0942f6372d9b33838bf133132bffb443f312a54dcea1cd3f895e76a9c778",
+      "skills/why/references/sources/code-archaeology.md": "fcbdfc43a4e10d06b68123aecfbccbe45083ba56431e2f6e7c20d35184bb075f",
+      "skills/why/references/sources/incident-postmortem.md": "1d514946552d868cae83fba0afb7bcf106108d220a4427e2009f33bc7da191dd",
+      "skills/why/references/sources/okf.md": "8f96975874c38bd7460a0a2e22d3987b9515d10165ef006adee0ba4bb3afc8b7",
+      "skills/why/references/synthesizer-prompt.md": "03d8d70ed4ac7ec51b4d8e4fcec6ee569b13aab3bea5d65b3e54397a868688ce"
+    },
+    "yomiyasu": {
+      "skills/yomiyasu/LICENSE": "79d802f15bc8caf67f1a83c1bdbe214ccb41a0a0275f9046b329b89c65ee1fca",
+      "skills/yomiyasu/SKILL.md": "0a8915986b0228abdf137d00f8e35959336f1914d36dfb73f1e8c053357209cf",
+      "skills/yomiyasu/UNICODE-LICENSE.txt": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
+      "skills/yomiyasu/assets/algo-artis.png": "57c7c204d43d0e2873e3b61221db3ac4ba75a7ce29271a6deaeb3bd09f26fdec",
+      "skills/yomiyasu/references/domains/business.md": "b9970281b5005bbbc998d5de9b9e6b2bc1bb83976b3862c0556425a142f4352c",
+      "skills/yomiyasu/references/domains/essay.md": "8c0dc2afe132299ad111d4e3bc004d75da6291dc4857328717dc63ba5c9c6740",
+      "skills/yomiyasu/references/domains/tech.md": "255b1bcbf42a0c7ea7f42c7293cd964e541d70f6f5079ebcbffc332ce6b7b0dd",
+      "skills/yomiyasu/references/gemini-syntax.md": "7685424e9f63cd0d45c0fca673eabd10d7879f29e220b7d8517e73fcd2a9b6e7",
+      "skills/yomiyasu/references/slop-catalog.md": "e7791d123db2573f50ee922c51f7d50694ab7e6b81f318713e9f405fe3c6daf2",
+      "skills/yomiyasu/scripts/markdown_visibility.py": "7e6f739114bc28b132aa8e2bcfb51c7de7f441c12a54431c7248b5353a9966bb",
+      "skills/yomiyasu/scripts/yomiyasu_diff.py": "b704e088fd6e1b01c21fb6b97373cc21d441cb14e976f3a47a95c3ba1c73a964",
+      "skills/yomiyasu/scripts/yomiyasu_lint.py": "299a61970e8c30092f947e2ace95e80ff8a513fac87824363f89ba77e6cac468"
+    }
+  }
+}
