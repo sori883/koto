@@ -69,6 +69,8 @@ setupは `default` の管理情報と保存先を準備します。管理ルー�
 
 取得元はHTTPS、SSH、file URL、または明示的なローカルパスです。相対パスは呼び出し時の作業ディレクトリを基準にします。認証には既存Gitの設定を使い、URLへトークン・パスワード・クエリを埋め込まないでください。CLIはGitの対話入力を抑えます。認証に失敗した場合はGit側の認証設定を確認してください。
 
+Gitの`url.<base>.insteadOf`による接続先の置換を利用できます。登録したURLは保持し、Gitに保存された`remote.origin.url`と照合するため、置換設定の利用だけで再登録する必要はありません。保存されたURLそのものが変わった場合や、複数の取得元URLが設定されている場合は競合として停止します。
+
 ## JSONと終了コード
 
 JSONで入力する場合は `--input-json` を使います。入力と出力の両方がJSONになり、通常のコマンド引数と同じ検証・処理を行います。
@@ -119,6 +121,8 @@ applyは最新の内容を再確認し、管理ルートの`.space/monorepo.lock
 
 `phase` は作成処理の状態（`pending` / `ready`）、`observed` は実体の確認結果（`ready` / `unavailable`）です。`dirty` は未コミットの変更の有無、`baseDistance` の `behind` / `ahead` は取得済みの開始元ブランチとのコミット数の差です。変更があるだけでdoctorの不整合にはなりません。
 
+書き込みロックで片付けが止まる場合は`GIT_WRITE_LOCKED`と`details.lockPath`を確認し、Gitの処理が終わってから再実行してください。kotoはGitのロックを自動削除しません。別Worktree専用のロックはそのWorktreeを削除する際に確認し、共有する管理領域のロックは同じリポジトリの片付けを停止させます。
+
 ## 再実行と登録解除
 
 同じ入力によるsetup・プロジェクト追加・repo add・workspace createは再実行できます。作業環境の再実行では既存の編集を保持し、別のリポジトリ構成や作業ブランチで同じタスクIDを使おうとすると拒否します。`repo add` の再実行は、取得済みなら更新取得を行いません。
@@ -145,6 +149,7 @@ koto-monorepo workspace remove task-001 --root /path/to/my-workspace --project c
 - 未コミットの変更、未追跡ファイル、`.gitignore`等で無視されたファイルがある。
 - HEADが現在のoriginのどのブランチにも含まれない、または通信に失敗して保存を確認できない。
 - GitがWorktreeをロックしている、merge・rebase等が進行中、submoduleを含む。
+- 対象WorktreeのGit管理領域、または共有するGit管理領域に`index.lock`・`HEAD.lock`・参照のロックなどの書き込みロックがある。
 - assume-unchangedやskip-worktreeにより変更が隠れる可能性がある。
 - 作成未完了、パス・所有情報・Git登録に不一致がある。
 

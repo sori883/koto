@@ -29,6 +29,14 @@ export async function git(args: string[], cwd: string, allowFailure = false): Pr
   if (result.code !== 0 && !allowFailure) throw new MonorepoError("GIT_FAILED", "Git could not complete the operation. Check repository access and Git configuration.", { exitCode: result.code });
   return result;
 }
+export async function storedOriginUrl(bare: string, root: string): Promise<string | undefined> {
+  const result = await git([`--git-dir=${bare}`, "config", "--null", "--get-all", "remote.origin.url"], root, true);
+  requireThat(result.code === 0 || result.code === 1, "GIT_FAILED", "Cannot inspect the stored origin URL.");
+  if (result.code === 1) return undefined;
+  const urls = result.output.split("\0");
+  requireThat(urls.length === 2 && urls[0] && urls[1] === "", "CONFLICT", "Expected exactly one nonempty stored origin URL.");
+  return urls[0];
+}
 export async function refName(value: string, cwd: string): Promise<string> {
   requireThat(!value.startsWith("-") && !/[\x00-\x20\x7f]/.test(value), "INVALID_REF", "Invalid branch name.");
   const checked = await git(["check-ref-format", `refs/heads/${value}`], cwd, true);

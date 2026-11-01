@@ -209,6 +209,38 @@ test("empty sources can recover, and an explicit base and work branch are honore
   expect((await run(["workspace", "create", "job", "--repo", "api", "--base", "main", "--branch", "feature/job"], 1)).error.code).toBe("CONFLICT");
 });
 
+test("Git URL rewrites preserve registration identity through reuse, sync and cleanup", async () => {
+  await run(["setup"]); const source = await remote("rewritten source"), url = "https://example.invalid/team/app";
+  await git("config", "--file", join(temp, "gitconfig"), `url.${source}.insteadOf`, url);
+  expect((await register("api", url)).data.url).toBe(url);
+  expect((await register("api", url)).data.changed).toBe(false);
+  const bare = join(root, "repositories/default/api.git");
+  expect(await git(`--git-dir=${bare}`, "config", "--get", "remote.origin.url")).toBe(url);
+  expect(await git(`--git-dir=${bare}`, "remote", "get-url", "origin")).toBe(source);
+  expect((await run(["workspace", "create", "job", "--repo", "api"])).data.ready).toBe(true);
+  await run(["repo", "sync", "api"]);
+  expect((await run(["doctor"])).data.healthy).toBe(true);
+  expect((await run(["workspace", "remove", "job", "--dry-run"])).data.canRemove).toBe(true);
+  await run(["workspace", "remove", "job"]);
+  await run(["repo", "remove", "api"]);
+  expect((await register("api", url)).data.phase).toBe("ready");
+  await git(`--git-dir=${bare}`, "config", "remote.origin.url", source);
+  expect((await run(["repo", "sync", "api"], 1)).error.code).toBe("CONFLICT");
+  await git(`--git-dir=${bare}`, "config", "remote.origin.url", url);
+  await git(`--git-dir=${bare}`, "config", "--add", "remote.origin.url", source);
+  expect((await run(["repo", "sync", "api"], 1)).error.code).toBe("CONFLICT");
+}, 30_000);
+
+test("Git URL rewrites allow retrying acquisition after an empty remote gains its first commit", async () => {
+  await run(["setup"]); const source = join(temp, "rewritten empty"), url = "ssh://git@example.invalid/team/app";
+  await git("init", "-q", "-b", "main", source);
+  await git("config", "--file", join(temp, "gitconfig"), `url.${source}.insteadOf`, url);
+  expect((await run(["repo", "add", "api", "--url", url], 1)).error.code).toBe("EMPTY_REPOSITORY");
+  await git("-C", source, "commit", "--allow-empty", "-qm", "initial");
+  expect((await register("api", url)).data.phase).toBe("ready");
+  expect((await run(["workspace", "create", "job", "--repo", "api"])).data.ready).toBe(true);
+});
+
 test("JSON requests use the same validations and Git workflow as command arguments", async () => {
   const input = (value: object) => ["--input-json", JSON.stringify({ root, ...value })];
   await run(input({ command: ["setup"] }));
@@ -340,6 +372,52 @@ test("cleanup rejects unpublished commits and stale tracking refs but accepts a 
   await run(["workspace", "remove", "job"]);
   expect(await Bun.file(join(path, ".git")).exists()).toBe(false);
 }, 30_000);
+
+test("cleanup preserves every worktree while target or shared Git metadata has a write lock", async () => {
+  await run(["setup"]); const source = await remote("source"); await register("api", source); await register("web", source);
+  await run(["workspace", "create", "job", "--repo", "api", "--repo", "web"]);
+  await run(["workspace", "create", "other", "--repo", "api"]);
+  const path = join(root, "workspaces/default/job/api"), other = join(root, "workspaces/default/other/api");
+  const gitDirectory = await git("-C", path, "rev-parse", "--absolute-git-dir"), bare = join(root, "repositories/default/api.git");
+  const config = join(root, ".space/default/monorepo.json"), before = await readFile(config, "utf8");
+  for (const lock of [join(gitDirectory, "index.lock"), join(gitDirectory, "HEAD.lock"), join(bare, "packed-refs.lock"), join(bare, "config.lock"), join(bare, "refs/heads/koto/job.lock")]) {
+    await writeFile(lock, "active Git writer\n");
+    const preview = (await run(["workspace", "remove", "job", "--dry-run"], 1)).data;
+    expect(preview.canRemove).toBe(false);
+    expect(preview.repositories[0].problem).toBe("GIT_WRITE_LOCKED");
+    expect((await run(["workspace", "remove", "job"], 1)).error.code).toBe("CLEANUP_BLOCKED");
+    expect(await readFile(lock, "utf8")).toBe("active Git writer\n");
+    expect(await readFile(config, "utf8")).toBe(before);
+    for (const repo of ["api", "web"]) expect(await Bun.file(join(root, "workspaces/default/job", repo, ".git")).exists()).toBe(true);
+    await rm(lock);
+  }
+  const otherLock = join(await git("-C", other, "rev-parse", "--absolute-git-dir"), "index.lock");
+  await writeFile(otherLock, "other writer\n");
+  expect((await run(["workspace", "remove", "job", "--dry-run"])).data.canRemove).toBe(true);
+  await run(["workspace", "remove", "job"]);
+  expect(await readFile(otherLock, "utf8")).toBe("other writer\n");
+  expect(await Bun.file(join(other, ".git")).exists()).toBe(true);
+}, 30_000);
+
+test("cleanup detects a Git write lock created while fetching remote state", async () => {
+  await run(["setup"]); const source = await remote("source"); await register("api", source);
+  await run(["workspace", "create", "job", "--repo", "api"]);
+  const path = join(root, "workspaces/default/job/api"), lock = join(await git("-C", path, "rev-parse", "--absolute-git-dir"), "index.lock");
+  const bin = join(temp, "bin"), realGit = Bun.which("git")!;
+  await mkdir(bin);
+  await writeFile(join(bin, "git"), `#!/usr/bin/env bun
+const args = process.argv.slice(2);
+const child = Bun.spawn([${JSON.stringify(realGit)}, ...args], { stdout: "inherit", stderr: "inherit" });
+const code = await child.exited;
+if (args.includes("fetch")) await Bun.write(${JSON.stringify(lock)}, "started during fetch");
+process.exit(code);
+`, { mode: 0o755 });
+  const failure = await run(["workspace", "remove", "job"], 1, { env: { PATH: `${bin}:${process.env.PATH}` } });
+  expect(failure.error.code).toBe("CLEANUP_BLOCKED");
+  expect(failure.error.details.repositories[0].problem).toBe("GIT_WRITE_LOCKED");
+  expect(await readFile(lock, "utf8")).toBe("started during fetch");
+  expect(await Bun.file(join(path, ".git")).exists()).toBe(true);
+});
 
 test("cleanup checks the whole task before deleting and does not cross projects or discard task-level files", async () => {
   await run(["setup"]); const source = await remote("source"); await register("a", source); await register("b", source);
