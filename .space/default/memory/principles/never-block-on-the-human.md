@@ -4,14 +4,15 @@ title: 許可された可逆的な作業を確認待ちで止めない
 description: 既に依頼され権限が明らかな可逆的作業について改めて実行許可を尋ねようとするとき、自律的に進め、判断が不可欠な曖昧さや未承認の操作だけを確認する。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-never-block-on-the-human/SKILL.md
     title: "pstack: never-block-on-the-human"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:56.896Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.172Z
+scope: shared
 ---
 # 許可された可逆的な作業を確認待ちで止めない
 
@@ -29,3 +30,6 @@ generated:
 - 問題を見つけたら、依頼範囲内なら対処し、範囲外なら事実と次の対応を示す。
 
 可逆性だけで権限を推定しない。外部へのメッセージ、共有ブランチの強制更新、本番データの削除などは、必要な明示的承認を確認する。この原則は承認やholdを解除しない。当該保留を踏まえた承認が既にある場合は、その範囲で進めて同じ確認を繰り返さない。
+
+# Related Concepts
+- [成果物の実際の動作を確かめる](prove-it-works.md): 許可済みの作業を自律的に進めた後、結果を報告する根拠として成果物や実際の動作を直接確認する。

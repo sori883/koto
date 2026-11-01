@@ -4,14 +4,15 @@ title: 呼び出し元を移行して旧APIを取り除く
 description: 外部への互換性が不要で呼び出し元をまとめて移行できる内部APIの刷新では、同じ改修で呼び出し元を移行し、旧APIと不要な互換層を削除する。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-migrate-callers-then-delete-legacy-apis/SKILL.md
     title: "pstack: migrate-callers-then-delete-legacy-apis"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:56.835Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.075Z
+scope: dev
 ---
 # 呼び出し元を移行して旧APIを取り除く
 
@@ -29,3 +30,6 @@ generated:
 - テストは新しい契約を確認するものへ更新し、旧実装の細部だけを固定するテストは整理する。
 
 外部利用者が互換性に依存するAPIや、同時移行できない公開インターフェースには、そのまま適用しない。互換性の約束と段階移行の必要性を確認する。
+
+# Related Concepts
+- [追加する前に不要なものを取り除く](subtract-before-you-add.md): 呼び出し元の移行後に旧APIと不要な互換経路を取り除くことで、後続の追加前に既存構造を単純化する。

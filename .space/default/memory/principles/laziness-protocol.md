@@ -4,14 +4,15 @@ title: 最小の変更と複雑さで解決する
 description: リファクタリングや変更量を評価し、抽象化・層・引数の受け渡しを追加するとき、削除と単純化を優先して問題を解決する最小の変更を選ぶ。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-laziness-protocol/SKILL.md
     title: "pstack: laziness-protocol"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:56.774Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.011Z
+scope: dev
 ---
 # 最小の変更と複雑さで解決する
 
@@ -30,3 +31,6 @@ generated:
 - 見栄えのよい定型コードより、要件を満たす小さな差分を選ぶ。
 
 削減するのは不要な複雑さであり、必要な動作や検証ではない。次の保守担当者が理解と修正に苦労する構造なら、さらに単純化する。
+
+# Related Concepts
+- [読み手が追う層と覚える状態を減らす](minimize-reader-load.md): 複雑さを減らしたかどうかは、変更量だけでなく、読み手が追う層と覚える可変状態が減ったかでも判断する。

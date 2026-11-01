@@ -4,14 +4,15 @@ title: 成果物の実際の動作を確かめる
 description: 作業の完了を報告するときや他の担当者の成果を受け入れるとき、実際の成果物・値・動作を確認し、間接的な指標や自己申告だけを成功の根拠にしない。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-prove-it-works/SKILL.md
     title: "pstack: prove-it-works"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:56.296Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.235Z
+scope: shared
 ---
 # 成果物の実際の動作を確かめる
 

@@ -4,14 +4,15 @@ title: 繰り返す教訓を仕組みとして定着させる
 description: 同じ指示や修正、テスト失敗が繰り返されるとき、型・lint・共通処理・実行時検証などの仕組みで再発を防ぐ。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-encode-lessons-in-structure/SKILL.md
     title: "pstack: encode-lessons-in-structure"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:55.459Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:21.820Z
+scope: dev
 ---
 # 繰り返す教訓を仕組みとして定着させる
 
@@ -31,3 +32,6 @@ generated:
 - 依頼範囲内ならその場で適用し、範囲外なら具体的な未対応事項として残す。外部Issueの作成を自動的に追加しない。
 
 記録するだけ、謝るだけ、一箇所だけ直すだけで終わらせない。一回の出来事から根拠なく普遍的な規則を増やすことも避ける。
+
+# Related Concepts
+- [型で不正な状態と扱い漏れを防ぐ](type-system-discipline.md): 繰り返す誤りを仕組みで防ぐ方法の一つとして、不正な状態を作れず分岐の扱い漏れを検出できる型を使う。

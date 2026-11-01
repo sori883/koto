@@ -4,14 +4,15 @@ title: 修正が繰り返し失敗したら前提を疑う
 description: 同じ前提を共有する修正が同じ検証で2回以上失敗したら、前提と偏りの所在を調べてから次の修正へ進む。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-attack-the-premise/SKILL.md
     title: "pstack: attack-the-premise"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:55.303Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:21.720Z
+scope: dev
 ---
 # 修正が繰り返し失敗したら前提を疑う
 
@@ -30,3 +31,6 @@ generated:
 - 分布が均等なら、想定した偏りは原因ではないという証拠を残し、別の原因を調べる。
 
 新要件に合わせて設計を作り直す原則とは異なり、ここでは現在の設計が事実として仮定している内容を検証する。
+
+# Related Concepts
+- [不具合を再現して根本原因を直す](fix-root-causes.md): 繰り返す修正が失敗したときの前提検証は、不具合を再現し、証拠から根本原因を追う調査を補う。

@@ -4,14 +4,15 @@ title: 不具合を再現して根本原因を直す
 description: 不具合や異常な挙動を調査・修正するとき、先に再現し、観測した証拠から原因を追って症状だけを隠す修正を避ける。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-fix-root-causes/SKILL.md
     title: "pstack: fix-root-causes"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:55.555Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:21.915Z
+scope: shared
 ---
 # 不具合を再現して根本原因を直す
 

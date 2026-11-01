@@ -4,14 +4,15 @@ title: ドメインの規則をデータ構造に表す
 description: 状態を持つ処理、分岐が多い処理、同じデータの前提が複数箇所へ広がる処理を書くとき、規則を型・状態機械・表などに集約する。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-model-the-domain/SKILL.md
     title: "pstack: model-the-domain"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:55.977Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.139Z
+scope: dev
 ---
 # ドメインの規則をデータ構造に表す
 

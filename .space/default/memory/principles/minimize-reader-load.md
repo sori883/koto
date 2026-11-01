@@ -4,14 +4,15 @@ title: 読み手が追う層と覚える状態を減らす
 description: 追いにくいコードをレビューしたり、層・ラッパー・可変状態を追加したりするとき、読み手がたどる層と覚える状態を減らして値の出所を追いやすくする。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-minimize-reader-load/SKILL.md
     title: "pstack: minimize-reader-load"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:55.890Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.107Z
+scope: dev
 ---
 # 読み手が追う層と覚える状態を減らす
 

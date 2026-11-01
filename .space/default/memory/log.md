@@ -1,3 +1,30 @@
+## 2026-11-01
+* **Relationship**: [自律実行と承認の境界](rules/remote-change-approval.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.512Z.
+* **Update**: [自律実行と承認の境界](rules/remote-change-approval.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.461Z.
+* **Update**: [型で不正な状態と扱い漏れを防ぐ](principles/type-system-discipline.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.428Z.
+* **Update**: [内部実装より観測できる振る舞いをテストする](principles/test-behavior-not-implementation.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.394Z.
+* **Update**: [追加する前に不要なものを取り除く](principles/subtract-before-you-add.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.363Z.
+* **Update**: [検証できる小さな単位で作業を進める](principles/sequence-verifiable-units.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.330Z.
+* **Update**: [共有状態を分離してから排他制御を考える](principles/separate-before-serializing-shared-state.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.299Z.
+* **Update**: [新しい要件を前提に設計し直す](principles/redesign-from-first-principles.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.267Z.
+* **Update**: [成果物の実際の動作を確かめる](principles/prove-it-works.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.235Z.
+* **Update**: [検証できる最終状態へ向けて移行する](principles/outcome-oriented-execution.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.203Z.
+* **Update**: [許可された可逆的な作業を確認待ちで止めない](principles/never-block-on-the-human.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.172Z.
+* **Update**: [ドメインの規則をデータ構造に表す](principles/model-the-domain.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.139Z.
+* **Update**: [読み手が追う層と覚える状態を減らす](principles/minimize-reader-load.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.107Z.
+* **Update**: [呼び出し元を移行して旧APIを取り除く](principles/migrate-callers-then-delete-legacy-apis.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.075Z.
+* **Update**: [再実行で同じ最終状態へ収束させる](principles/make-operations-idempotent.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.042Z.
+* **Update**: [最小の変更と複雑さで解決する](principles/laziness-protocol.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:22.011Z.
+* **Update**: [必要な情報に絞ってコンテキストを保つ](principles/guard-the-context-window.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:21.979Z.
+* **Update**: [ロジックより先にデータと基盤を整える](principles/foundational-thinking.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:21.947Z.
+* **Update**: [不具合を再現して根本原因を直す](principles/fix-root-causes.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:21.915Z.
+* **Update**: [実装の都合より利用者の体験を優先する](principles/experience-first.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:21.883Z.
+* **Update**: [有力な設計案を具体化して比較する](principles/exhaust-the-design-space.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:21.851Z.
+* **Update**: [繰り返す教訓を仕組みとして定着させる](principles/encode-lessons-in-structure.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:21.820Z.
+* **Update**: [作業や検証を再実行できる道具を作る](principles/build-the-lever.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:21.788Z.
+* **Update**: [検証を境界へ集めて内部の責務を分ける](principles/boundary-discipline.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:21.757Z.
+* **Update**: [修正が繰り返し失敗したら前提を疑う](principles/attack-the-premise.md). Actor: agent:codex_mac_alignment. At: 2026-11-01T04:54:21.720Z.
+
 ## 2026-09-20
 * **Update**: [自律実行と承認の境界](rules/remote-change-approval.md).
 * **Creation**: [リモート変更の承認](rules/remote-change-approval.md).

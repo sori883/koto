@@ -4,14 +4,15 @@ title: 実装の都合より利用者の体験を優先する
 description: 製品・UX・機能範囲を判断するとき、利用者と保守担当者の体験を優先し、機能数より中心的な体験の完成度を高める。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-experience-first/SKILL.md
     title: "pstack: experience-first"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:56.707Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:21.883Z
+scope: dev
 ---
 # 実装の都合より利用者の体験を優先する
 

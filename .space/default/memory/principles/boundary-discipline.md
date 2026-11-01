@@ -4,14 +4,15 @@ title: 検証を境界へ集めて内部の責務を分ける
 description: 入力検証・エラー処理・CLIや通信の接続部分を設計するとき、検証と型への変換をシステム境界に集約し、内部の業務ロジックを純粋な処理に保つ。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-boundary-discipline/SKILL.md
     title: "pstack: boundary-discipline"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:55.362Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:21.757Z
+scope: dev
 ---
 # 検証を境界へ集めて内部の責務を分ける
 
@@ -30,3 +31,6 @@ CLI引数、設定ファイル、ネットワーク、外部APIなどの境界�
 - 解析は生の入力から型付き状態への変換、プロンプト生成は構造化状態から文字列への変換、評価は状態から結果への変換として扱う。
 
 検証を追加する際は、今まさにデータが境界を越えるのか、既に保証された条件を重複確認していないかを確かめる。
+
+# Related Concepts
+- [型で不正な状態と扱い漏れを防ぐ](type-system-discipline.md): 境界で生の入力を検証して型へ変換し、内部ではその型の保証を使って不正な状態と扱い漏れを防ぐ。

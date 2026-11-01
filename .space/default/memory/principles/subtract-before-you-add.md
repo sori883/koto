@@ -4,14 +4,15 @@ title: 追加する前に不要なものを取り除く
 description: 機能追加・リファクタリング・書き換えの順序を決めるとき、不要なコードや指示を先に除き、観測された用途に必要な構造を作る。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-subtract-before-you-add/SKILL.md
     title: "pstack: subtract-before-you-add"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:56.490Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.363Z
+scope: dev
 ---
 # 追加する前に不要なものを取り除く
 

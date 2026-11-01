@@ -4,12 +4,13 @@ title: 自律実行と承認の境界
 description: 可逆的な作業は自律実行し、不可逆な操作は事前確認する方針を後日記載する草案。
 governance: constraint
 status: draft
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:45:42.196Z
-sources: 
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.512Z
+sources:
   - resource: "https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/SKILL.md#autonomy"
     title: "pstack: Poteto Mode / Autonomy"
+scope: shared
 ---
 <!--
 TODO: pstackのAutonomyを参考に、自律実行と承認の境界を後で記載する。
@@ -17,3 +18,6 @@ TODO: pstackのAutonomyを参考に、自律実行と承認の境界を後で記
 - 共有ブランチへのforce-push、デプロイ、データ削除、顧客へのメッセージ送信などは実行前に確認する。
 - 既存のユーザー指示・操作権限・明示的な承認に従い、同じ範囲では確認を繰り返さない。
 -->
+
+# Related Concepts
+- [許可された可逆的な作業を確認待ちで止めない](../principles/never-block-on-the-human.md): 承認済みの範囲を確認し、可逆的な作業を自律的に進める際の原則。承認境界の本文は草案のまま保持する。

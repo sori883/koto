@@ -4,14 +4,15 @@ title: 型で不正な状態と扱い漏れを防ぐ
 description: 型・関数の引数と戻り値・状態の表現を設計またはレビューするとき、不正な組み合わせを型で防ぎ、境界での解析と網羅的な分岐で実行時の失敗を減らす。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-type-system-discipline/SKILL.md
     title: "pstack: type-system-discipline"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:56.636Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.428Z
+scope: dev
 ---
 # 型で不正な状態と扱い漏れを防ぐ
 

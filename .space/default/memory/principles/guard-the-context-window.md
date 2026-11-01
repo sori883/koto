@@ -4,14 +4,15 @@ title: 必要な情報に絞ってコンテキストを保つ
 description: 大量の出力・長い文書・反復した読み込み・並行作業で情報が増えるとき、必要な情報に絞り、主担当には根拠へ戻れる要点を集める。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-guard-the-context-window/SKILL.md
     title: "pstack: guard-the-context-window"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:55.682Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:21.979Z
+scope: shared
 ---
 # 必要な情報に絞ってコンテキストを保つ
 
@@ -30,3 +31,6 @@ generated:
 - 必要な状態は再開可能な記録に残し、縮約後に推測で補わない。
 
 要約のために判断の前提、例外、未解決事項を落とさない。大量の原文を親へ転送することを、委譲の成果としない。
+
+# Related Concepts
+- [検証できる小さな単位で作業を進める](sequence-verifiable-units.md): 作業段階ごとに読む範囲を区切る際、変更と検証の単位を手掛かりに、今の判断に必要な情報を選ぶ。

@@ -4,14 +4,15 @@ title: 再実行で同じ最終状態へ収束させる
 description: 停止・再起動・再試行が起こり得るコマンド、起動終了処理、ループを設計するとき、重複実行や途中失敗からも同じ最終状態へ収束させる。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-make-operations-idempotent/SKILL.md
     title: "pstack: make-operations-idempotent"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:55.765Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.042Z
+scope: shared
 ---
 # 再実行で同じ最終状態へ収束させる
 

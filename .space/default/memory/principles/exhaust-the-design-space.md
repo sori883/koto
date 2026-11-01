@@ -4,14 +4,15 @@ title: 有力な設計案を具体化して比較する
 description: 前例のないUI、複数の有力な構造、操作感が重要な判断で設計が明らかでないとき、異なる2〜3案を試作または具体化して比較する。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-exhaust-the-design-space/SKILL.md
     title: "pstack: exhaust-the-design-space"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:55.506Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:21.851Z
+scope: dev
 ---
 # 有力な設計案を具体化して比較する
 
@@ -28,3 +29,6 @@ generated:
 - 観測した結果から採用案と不採用の理由を示す。
 
 既存の定型に従う機械的な実装、目標が明確な不具合修正やリファクタリング、制約によって実現可能な案が一つしかない変更では、比較用の試作を強制しない。読み取りだけの調査依頼では、既存資料による比較に留める。
+
+# Related Concepts
+- [実装の都合より利用者の体験を優先する](experience-first.md): 設計案を比較するときは、実装の都合だけでなく、利用者が中心的な目的を達成できるかを判断軸にする。

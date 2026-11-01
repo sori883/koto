@@ -4,14 +4,15 @@ title: 内部実装より観測できる振る舞いをテストする
 description: テストを追加・変更するときや既存テストを残すか判断するとき、利用者と同じ入口から処理を動かし、独立した期待値と観測できる結果を比較する。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-test-behavior-not-implementation/SKILL.md
     title: "pstack: test-behavior-not-implementation"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:56.557Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.394Z
+scope: dev
 ---
 # 内部実装より観測できる振る舞いをテストする
 
@@ -31,3 +32,6 @@ generated:
 - 用意したfixtureを読み返すだけで、対象が実行されないテストを残さない。
 
 表のキーの整合や親の存在など、関係の不変条件を検証するテストと、コンパイル時の型検証には意味がある。アサーション名だけで機械的に削除せず、どの不具合を検出できるかで判断する。
+
+# Related Concepts
+- [成果物の実際の動作を確かめる](prove-it-works.md): 実動作の証拠をテストで残す際は、対象を実行し、利用者が観測できる結果を独立した期待値と比較する。

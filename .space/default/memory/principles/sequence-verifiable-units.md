@@ -4,14 +4,15 @@ title: 検証できる小さな単位で作業を進める
 description: 複数箇所の修正・移行・反復する編集やコミット・PRの順序を組み立てるとき、作業を確認可能な小さな単位へ分け、各単位の検証後に次へ進む。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-sequence-verifiable-units/SKILL.md
     title: "pstack: sequence-verifiable-units"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:56.418Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.330Z
+scope: shared
 ---
 # 検証できる小さな単位で作業を進める
 

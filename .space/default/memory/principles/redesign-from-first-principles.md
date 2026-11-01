@@ -4,14 +4,15 @@ title: 新しい要件を前提に設計し直す
 description: 既存設計へ新しい要件を組み込むとき、その要件が最初から存在した場合の構造を考えて段階的に反映する。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-redesign-from-first-principles/SKILL.md
     title: "pstack: redesign-from-first-principles"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:56.357Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:22.267Z
+scope: dev
 ---
 # 新しい要件を前提に設計し直す
 
@@ -29,3 +30,6 @@ generated:
 - 全体像を考えたうえで、検証可能な小さな段階で届ける。
 
 設計の見直しを、依頼されていない全面改修の許可にはしない。必要な変更とその影響を示し、認められた範囲で実施する。
+
+# Related Concepts
+- [有力な設計案を具体化して比較する](exhaust-the-design-space.md): 新要件を前提に構造を見直し、有力な案が複数ある場合は、同じ判断軸で具体化して比較する。

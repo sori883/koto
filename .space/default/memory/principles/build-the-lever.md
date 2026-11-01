@@ -4,14 +4,15 @@ title: 作業や検証を再実行できる道具を作る
 description: 自明な少数の編集を超える編集・移行・分析・検証を行うとき、同じ作業や確認を再実行できる最小の道具を作る。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-build-the-lever/SKILL.md
     title: "pstack: build-the-lever"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:55.413Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:21.788Z
+scope: shared
 ---
 # 作業や検証を再実行できる道具を作る
 
@@ -31,3 +32,6 @@ generated:
 - セッション後も使う道具は成果物として保持し、コミットはユーザーの指示と権限に従う。
 
 必要な処理をする最小の道具に留め、汎用フレームワークへ広げない。反復する誤りを恒久的に防ぐ仕組みとは目的を区別する。
+
+# Related Concepts
+- [再実行で同じ最終状態へ収束させる](make-operations-idempotent.md): 編集や検証を繰り返せる道具にする際、重複実行や途中停止からの再開でも同じ最終状態へ収束することを確認する。

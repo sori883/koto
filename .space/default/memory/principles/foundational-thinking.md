@@ -4,14 +4,15 @@ title: ロジックより先にデータと基盤を整える
 description: 中心となる型・データ構造・共有状態や基盤と機能の順序を決めるとき、ロジックの前にデータとアクセス方法を整える。
 governance: context
 status: stable
-tags: 
+tags:
   - 開発原則
-sources: 
+sources:
   - resource: https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/principle-foundational-thinking/SKILL.md
     title: "pstack: foundational-thinking"
-generated: 
-  by: agent:codex
-  at: 2026-09-20T12:35:55.616Z
+generated:
+  by: agent:codex_mac_alignment
+  at: 2026-11-01T04:54:21.947Z
+scope: dev
 ---
 # ロジックより先にデータと基盤を整える
 
@@ -30,3 +31,6 @@ generated:
 - 各段階は一貫した抽象化を追加・改善する単位とし、呼び出し側に特別扱いをばらまかない。
 
 コミットする場合は小さく目的を揃える。原則自体をコミットの許可とは扱わない。
+
+# Related Concepts
+- [ドメインの規則をデータ構造に表す](model-the-domain.md): 処理より先に中心となるデータ構造を整える際、対象領域の規則と読み書きの方法を型や状態モデルへ表す。
