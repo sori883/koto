@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: shared
 title: 許可された可逆的な作業を確認待ちで止めない
 description: 既に依頼され権限が明らかな可逆的作業について改めて実行許可を尋ねようとするとき、自律的に進め、判断が不可欠な曖昧さや未承認の操作だけを確認する。
 governance: context

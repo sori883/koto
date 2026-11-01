@@ -6,7 +6,7 @@
 
 ```sh
 bun /path/to/plugin/cli/memory/memory.ts setup --root /path/to/workspace --json
-bun /path/to/plugin/cli/memory/memory.ts create knowledge/auth --root /path/to/workspace --type knowledge --title "認証方式" --desc "トークンを検証する理由" --body "判断と根拠を記録する。" --actor agent:codex --json
+bun /path/to/plugin/cli/memory/memory.ts create knowledge/auth --root /path/to/workspace --type knowledge --scope dev --title "認証方式" --desc "トークンを検証する理由" --body "判断と根拠を記録する。" --actor agent:codex --json
 bun /path/to/plugin/cli/memory/memory.ts search "認証" --root /path/to/workspace --json
 bun /path/to/plugin/cli/memory/memory.ts show knowledge/auth --root /path/to/workspace --json
 ```
@@ -33,7 +33,9 @@ bun /path/to/plugin/cli/memory/memory.ts show knowledge/auth --root /path/to/wor
 
 ## 知識の形式
 
-各ファイルはYAML frontmatterとMarkdown本文を持ちます。必須属性は `type`・`title`・`description` です。
+各ファイルはYAML frontmatterとMarkdown本文を持ちます。新規作成・更新時の必須属性は `type`・`scope`・`title`・`description` です。
+
+- `scope`: `shared`（共有）・`dev`（開発）・`ops`（運用）のいずれか1つ。全5分類で使い、同じproject内での用途を示します。成熟度やアクセス権とは別です。
 
 - `tags`: 重複のない文字列配列。
 - `status`: `draft`・`stable`・`deprecated`。省略時はstableとして検索。
@@ -52,6 +54,23 @@ JSON互換の独自属性を保持します。更新時はYAMLの値と本文を
 
 `show`の`content_hash`を `update`・`relate`・`delete` の`--if-hash`に渡すと、読んだ後に変更されている場合は`VERSION_CONFLICT`で停止します。`relate`の照合対象はsourceです。`delete --dry-run`も削除対象のハッシュを返します。ハッシュの指定を省くと、実行時の内容を基に操作します。
 
+## 開発・運用と共有の知識
+
+作成・更新時は`--scope dev`などで文書の用途を指定します。metadataにもscopeを記載でき、両方を渡した場合はフラグの値を優先します。分類済み文書の更新で省略すると現在の値を保持します。配列・空文字・未知の用途や`--unset scope`は受け付けません。
+
+| 検索指定 | 取得する用途 |
+| --- | --- |
+| `--scope dev` | sharedとdev |
+| `--scope ops` | sharedとops |
+| `--scope shared` | sharedのみ |
+| scope指定なし | 全用途と未分類 |
+| `--filter scope=dev` | devだけの完全一致 |
+| `--filter '!scope' --all` | 未分類の棚卸し |
+
+用途の選択は分類・語句・属性・コード参照と併用でき、件数の上限より先に適用します。検索結果には文書のscopeを返し、未分類なら省略します。共有と開発・運用の知識の間で、自動的な優先・上書きは行いません。`show`は既知IDで参照する操作のため、返されたmetadata.scopeと適用条件を確認してください。
+
+既存のscopeのない知識は読み取れます。未分類をsharedへ補完せず、用途を指定した検索には含めません。`validate`は未分類を警告し、`--strict`では不合格にします。未分類の更新・関連付け元への追記は、先に用途を決めて通常の`update --scope ... --if-hash ...`で分類してください。本文やIDの移動は不要です。削除に伴う参照除去と中断した書き込みの復旧は、残る知識の用途を推測しません。
+
 ## 検索と検証
 
 ```sh
@@ -61,7 +80,7 @@ bun /path/to/plugin/cli/memory/memory.ts search --root /path/to/workspace --for-
 bun /path/to/plugin/cli/memory/memory.ts validate --root /path/to/workspace --strict --drift --stale --stale-within 7d --json
 ```
 
-検索語を省く場合は`--type`・`--for-path`・`--filter`のいずれかが必要です。既定10件、`--limit`は最大100件、`--all`は全件です。検索はローカルの語句一致・前方一致を使い、埋め込みや外部AIは使いません。
+検索語を省く場合は`--type`・`--for-path`・`--filter`・`--scope`のいずれかが必要です。既定10件、`--limit`は最大100件、`--all`は全件です。検索はローカルの語句一致・前方一致を使い、埋め込みや外部AIは使いません。
 
 `--filter`は繰り返してAND条件にできます。`field=value`・`field!=value`・`field?`・`!field`に対応し、`verified.by=human:alice`のような属性や配列内の値も扱えます。検索対象に壊れた知識があれば部分結果を成功として返しません。`show`は指定した知識だけを読み、`--relations`付きでは関連全体を調べます。元のMarkdownだけが必要なら`show --raw`を使います。
 
@@ -101,13 +120,13 @@ bun /path/to/plugin/cli/memory/memory.ts usage list --root /path/to/workspace --
   "command": ["create", "knowledge/auth"],
   "root": "/path/to/workspace",
   "project": "default",
-  "metadata": {"type": "knowledge", "title": "認証方式", "description": "判断の根拠", "tags": ["auth"]},
+  "metadata": {"type": "knowledge", "scope": "dev", "title": "認証方式", "description": "判断の根拠", "tags": ["auth"]},
   "body": "採用した方式と理由。",
   "actor": "agent:codex"
 }
 ```
 
-`command`はコマンドと位置引数の配列です。フラグに相当するフィールドは`root`・`project`・`actor`・`type`・`title`・`description`・`status`・`tags`（カンマ区切り文字列）・`body`・`metadata`・`metadataFile`・`bodyFile`・`ifHash`・`limit`（整数）・`forPath`・`staleWithin`（例`7d`）・`usageSource`・`taskId`・`since`・`until`。`filter`・`unset`は文字列配列、`all`・`relations`・`sync`・`noIndex`・`noLog`・`dryRun`・`strict`・`drift`・`stale`・`recordUsage`は真偽値です。
+`command`はコマンドと位置引数の配列です。フラグに相当するフィールドは`root`・`project`・`actor`・`type`・`scope`・`title`・`description`・`status`・`tags`（カンマ区切り文字列）・`body`・`metadata`・`metadataFile`・`bodyFile`・`ifHash`・`limit`（整数）・`forPath`・`staleWithin`（例`7d`）・`usageSource`・`taskId`・`since`・`until`。`filter`・`unset`は文字列配列、`all`・`relations`・`sync`・`noIndex`・`noLog`・`dryRun`・`strict`・`drift`・`stale`・`recordUsage`は真偽値です。
 
 利用記録付きの`search`・`show`では従来の`data`を保持し、トップレベルに`usage: {event_id, path}`を追加します。`show --raw`の出力は元のMarkdownのままです。
 

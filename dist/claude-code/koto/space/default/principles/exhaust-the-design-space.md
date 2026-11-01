@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: 有力な設計案を具体化して比較する
 description: 前例のないUI、複数の有力な構造、操作感が重要な判断で設計が明らかでないとき、異なる2〜3案を試作または具体化して比較する。
 governance: context

@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: 実装の都合より利用者の体験を優先する
 description: 製品・UX・機能範囲を判断するとき、利用者と保守担当者の体験を優先し、機能数より中心的な体験の完成度を高める。
 governance: context

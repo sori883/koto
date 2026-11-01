@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: shared
 title: 検証できる最終状態へ向けて移行する
 description: 段階と検証の区切りを明示した書き換え・移行を行うとき、目標の構造へ収束させ、一時的な不整合を作業単位の終わりで解消する。
 governance: context

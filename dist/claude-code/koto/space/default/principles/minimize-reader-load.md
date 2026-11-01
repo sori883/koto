@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: 読み手が追う層と覚える状態を減らす
 description: 追いにくいコードをレビューしたり、層・ラッパー・可変状態を追加したりするとき、読み手がたどる層と覚える状態を減らして値の出所を追いやすくする。
 governance: context

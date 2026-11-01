@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: 内部実装より観測できる振る舞いをテストする
 description: テストを追加・変更するときや既存テストを残すか判断するとき、利用者と同じ入口から処理を動かし、独立した期待値と観測できる結果を比較する。
 governance: context

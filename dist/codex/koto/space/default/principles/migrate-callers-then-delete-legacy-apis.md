@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: 呼び出し元を移行して旧APIを取り除く
 description: 外部への互換性が不要で呼び出し元をまとめて移行できる内部APIの刷新では、同じ改修で呼び出し元を移行し、旧APIと不要な互換層を削除する。
 governance: context

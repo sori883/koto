@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: ドメインの規則をデータ構造に表す
 description: 状態を持つ処理、分岐が多い処理、同じデータの前提が複数箇所へ広がる処理を書くとき、規則を型・状態機械・表などに集約する。
 governance: context

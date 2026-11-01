@@ -15,7 +15,7 @@ const path = (name: string, project = "default") => join(root, ".space", project
 const read = (name: string) => readFile(path(name), "utf8");
 async function put(name: string, text: string) { await mkdir(dirname(path(name)), { recursive: true }); await writeFile(path(name), text); }
 async function create(id: string, extra: Metadata = {}, body = "body") {
-  return saveConcept("create", root, "default", id, { type: "knowledge", title: id.split("/").at(-1)!, description: `${id} description`, ...extra }, body);
+  return saveConcept("create", root, "default", id, { scope: "shared", type: "knowledge", title: id.split("/").at(-1)!, description: `${id} description`, ...extra }, body);
 }
 async function cli(args: string[]) {
   const child = Bun.spawn([process.execPath, cliPath, ...args, "--root", root, "--json"], { stdout: "pipe", stderr: "pipe" });
@@ -122,7 +122,7 @@ test.each(["[B][b]\n[b]: b.md\n", '<a href="b.md">B</a>', '<a href=b.md>B</a>', 
 
 test("parse errors and symlinked documents prevent deletion; another project is untouched", async () => {
   await create("knowledge/a"); await initMemory(root, "other");
-  await saveConcept("create", root, "other", "knowledge/a", { type: "knowledge", title: "other", description: "other" }, "other");
+  await saveConcept("create", root, "other", "knowledge/a", { scope: "shared", type: "knowledge", title: "other", description: "other" }, "other");
   await put("knowledge/bad.md", "broken");
   expect((await cli(["delete", "knowledge/a"])).data.message).toContain("knowledge/bad.md");
   await rm(path("knowledge/bad.md"));
@@ -134,7 +134,7 @@ test("parse errors and symlinked documents prevent deletion; another project is 
 
 test("a failed unlink reports prior edits, keeps target and does not record a successful deletion", async () => {
   await create("knowledge/a", {}, "Read [B](locked/b.md).");
-  await saveConcept("create", root, "default", "knowledge/locked/b", { type: "knowledge", title: "B", description: "B" }, "body", { noIndex: true, noLog: true });
+  await saveConcept("create", root, "default", "knowledge/locked/b", { scope: "shared", type: "knowledge", title: "B", description: "B" }, "body", { noIndex: true, noLog: true });
   await chmod(path("knowledge/locked"), 0o555);
   let failure: unknown;
   try { await deleteConcept(root, "default", "knowledge/locked/b"); } catch (error) { failure = error; }

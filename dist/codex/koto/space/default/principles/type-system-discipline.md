@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: 型で不正な状態と扱い漏れを防ぐ
 description: 型・関数の引数と戻り値・状態の表現を設計またはレビューするとき、不正な組み合わせを型で防ぎ、境界での解析と網羅的な分岐で実行時の失敗を減らす。
 governance: context

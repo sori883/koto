@@ -87,7 +87,7 @@ describe("filtered CLI search", () => {
   const cliPath = resolve(import.meta.dir, "../../cli/memory/memory.ts");
   const file = (id: string) => join(root, ".space/default/memory", `${id}.md`);
   async function create(id: string, extra: Metadata = {}, body = "本文", project = "default") {
-    await saveConcept("create", root, project, id, { type: "knowledge", title: id.split("/").at(-1)!, description: "説明", ...extra }, body);
+    await saveConcept("create", root, project, id, { scope: "shared", type: "knowledge", title: id.split("/").at(-1)!, description: "説明", ...extra }, body);
   }
   async function cli(args: string[], json = true) {
     const child = Bun.spawn([process.execPath, cliPath, ...args, "--root", root, ...(json ? ["--json"] : [])], { stdout: "pipe", stderr: "pipe" });
@@ -176,7 +176,7 @@ describe("filtered CLI search", () => {
   });
 
   test("all and capped limit still work for filter-only, keyword and code path queries", async () => {
-    for (let i = 0; i < 105; i++) await writeFile(file(`knowledge/d${i}`), serializeDocument({ metadata: { type: "knowledge", title: "認証", description: "説明", tags: ["target"], code_refs: ["repositories/default/api/"] }, body: "本文" }));
+    for (let i = 0; i < 105; i++) await writeFile(file(`knowledge/d${i}`), serializeDocument({ metadata: { scope: "shared", type: "knowledge", title: "認証", description: "説明", tags: ["target"], code_refs: ["repositories/default/api/"] }, body: "本文" }));
     for (const query of [[], ["認証"], ["--for-path", "repositories/default/api/a.ts"]]) {
       for (const [options, count] of [[[], 10], [["--limit", "999"], 100], [["--all"], 105]] as const) {
         const result = await cli(["search", ...query, "--filter", "tags=target", ...options]);

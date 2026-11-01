@@ -63,6 +63,8 @@ setup、プロジェクト追加・参照、リポジトリ登録・取得・参
 
 試作agent-memoryの現時点のソースを参考にした。元リポジトリの未コミット変更はそのまま保持し、データの移動や自動移行は行っていない。[Memoryの設計と検証](memory-cli-design.md)と[利用手順](../cli/memory/README.md)を参照する。
 
+全5分類のscopeにshared・dev・opsを実装した。新規保存・更新はscopeを必要とし、既存の未分類は読める状態を維持する。search --scope devは共有＋開発、opsは共有＋運用を選び、属性・コード参照との併用でも件数制限前に適用する。未分類は共有へ補完せず、validateで警告する。配布元の23件は本文を変えずに共有9件・開発14件へ分類した。利用先データの移行は行っていない。[変更計画](memory-scopes-opsflow-plan.md)と[分類・検証記録](memory-scopes-validation.md)を参照する。Opsフロー新設は後続段階。
+
 ## 開発フローと専門スキル
 
 devlowは工程の選択と受け渡し、3つのCLIを使った開始・中断・再開・完了・片付けを案内する。recallは現在のTasks、保存時点のcheckpoint、コードとGit、関連するMemoryを読み取り専用で照合する。tdd・blast-radius・interrogateは必要な工程だけで使う。計8スキルを両製品へ同梱する。

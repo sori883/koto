@@ -200,7 +200,7 @@ test("distributed Memory, Tasks and monorepo preserve each other's data through 
     expect(await readFile(taskPath, "utf8")).toBe(taskBefore);
     const monoPath = join(destination, ".space/default/monorepo.json"), monoBefore = await readFile(monoPath, "utf8");
     await cli("memory", ["setup"]);
-    await cli("memory", ["create", "knowledge/repository"], { metadata: { type: "knowledge", title: "Repository", description: "Repository layout", code_refs: ["workspaces/default/job/api/README.md"] }, body: "Repository document" });
+    await cli("memory", ["create", "knowledge/repository"], { metadata: { scope: "shared", type: "knowledge", title: "Repository", description: "Repository layout", code_refs: ["workspaces/default/job/api/README.md"] }, body: "Repository document" });
     expect((await cli("memory", ["validate"], { strict: true, drift: true })).data.gate_passed).toBe(true);
     expect(await readFile(taskPath, "utf8")).toBe(taskBefore);
     expect(await readFile(monoPath, "utf8")).toBe(monoBefore);
@@ -244,8 +244,10 @@ test("distributed Memory runs alone with the bundled version after removing sour
     }
     expect((await cli(["version"])).version).toBe("1.2.3");
     await cli(["setup"]);
-    await cli(["create", "decisions/auth"], { metadata: { type: "decision", title: "認証判断", description: "方式を選んだ理由" }, body: "判断の内容" });
+    await cli(["create", "decisions/auth"], { metadata: { scope: "dev", type: "decision", title: "認証判断", description: "方式を選んだ理由" }, body: "判断の内容" });
     expect((await cli(["search", "認証"]))).toHaveLength(1);
+    expect((await cli(["search"], { scope: "dev" })).map((item: { scope: string }) => item.scope)).toEqual(["dev"]);
+    expect((await cli(["search"], { scope: "ops" }))).toEqual([]);
     expect((await cli(["search", "認証"], { recordUsage: true, usageSource: "devlow" }))).toHaveLength(1);
     const shown = await cli(["show", "decisions/auth"], { recordUsage: true, taskId: "task-1" });
     expect((await cli(["usage", "stats"]))).toMatchObject({ events: 2, searches: 1, shows: 1 });
@@ -256,6 +258,8 @@ test("distributed Memory runs alone with the bundled version after removing sour
     await cli(["delete", "decisions/auth"]);
     expect((await cli(["validate"])).concept_count).toBe(0);
     expect((await cli(["usage", "stats"])).concepts[0]).toMatchObject({ concept_id: "decisions/auth", search_results: 1, shows: 1 });
+    await cli(["create", "knowledge/shared"], { metadata: { type: "knowledge", title: "Shared", description: "Both workflows", scope: "shared" } });
+    expect((await cli(["search"], { scope: "ops" })).map((item: { concept_id: string }) => item.concept_id)).toEqual(["knowledge/shared"]);
   }
 });
 

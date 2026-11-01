@@ -23,7 +23,7 @@ const call = (command: string[], fields = {}) => invoke({ command, root, ...fiel
 
 test("JSON stdin and inline requests support the complete knowledge lifecycle with stale-write protection", async () => {
   expect((await invoke({ command: ["setup"], root }, true)).body.ok).toBe(true);
-  const metadata = { type: "knowledge", title: "認証方式", description: "認証の判断", tags: ["auth"], extra: { value: true } };
+  const metadata = { scope: "shared", type: "knowledge", title: "認証方式", description: "認証の判断", tags: ["auth"], extra: { value: true } };
   expect((await call(["create", "knowledge/auth"], { metadata, body: "トークンを検証する。" })).body.ok).toBe(true);
   expect((await call(["create", "knowledge/session"], { metadata })).code).toBe(0);
   const shown = (await call(["show", "knowledge/auth"])).body;
@@ -117,7 +117,7 @@ test("foreign and broad code paths are rejected before scanning, and symlinks ca
     await expect(codePath(root, ref)).rejects.toThrow("project");
   }
   expect(await codeRefExists(root, "repositories/default/alias/**/*.ts")).toBe(false);
-  await saveConcept("create", root, "default", "knowledge/a", { type: "knowledge", title: "A", description: "A", code_refs: ["repositories/other/api/**"] }, "body");
+  await saveConcept("create", root, "default", "knowledge/a", { scope: "shared", type: "knowledge", title: "A", description: "A", code_refs: ["repositories/other/api/**"] }, "body");
   const result = await validateMemory(root, "default", { drift: true });
   expect(result.gate_passed).toBe(false); expect(result.errors[0]).toContain("project");
   expect(await (await openProjectMemory(root)).search("A")).toHaveLength(1);

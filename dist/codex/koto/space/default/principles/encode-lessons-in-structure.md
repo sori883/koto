@@ -1,5 +1,6 @@
 ---
 type: principle
+scope: dev
 title: 繰り返す教訓を仕組みとして定着させる
 description: 同じ指示や修正、テスト失敗が繰り返されるとき、型・lint・共通処理・実行時検証などの仕組みで再発を防ぐ。
 governance: context

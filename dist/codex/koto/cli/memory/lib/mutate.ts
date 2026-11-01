@@ -6,6 +6,7 @@ import { isDeepStrictEqual } from "node:util";
 import { openProjectFiles, WriteError, type FileChange, type ProjectFiles } from "./files.ts";
 import { parseDocument, searchDocument, serializeDocument, typeDirectories, validActor, type Concept, type Metadata } from "./frontmatter.ts";
 import { requireInitialized, validateConceptId } from "./memory.ts";
+import { parseScope } from "./scope.ts";
 
 export interface MutationOptions { ifHash?: string; actor?: string; unset?: readonly string[]; sync?: boolean; noIndex?: boolean; noLog?: boolean }
 export interface MutationResult { status: "success"; changed_paths: string[]; unchanged: boolean; concept_id?: string; path?: string }
@@ -70,7 +71,7 @@ function optionsFor(options: MutationOptions) {
   if (!validActor(actor)) throw new Error("actor must be an identifier such as agent:codex.");
   if (options.sync && (options.noIndex || options.noLog)) throw new Error("--sync cannot be combined with --no-index or --no-log.");
   for (const key of options.unset ?? []) {
-    if (!key || ["type", "title", "description", "generated"].includes(key)) throw new Error(`Cannot unset ${key || "an empty key"}.`);
+    if (!key || ["type", "title", "description", "generated", "scope"].includes(key)) throw new Error(`Cannot unset ${key || "an empty key"}.`);
   }
   return { ...options, actor };
 }
@@ -112,6 +113,7 @@ export async function saveConcept(command: "create" | "update", root: string, pr
       const previous = before === undefined ? { metadata: {}, body: "" } : parseDocument(before);
       const metadata = { ...previous.metadata, ...patch };
       for (const key of options.unset ?? []) delete metadata[key];
+      parseScope(metadata.scope);
       const nextBody = body ?? previous.body;
       const unchanged = before !== undefined && isDeepStrictEqual(metadata, previous.metadata) && nextBody === previous.body;
       const at = new Date().toISOString();
@@ -147,6 +149,7 @@ export async function relateConcepts(root: string, project: string, source: stri
       const from = await readConcept(files, source), to = await readConcept(files, target);
       checkHash(from.raw_content, options.ifHash);
       searchDocument(from); searchDocument(to);
+      parseScope(from.metadata.scope);
       const visible = visibleLines(from.body);
       if (!visible.complete) throw new Error(`Cannot safely append to unclosed Markdown in ${from.path}.`);
       const href = posix.relative(posix.dirname(from.path), to.path);

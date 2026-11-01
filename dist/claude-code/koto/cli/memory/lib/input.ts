@@ -3,6 +3,7 @@ import { maxFileBytes } from "./files.ts";
 const fields: Record<string, [string, "string" | "boolean" | "array" | "number" | "metadata"]> = {
   root: ["root", "string"], project: ["project", "string"], actor: ["actor", "string"],
   type: ["type", "string"], title: ["title", "string"], description: ["desc", "string"],
+  scope: ["scope", "string"],
   status: ["status", "string"], tags: ["tags", "string"], body: ["body", "string"],
   metadataFile: ["metadata-file", "string"], bodyFile: ["body-file", "string"],
   metadata: ["metadata-json", "metadata"], ifHash: ["if-hash", "string"],
