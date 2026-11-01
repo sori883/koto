@@ -1,6 +1,6 @@
 # 導入・更新と配布物の生成
 
-kotoはCodex・Claude Code・GitHub Copilot in VS Code用のプラグインとして導入できる。Codex・Claude Codeでは、プラグインを登録せずプロジェクトへ全スキルを実ファイルで配置する方式も選べる。OKF・orch・setupの実行にはBun 1.4.2以上、natural-japaneseの検査スクリプトにはuvとPython 3.10以上が必要。yomiyasuの検査スクリプトはPython 3の標準ライブラリで動作する。プラグインのインストールと、プロジェクトへの共通知識・指示の配置は別の操作である。
+kotoはCodex・Claude Code・GitHub Copilot in VS Code用のプラグインとして導入できる。Codex・Claude Codeでは、プラグインを登録せずプロジェクトへ全スキルを実ファイルで配置する方式も選べる。Memory・Tasks・setupの実行にはBun 1.4.2以上、natural-japaneseの検査スクリプトにはuvとPython 3.10以上が必要。yomiyasuの検査スクリプトはPython 3の標準ライブラリで動作する。プラグインのインストールと、プロジェクトへの共通知識・指示の配置は別の操作である。
 
 ## 全スキルをプロジェクトへ直接導入する
 
@@ -18,7 +18,7 @@ bun /path/to/koto/dist/codex/koto/skills/setup/scripts/setup.ts apply --project 
 bun /path/to/koto/dist/codex/koto/skills/setup/scripts/setup.ts status --project /path/to/project --scope project --json
 ```
 
-Claude Codeでは配布元の`dist/codex/koto`を`dist/claude-code/koto`に読み替える。全スキルの配置先はCodexが`.agents/skills/`、Claude Codeが`.claude/skills/`。エージェントはそれぞれ`.codex/agents/`・`.claude/agents/`へ、共通知識は共通の`.space/babel/`へ配置する。指示はAGENTS.md・CLAUDE.mdの管理ブロックに入る。同じプロジェクトに両製品を導入できる。
+Claude Codeでは配布元の`dist/codex/koto`を`dist/claude-code/koto`に読み替える。全スキルの配置先はCodexが`.agents/skills/`、Claude Codeが`.claude/skills/`。エージェントはそれぞれ`.codex/agents/`・`.claude/agents/`へ、共通知識は共通の`.space/default/memory/`へ配置する。指示はAGENTS.md・CLAUDE.mdの管理ブロックに入る。同じプロジェクトに両製品を導入できる。
 
 導入後は対象プロジェクトで新しい会話を開く。スキル・CLI・資料はプロジェクト内で完結し、指示の参照先は相対パスになる。配布元のコピーは通常のCLI実行には不要。更新時は新版の製品別配布物を取得し、同じplan・apply・statusを実行する。コピー済みsetupから比較・更新する場合は`--source /path/to/koto/dist/codex/koto`等を追加する。
 
@@ -85,9 +85,13 @@ bun /path/to/installed/plugin/skills/setup/scripts/setup.ts plan --project /path
 bun /path/to/installed/plugin/skills/setup/scripts/setup.ts apply --project /path/to/project --json
 ```
 
-共通知識は`.space/babel/`直下のtype別ディレクトリへ、指示はCodexならAGENTS.md、Claude CodeならCLAUDE.md、Copilotなら.github/copilot-instructions.mdの管理ブロックへ入る。Copilotは上記の通り`--product copilot`を指定する。既存の指示や独自知識、目次、履歴は保持する。プラグインを更新した後もplan・applyで利用先への変更を反映する。旧vendorからの更新方法、衝突・中断時の扱いは[setupの資料](../skills/setup/references/setup.md)を参照する。
+共通知識は`.space/default/memory/`直下のtype別ディレクトリへ、指示はCodexならAGENTS.md、Claude CodeならCLAUDE.md、Copilotなら.github/copilot-instructions.mdの管理ブロックへ入る。Copilotは上記の通り`--product copilot`を指定する。既存の指示や独自知識、目次、履歴は保持する。プラグインを更新した後もplan・applyで利用先への変更を反映する。旧vendorからの更新方法、衝突・中断時の扱いは[setupの資料](../skills/setup/references/setup.md)を参照する。
 
-OKF・orchはそれぞれ`skills/okf-agent-memory/scripts/okf.ts`、`skills/orch/scripts/task.ts`をBunで実行する。初回の依存準備はスキル自身のscripts内で行うため、書き込み権限が必要。OKFの初回はネットワークまたはBunキャッシュも必要になる。利用先のworkspaceに含まれる場所ではOKFの依存準備を拒否する。プロジェクト導入では`.agents/skills/`または`.claude/skills/`がworkspaceの対象にならないようにする。通常の`packages/*`構成には含まれない。実行時にできるnode_modules・Pythonキャッシュ等はGit管理から除外する。
+Tasks・Memoryはそれぞれ`cli/tasks/tasks.ts`・`cli/memory/memory.ts`をBunで実行する。実行時npm依存はなく、配布物への書き込みや初回のパッケージ導入は不要。setupは自身のscripts内で実行準備を行うため、そこへの書き込み権限が必要になる。
+
+プロジェクト導入ではCLIをCodexの`.agents/cli/`、Claude Codeの`.claude/cli/`へ配置する。利用先のリポジトリルートを`--root`で明示し、通常はdefaultを選ぶ。リポジトリ直下のソースコードを移動する必要はない。操作の詳細は[Tasks](../cli/tasks/README.md)・[Memory](../cli/memory/README.md)を参照する。
+
+旧`.space/babel/`がある場合はsetupが停止する。[移行手順](../skills/setup/references/setup.md#既存の知識を移行する)で既存文書と管理記録を確認する。旧orch台帳は保存し、必要な仕事だけを内容と実態を照合して新しいTasksへ登録する。
 
 natural-japaneseは原版のPythonスクリプトをuvで実行する。`lint.py`・`outline.py`・`terms.py`は入力ファイルを読み取り、結果を標準出力に返す。スクリプト内の依存定義に従ってuvが実行環境を準備するため、初回はネットワークまたはuvキャッシュが必要。診断のscoreは[スキルの手順](../skills/natural-japanese/references/diagnose.md)として実行する。任意の`semantic.py`は追加の依存とモデルの取得を伴う。詳しくは[スキル本文](../skills/natural-japanese/SKILL.md)を参照する。
 
@@ -114,7 +118,8 @@ python3 /path/to/installed/plugin/skills/yomiyasu/scripts/yomiyasu_diff.py /path
 
 ```sh
 bun install --frozen-lockfile --ignore-scripts
-bun skills/okf-agent-memory/scripts/okf.ts version --json
+bun cli/memory/memory.ts --help
+bun cli/tasks/tasks.ts --help
 uv run skills/natural-japanese/scripts/lint.py --help
 python3 skills/yomiyasu/scripts/yomiyasu_lint.py --help
 bun run typecheck
@@ -123,7 +128,7 @@ bun run build
 bun run build:check
 ```
 
-root package.jsonのversionが全製品の配布版数を決める。正本はskills・space・packaging。distとカタログは生成結果としてGit管理し、手編集しない。Copilot用テンプレートはpackaging/copilotからClaude形式の配布物へ組み込む。buildは配布対象だけを選び、docs・kotoのテスト・利用先の.space・node_modules・__pycache__・.venvを含めない。natural-japaneseは原版の校正スクリプトとfixturesも同梱する。Markdownの参照先を確認してから出力する。
+root package.jsonのversionが全製品の配布版数を決める。正本はskills・cli・space・packaging。distとカタログは生成結果としてGit管理し、手編集しない。Copilot用テンプレートはpackaging/copilotからClaude形式の配布物へ組み込む。buildは配布対象だけを選び、docs・kotoのテスト・利用先の.space・node_modules・__pycache__・.venvを含めない。natural-japaneseは原版の校正スクリプトとfixturesも同梱する。Markdownの参照先を確認してから出力する。
 
 build:checkはソースから期待する全ファイルを組み立て、内容の変更だけでなく、未追跡の追加ファイル・不足ファイルも検出する。CIでも同じ検査を行う。生成途中に異常終了した場合は、書き手の停止を確認してから`.build.lock`と一時領域を調べ、正本から再生成する。
 

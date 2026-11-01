@@ -19,8 +19,8 @@ jobs:
       - run: bun install --frozen-lockfile --ignore-scripts
       - name: Prepare each CLI runtime
         run: |
-          bun skills/okf-agent-memory/scripts/okf.ts version --json
-          bun skills/orch/scripts/task.ts --help
+          bun cli/memory/memory.ts --help
+          bun cli/tasks/tasks.ts --help
           bun skills/setup/scripts/setup.ts --help
           uv run skills/natural-japanese/scripts/lint.py --help
           python3 skills/yomiyasu/scripts/yomiyasu_lint.py --help

@@ -4,7 +4,7 @@ koto（コト）は **Knowledge-Oriented Task Orchestration** の略であり、
 
 kotoは、AIエージェントが開発で使うスキル・CLI・共通知識・ルールを、Codex・Claude Code・GitHub Copilot in VS Code向けに配布するためのリポジトリである。利用先のプロジェクトで、知識管理、タスク分割・管理、必要な文書や設定の導入を行える道具を作る。
 
-**スキルごとにCLIと実行時の依存関係を持たせ、配布物を `main` ブランチで管理する。Codex形式とClaude形式を生成し、Claude Code・CopilotはClaude形式を共用する。koto独自のCLIは配布後もTypeScriptとし、Bunで実行する。natural-japaneseとyomiyasuは原版のPythonスクリプトを保持する。natural-japaneseの依存はuvで準備し、yomiyasuは標準ライブラリだけで実行する。**
+**Tasks・Memoryは独立CLI、setupは専用スキル内のCLIとして提供し、配布物を `main` ブランチで管理する。Codex形式とClaude形式を生成し、Claude Code・CopilotはClaude形式を共用する。koto独自のCLIは配布後もTypeScriptとし、Bunで実行する。natural-japaneseとyomiyasuは原版のPythonスクリプトを保持する。natural-japaneseの依存はuvで準備し、yomiyasuは標準ライブラリだけで実行する。**
 
 この文書を、何を作るか・どこに置くか・どう配布するかを判断するための設計方針の正本とする。以下は目標の構成であり、すべてが実装済みという意味ではない。実装状況や検証結果は [現状資料](current-state.md) や個別の開発資料に記録し、この設計と区別する。
 
@@ -18,16 +18,17 @@ Codex・Claude Codeには、プラグイン方式に加えて、全スキルを�
 
 配布物には、その配布物を保守する人向けの記述を一切含めない。配布するスキル本文・参照資料・プロンプト・テンプレート等には、利用者または利用先で実行するAIに必要な内容だけを記載する。保守方針、原版との差分、変更経緯、開発時の検証記録などは、配布対象外の `docs/` 等で管理する。
 
-正式名称、リポジトリ名、プラグイン名、マーケットプレイス名は`koto`とする。配布先は`dist/<製品>/koto/`、GitHubの参照先は`sori883/koto`とする。既存のスキル名と利用先の`.space/`の配置は維持する。旧名で導入済みのsetup管理記録と指示ブロックは、新名での更新時に引き継ぎ、ローカル編集や未完了の適用は衝突として保護する。改名の範囲と切り替え手順は[改名記録](rename-koto.md)に置く。
+正式名称、リポジトリ名、プラグイン名、マーケットプレイス名は`koto`とする。配布先は`dist/<製品>/koto/`、GitHubの参照先は`sori883/koto`とする。Tasks・Memoryへの置換では、旧スキル名orch・okf-agent-memoryを新手順への入口として残す。利用先の知識は`.space/default/memory/`へ整理し、既存データは明示的な移行なしに変更しない。旧名で導入済みのsetup管理記録と指示ブロックは、新名での更新時に引き継ぎ、ローカル編集や未完了の適用は衝突として保護する。改名の範囲と切り替え手順は[改名記録](rename-koto.md)に置く。
 
 ## 正本・配布物・利用先
 
-配布用の正本は `skills/`・`space/`・`packaging/` に置く。生成した配布物と、利用先へ配置したコピーはそれぞれ区別する。
+配布用の正本は `skills/`・`cli/`・`space/`・`packaging/` に置く。生成した配布物と、利用先へ配置したコピーはそれぞれ区別する。
 
 | 場所 | 役割・管理方針 |
 | --- | --- |
-| `skills/` | 配布するスキルと専用CLIの正本。スキル専用の説明・実行手順は `references/`、実行コードと依存定義は `scripts/`、開発用テストは `tests/` に置く |
-| `space/babel/` | 配布する共通知識・ルールの正本。複数のスキルやエージェントから参照する文書を置く |
+| `cli/tasks/`・`cli/memory/` | 独立CLIの正本。各CLIのテストは`tests/tasks/`・`tests/memory/`に置く |
+| `skills/` | 配布するスキルとsetup専用CLIの正本。スキル専用の説明・実行手順は `references/`、実行コードと依存定義は `scripts/`、開発用テストは `tests/` に置く |
+| `space/default/` | 配布する共通知識・ルールの正本。複数のスキルやエージェントから参照する文書を置く |
 | `packaging/codex/`・`packaging/claude-code/` | 製品別のマニフェスト、エージェント定義、必要なhooksや指示テンプレートの正本 |
 | `packaging/copilot/` | Copilot用の指示テンプレートの正本。Claude形式の配布物に組み込む |
 | `scripts/build.ts` | 共通ソースと製品別定義から、配布物とカタログを生成する開発用の入口 |
@@ -36,15 +37,15 @@ Codex・Claude Codeには、プラグイン方式に加えて、全スキルを�
 | `docs/` | 開発者向けの目的・設計・実装状況・検証記録。配布対象に含めない |
 | 開発リポジトリ自身の `.space/` | このリポジトリで利用する知識と作業記録。配布物の生成対象に含めない |
 
-共通知識の本文を `space/babel/` と各スキルの `references/` に重複して管理しない。共通文書を修正するときは `space/babel/` を変更し、配布物と利用先のコピーへ反映する。
+共通知識の本文を `space/default/` と各スキルの `references/` に重複して管理しない。共通文書を修正するときは `space/default/` を変更し、配布物と利用先のコピーへ反映する。
 
-explain-before-shortenは、2026-10-29のユーザー指示により、Kazuki Otaの[紹介記事](https://zenn.dev/microsoft/articles/explain-before-shorten)で公開された`SKILL.md`を改変せず、独立したスキルとして同梱する。正本は`skills/explain-before-shorten/SKILL.md`に置き、既存の文章改善スキルへ統合しない。付属CLIや追加依存は設けず、既存の製品別ビルドで配布する。出典・取得時点・原文との一致・検証結果は、配布対象外の[取込記録](skills/explain-before-shorten/upstream-import.md)に置く。
+explain-before-shortenは、2026-10-29のユーザー指示により、Kazuki Otaの[紹介記事](https://zenn.dev/microsoft/articles/explain-before-shorten)で公開された`SKILL.md`を改変せず、独立したスキルとして同梱する。正本は`skills/explain-before-shorten/SKILL.md`に置き、既存の文章改善スキルへ統合しない。付属CLIや追加依存は設けず、既存の製品別ビルドで配布する。出典はスキル本文にも明記する。取得時点・原文との一致・検証結果は、配布対象外の[取込記録](skills/explain-before-shorten/upstream-import.md)に置く。
 
 ## 全体フローと工程の定義
 
 開発作業の全体フローは、統括スキルに同梱する `skills/devlow/references/workflow.md` を正本とする。工程の順序・分岐、各工程の成果物と完了条件、依頼種別・作業規模・リスクによる実施判断を定義する。判断や設計は、小規模な作業でもなるべく記録に残す。
 
-task.mdは標準（中規模）・大規模で作成する。会話中の小規模な依頼では新規作成せず、既存タスクへの追加指示は同じ記録に反映する。小規模な子も独立したtask.mdを増やさず、台帳または親への報告で追う。判断・設計の資料や再開用checkpointを残すことと、task.mdを作ることは別に扱う。
+ソースコードを変更する仕事は規模にかかわらず、編集前にTasksへ登録する。途中で調査から変更へ進む場合も同じ境界で登録し、既存タスクがあれば重複させない。調査・説明・レビューだけの依頼はタスク化しない。task.md等の詳しい計画資料を作るかどうかと、CLIへのタスク登録は別の判断とする。ソース変更タスクは原則としてPR/MRのマージと必要な検証の確認後、またはユーザーが明示的に完了とした時点で完了する。
 
 統括スキルの `SKILL.md` は同梱する全体フローを相対参照し、今回の工程を選択して実行する。各工程の具体的な実行手順は担当するスキルとその `references/` に置き、全体フローの本文を複製しない。タスクの成果物は利用先へ保存し、配布用ソースと分ける。
 
@@ -54,15 +55,15 @@ task.mdは標準（中規模）・大規模で作成する。会話中の小規�
 
 依頼・工程の進行状態と、確認した対象の成果判定を別に記録する。検証・レビューのみの依頼は各工程から引き渡しへ接続し、結果の報告が完了しても対象の不合格・未確認を保持する。依頼外の修正へ広げず、修正や必要な検証の実施まで求められた仕事では、報告だけを全体の完了にしない。
 
-全体フローは、統括スキルが所有する実行手順としてスキルと一緒に配布・更新する。複数工程が参照するという理由だけでBabelの共通知識にせず、フローの読込にsetupやOKFを必要としない。複数の独立したスキルから使う原則・ルール等は引き続きBabelに置く。
+全体フローは、統括スキルが所有する実行手順としてスキルと一緒に配布・更新する。複数工程が参照するという理由だけでMemoryの共通知識にせず、フローの読込にsetupやOKFを必要としない。複数の独立したスキルから使う原則・ルール等は共通Memoryに置く。
 
 checkpointは中断・引き継ぎ等の再開に必要な要約と、作業成果物への参照を残す。作成・更新・保存には [checkpoint-safely](../skills/checkpoint-safely/SKILL.md) を使う。保存先、記録形式、ひな形、保存・中断の手順は同スキルが所有する。全体フローは必要なタイミングで同スキルへ渡し、返された記録への参照を保持する。通常の設計文書・作業ログ・判断ログは各工程の成果物として管理し、checkpointをそれらの正本にしない。
 
-具体的なスキル構成、工程ファイル、成果物の分割、規模ごとの選択は[開発フローの設計案](devlow-design.md)で扱う。統括スキルの入口と全体フローを作成し、use-principlesは原則参照の責務へ分離した。依頼整理から引き渡しまで8工程の手順と、タスク・設計・計画・検証記録のひな形を作成済みである。大規模管理はorchスキルと専用CLIへ具体化した。unitの進行、対象の成果判定、親の受け入れを分離し、JSONを正本、TSV・Markdownを出力とする。配布生成・setupを実装し、実際の子担当による提出・受け入れを確認する。長期運用は別に確認する。[実装・確認記録](skills/devlow/implementation.md)に実施範囲を記録し、配置方針と実装状況を区別する。
+devlowはTasksによる作業状態、Memoryによる関連知識、実際のGit作業場所を結び付ける。Git操作は既存のGit・GitHub等の道具を使う。旧orchの親子unitと受け入れ状態はTasksと同一ではなく、実行担当の報告と全体の完了判断はフロー側で扱う。今回の取り込みではmonorepo CLI・opsflow・複数配置の共通設定は追加しない。以前の設計・検証の経緯は[開発フローの設計案](devlow-design.md)、現在の差分は[mainへの取り込み](main-tasks-memory-port.md)を参照する。
 
-## CLIと依存関係はスキル単位にする
+## 独立CLIと実行時の依存関係
 
-以下のTypeScript・Bun・bootstrapの方針は、koto独自のCLIに適用する。natural-japaneseは2026-10-13のユーザー指示により、独自のTypeScript移植を取りやめ、[coji/natural-japanese](https://github.com/coji/natural-japanese)のスキル一式を改変せず取り込む。Pythonスクリプトとインライン依存定義を保持し、uvが実行環境を準備する。原版のsemantic・calibrate・fixturesも同梱し、MIT LICENSEを添える。koto側の保守説明・出典の版・検証記録は配布物へ追記せず、[取込記録](skills/natural-japanese/upstream-import.md)で管理する。
+koto独自のCLIはTypeScriptをBunで実行する。Tasks・Memoryには実行時npm依存とbootstrapを設けない。setupは既存のスキル内bootstrapを維持する。natural-japaneseは2026-10-13のユーザー指示により、独自のTypeScript移植を取りやめ、[coji/natural-japanese](https://github.com/coji/natural-japanese)のスキル一式を改変せず取り込む。Pythonスクリプトとインライン依存定義を保持し、uvが実行環境を準備する。原版のsemantic・calibrate・fixturesも同梱し、MIT LICENSEを添える。koto側の保守説明・出典の版・検証記録は配布物へ追記せず、[取込記録](skills/natural-japanese/upstream-import.md)で管理する。
 
 yomiyasuも同日のユーザー依頼で追加する。[nanaism/yomiyasu](https://github.com/nanaism/yomiyasu)のスキル本文・参照資料・assets・Pythonスクリプトを改変せず取り込み、MIT LICENSEとUnicodeの著作権・許諾通知を同梱する。原版の単独プラグイン用マニフェストは取り込まず、kotoの製品別定義で配布する。実行はPython標準ライブラリだけで完結し、Bunへの移植やbootstrapの追加は行わない。出典と検証は[取込記録](skills/yomiyasu/upstream-import.md)に置く。
 
@@ -70,11 +71,11 @@ yomiyasuも同日のユーザー依頼で追加する。[nanaism/yomiyasu](https
 
 | 責務 | CLIの入口 | 提供するもの |
 | --- | --- | --- |
-| OKF | `skills/okf-agent-memory/scripts/okf.ts` | frontmatter付きMarkdownの知識を検索・保存・更新・検証する |
-| タスク分割・管理 | `skills/orch/scripts/task.ts` | unitの親子・依存・進行・検証・受け入れを管理する。利用先の`.space/tasks/.orch/state.json`を既定の正本とし、一覧はexportする |
+| Memory | `cli/memory/memory.ts` | OKFの検索・参照・保存・更新・検証、scopeの選択、任意の利用ログと集計 |
+| Tasks | `cli/tasks/tasks.ts` | タスク・依存・成果物・checkpoint・履歴を管理する。保存先は`.space/<project>/tasks/`と`.space/<project>/checkpoint/` |
 | 初期配置・更新 | `skills/setup/scripts/setup.ts` | 同梱する共通文書・エージェント定義・指示テンプレートを利用先へ配置・更新する |
 
-各CLIの入口、`bootstrap.ts`、処理本体の `lib/`、実行時の `package.json` と `bun.lock` は、すべて `skills/<skill-name>/scripts/` に置く。実行時に生成する `node_modules/` も同じ `scripts/` 配下に置く。
+Tasks・Memoryの入口、lib、package.json、利用資料はそれぞれ`cli/<tool>/`で完結する。他CLIの実装や状態をimportしない。共通Coreは設けず、AIが明示的なroot・project・task IDで連携する。両CLIの実行時に依存導入や配布ルートへの書き込みは不要。以下のbootstrapの手順はsetup等、スキル内で実行依存を持つ道具にだけ適用する。
 
 ルートの依存関係がなくても、スキル単体で動く構成にする。利用先プロジェクトの `package.json`・`bun.lock`・`node_modules/` に、スキルの依存関係を混ぜない。
 
@@ -90,13 +91,13 @@ yomiyasuも同日のユーザー依頼で追加する。[nanaism/yomiyasu](https
 
 | データ | 保存先 |
 | --- | --- |
-| 配布する共通知識・ルールの正本 | 開発リポジトリの `space/babel/` |
-| setupが配置・更新する共通文書 | 利用先の `.space/babel/` 直下のtype別ディレクトリ |
-| システムの設計・構成・判断理由・重要な変遷と、再利用する知識 | そのプロジェクトの `.space/babel/` 直下のtype別ディレクトリ。システムに関する記録は対象システムごとに整理 |
-| 作業中の依頼・設計案・計画・作業ログ・判断ログ・検証証拠 | 新規保存時の既定は、そのプロジェクトの `.space/tasks/<task-id>/`。既存の記録先を優先し、CLI台帳の内部形式は別途設計する |
-| 中断・引き継ぎ等の再開情報 | そのプロジェクトの `.space/checkpoint/`。ファイル名と既存記録の扱いはcheckpoint-safelyで定義する |
+| 配布する共通知識・ルールの正本 | 開発リポジトリの `space/default/` |
+| setupが配置・更新する共通文書 | 利用先の `.space/default/memory/` 直下のtype別ディレクトリ |
+| システムの設計・構成・判断理由・重要な変遷と、再利用する知識 | そのプロジェクトの `.space/default/memory/` 直下のtype別ディレクトリ。システムに関する記録は対象システムごとに整理 |
+| 作業中の依頼・設計案・計画・作業ログ・判断ログ・検証証拠 | 新規保存時の既定は、そのプロジェクトの `.space/<project>/tasks/<task-id>/`。TasksのJSON状態と成果物の文書を区別する |
+| 中断・引き継ぎ等の再開情報 | そのプロジェクトの `.space/<project>/checkpoint/`。ファイル名と既存記録の扱いはcheckpoint-safelyで定義する |
 
-Babelの文書はfrontmatter付きMarkdownとし、配布元・利用先とも同じ分類を使う。
+Memoryの文書はfrontmatter付きMarkdownとし、配布元・利用先とも同じ分類を使う。
 
 | `type` | ディレクトリ |
 | --- | --- |
@@ -112,39 +113,47 @@ OKFには、システムを理解し、次の変更を判断するための設�
 
 設計だけの依頼でも、最終的に選んだ設計の内容と理由をdecisionへ残せる。タスクの草案へのリンクだけで済ませず、採用した構造・責務・境界と、判断に関わる目的・制約を理解できる本文にする。採用状況と実装状況は分け、実装・効果が未確認なら明記し、現在の構成や実施済みの歴史に置き換えない。現状の知識は同じ対象の文書を更新し、過去の判断や出来事は基準時点と後継への参照を保つ。既存の作業結果文書は移動・削除せず、必要な履歴から参照する。知識化のタイミングと内容は[開発フローの設計案](devlow-design.md)で定義する。
 
-system-blueprintが新規に作成する構成・動作の説明は、利用先の `.space/babel/knowledge/systems/<system>/` に保存し、全体像の入口を `blueprint.md` とする。根拠のある設計判断は `.space/babel/decisions/systems/<system>/` に保存する。対象システムごとに安定して参照・更新できるよう、単一システムでも `<system>` を省略しない。詳細の配置は配布用の[文書モデル](../skills/system-blueprint/references/document-model.md)で定義する。
+system-blueprintが新規に作成する構成・動作の説明は、利用先の `.space/default/memory/knowledge/systems/<system>/` に保存し、全体像の入口を `blueprint.md` とする。根拠のある設計判断は `.space/default/memory/decisions/systems/<system>/` に保存する。対象システムごとに安定して参照・更新できるよう、単一システムでも `<system>` を省略しない。詳細の配置は配布用の[文書モデル](../skills/system-blueprint/references/document-model.md)で定義する。
 
-これらのファイルはOKFスキルのCLIで作成・更新し、bundleは `.space/babel/` のまま、concept IDで保存先を指定する。既存の同じ対象・責務の文書は元のIDで更新・参照し、標準配置に合わせるためだけに移動・複製しない。この方針は新規生成先の明確化であり、既存文書の一括移行は含まない。
+これらのファイルはMemoryスキルのCLIで作成・更新し、bundleは `.space/default/memory/` のまま、concept IDで保存先を指定する。既存の同じ対象・責務の文書は元のIDで更新・参照し、標準配置に合わせるためだけに移動・複製しない。この方針は新規生成先の明確化であり、既存文書の一括移行は含まない。
 
 開発フローの各工程は知識化候補と根拠を識別し、原則として引き渡し工程が保存の要否、重複確認、作成・更新・関連付け、保存結果の検証を取りまとめる。既存知識の検索・参照は調査・設計等でも行う。構成文書そのものが依頼され、system-blueprintが専門手順内で保存した場合は、引き渡しで保存結果を確認し、重複保存しない。
 
 コメントの設計理由・外部制約・回避策の背景は、no-commentsでOKFへ保存・内容照合した後にソースから削除する。この保存は引き渡しまで延期しない。`code_refs`には利用先相対のファイルパス・globを置き、シンボル・範囲・参照版・元コメントの出典は本文へ残す。コードの調査・変更時にはパスから関連知識を検索する。ライセンス、必要な公開API文書、ツールが解釈する指示はソースに残し、不明・保存失敗を理由に先に消さない。これは2026-09-26のユーザー指示に基づく、コード外へ理由を保存する設計である。
 
-判断ログはshow-me-your-workが追記・訂正・照合を扱う。新規の既定はタスク側の `decisions.tsv` とし、既存記録の形式と場所は維持する。過去の誤記は訂正先IDを持つ新規行で訂正し、履歴を消さない。証拠の存在だけでなく主張・対象版との対応を照合する。マイルストーンやorchの進捗台帳の正本にはしない。
+判断ログはshow-me-your-workが追記・訂正・照合を扱う。新規の既定はタスク側の `decisions.tsv` とし、既存記録の形式と場所は維持する。過去の誤記は訂正先IDを持つ新規行で訂正し、履歴を消さない。証拠の存在だけでなく主張・対象版との対応を照合する。マイルストーンやTasksの状態の正本にはしない。
 
 reflectは作業の学びから既存スキルの改善案を作り、automate-meは本人の明示した作業方針と対象範囲の記録から個人向けスキルを提案する。両者は新規作成・変更の前に、保存先・利用範囲・具体的な本文または差分を提示し、人間の明示的な承認を必須とする。承認前は会話または自動発見されない草案の場所に留め、利用されるスキルへ反映しない。承認済みの同じ案は再確認せず、内容・範囲・保存先が変われば再度承認を求める。共通の提示・承認・適用手順はreflectの `references/approval.md`が所有し、automate-meから参照する。これは2026-09-26の追加依頼に基づく利用時の手順である。
 
-system-blueprintはブループリント固有の保存先・concept ID・typeを定義する。CLIの準備、コマンド書式・引数、作成・更新・関連付け・形式検証の実行方法はOKFスキルを正本とし、system-blueprintに実行例や操作手順を複製しない。
+system-blueprintはブループリント固有の保存先・concept ID・typeを定義する。CLIの準備、コマンド書式・引数、作成・更新・関連付け・形式検証の実行方法はMemoryスキルを正本とし、system-blueprintに実行例や操作手順を複製しない。
 
-how・whyにも、OKFスキルによる既存知識の検索・参照を明記する。howは構成・動作の説明を現在のコード・設定と照合し、whyは決定・制約・経緯を採用理由の根拠として評価する。両者は読み取り専用とし、bundleの初期化や知識の保存・更新は行わない。確認済みの知識・検索範囲・不足を担当間で引き継ぎ、CLIの実行手順は複製しない。
+how・whyにも、Memoryスキルによる既存知識の検索・参照を明記する。howは構成・動作の説明を現在のコード・設定と照合し、whyは決定・制約・経緯を採用理由の根拠として評価する。両者は読み取り専用とし、bundleの初期化や知識の保存・更新は行わない。確認済みの知識・検索範囲・不足を担当間で引き継ぎ、CLIの実行手順は複製しない。
 
 whyはGit履歴・PR・コードコメント・テスト・リポジトリ内の資料から設計理由を調べる。配布内容に関するプロジェクトの制約により、外部の課題管理・文書・チャット・監視・分析サービスを探索する専用手順は含めない。担当分担と出力形式もこの調査範囲に合わせ、原版の情報源カテゴリを網羅する指示は引き継がない。根拠と確度の区別、矛盾や不明点の報告は維持する。
 
 checkpointの必要な記録項目とGitへの保存条件はcheckpoint-safelyを正本とする。checkpointと作業中のタスク記録はOKFの検索・形式検証と配布の対象に含めない。途中の判断もタスク側に記録して失わず、結果が確定した時点で永続的な知識へ整理する。知識化に伴う元記録の自動削除は行わない。
 
+## 既存リポジトリでの対象選択
+
+この取り込みの`--root`は既存リポジトリのルートを指定する。project省略時はdefaultとし、直下の`src/`等の通常のコードはdefaultに所属する。`.space/<project>/`・`workspaces/<project>/`・`repositories/<project>/`は予約領域であり、指定外projectへ検索・参照を広げない。パストラバーサル、Git管理領域、ファイル検査時のシンボリックリンクは拒否する。Tasksの成果物参照は参照文字列であり、登録だけで成果物の存在・品質を保証しない。
+
+別worktreeの作成やbranch切り替えで、Tasks・checkpoint・利用ログが自動的に共有・移動されることはない。既存の管理rootを引き継ぎ、Git追跡状態と記録の保存方法を確認する。配置方式を自動判定する共通設定や、worktreeをまたぐ管理領域の一般設計は今回の範囲外。
+
+知識のscopeはshared・dev・ops。分類は5種類のtypeすべてに適用する。既存のscopeなしの文書は未分類として保持し、内容を判断せず一括変換しない。検索・本文取得の利用ログは明示した呼び出しだけを`.space/<project>/memory/usage/events/`へ残す。集計は取得回数であり、判断への採用や読解を保証しない。通常の読み取りAPIは書き込まない。
+
 ## setupと製品別の配置
 
 setupは、プラグイン自身の位置から同梱ファイルを読み、利用先プロジェクトへ配置する。プラグインの更新と、プロジェクト内の文書・設定の更新は別の処理として扱う。
 
-`--scope project`では、取得した製品別配布物から全スキル・CLI・資料・エージェントをコピーする。Codexのスキルは`.agents/skills/`、Claude Codeのスキルは`.claude/skills/`へ配置する。シンボリックリンクは使わない。共通知識と指示の管理は既存のsetupと共通にし、CodexとClaude Codeを同じプロジェクトに導入できる。Copilotには既存のプラグイン方式を維持する。
+`--scope project`では、取得した製品別配布物から全スキル・CLI・資料・エージェントをコピーする。Codexのスキルは`.agents/skills/`、Claude Codeのスキルは`.claude/skills/`へ配置する。シンボリックリンクは使わない。共通知識と指示の管理はプラグイン方式のsetupと共通にし、CodexとClaude Codeを同じプロジェクトに導入できる。Copilotには既存のプラグイン方式を維持する。
 
-コピー済みのCLIはプロジェクト内で実行でき、スキル間の相対参照も維持する。プロジェクト導入の指示はプロジェクトルートからの相対パスを使い、配布元や導入者の絶対パスを埋め込まない。依存関係は引き続き各スキルのscripts内に準備する。利用先のworkspaceへ依存を混ぜる配置は拒否し、利用先のpackage.jsonやlockを自動変更しない。
+コピー済みのCLIはプロジェクト内で実行でき、スキル間の相対参照も維持する。プロジェクト導入の指示はプロジェクトルートからの相対パスを使い、配布元や導入者の絶対パスを埋め込まない。独立CLIはCodexの`.agents/cli/`・Claude Codeの`.claude/cli/`に配置する。依存導入を要する他スキルは各scripts内に準備する。利用先のworkspaceへ依存を混ぜる配置は拒否し、利用先のpackage.jsonやlockを自動変更しない。
 
 初期配置と更新は同じsetup CLIが所有する。通常は実行元の配布ルートを使い、コピー済みのsetupから更新・比較するときは`--source`で取得した配布ルートを明示する。更新の取得と適用を分け、最新版の自動取得や実行中の自動更新は行わない。プロジェクト導入後も同じscopeで更新し、省略によってプラグインへの参照へ戻さない。
 
 | 配布するもの | 利用先での扱い |
 | --- | --- |
-| 共通知識・ルール | `.space/babel/` のtype別ディレクトリへ配置し、共通知識とプロジェクト固有の知識を一つのbundleで扱う。既存の目次・履歴・独自文書を保持する |
+| 共通知識・ルール | `.space/default/memory/` のtype別ディレクトリへ配置し、共通知識とプロジェクト固有の知識を一つのbundleで扱う。既存の目次・履歴・独自文書を保持する |
 | Codex向けエージェント定義 | 配布物の `templates/agents/` に同梱し、必要に応じて `.codex/agents/` へ配置する |
 | Claude Code向けエージェント定義 | 配布物の `agents/` に同梱し、プラグインのエージェントとして提供する。プロジェクト導入では`.claude/agents/`へコピーする |
 | `AGENTS.md`・`CLAUDE.md`・`copilot-instructions.md` のテンプレート | Codexは`AGENTS.md`、Claude Codeは`CLAUDE.md`、Copilotは`.github/copilot-instructions.md`へ既存の指示を確認して統合する。配布用テンプレートと開発リポジトリの指示を混同しない |
@@ -152,17 +161,17 @@ setupは、プラグイン自身の位置から同梱ファイルを読み、利
 
 更新対象は、そのプラグインが管理するファイルに限る。利用先固有の知識、他の配布元の文書、checkpoint、既存の指示やエージェント設定を上書きしない。配置済みの共通文書にローカル編集がある場合は、差分を示して自動上書きを避ける。
 
-2026-09-24のユーザー指示で、共通知識も利用先のBabel直下へ配置する方針に変更した。共有の目次は独自項目を保持して不足項目を追加し、配布側の変更は前回の項目と比較して更新する。両側で変更された項目は衝突とする。履歴とLICENSEは初回のみ補い、既存内容を保持する。旧vendorへの導入記録は読み取れるようにし、新しい配置先への再セットアップ時は旧文書のローカル編集を確認する。旧vendorのファイルや独自文書は自動削除・移動しない。設計と検証の詳細は[Babel統合の記録](babel-distribution.md)に置く。
+共通知識と利用先の知識は`.space/default/memory/`に共存する。共有の目次は独自項目を保持して不足項目を追加し、配布側の変更は前回の項目と比較して更新する。両側で変更された項目は衝突とする。履歴とLICENSEは初回のみ補い、既存内容を保持する。旧vendorへの導入記録は読み取れるようにし、新しい配置先への再セットアップ時は旧文書のローカル編集を確認する。旧vendorのファイルや独自文書は自動削除・移動しない。設計と検証の詳細は[Babel統合の記録](babel-distribution.md)に置く。
 
 ファイルを置くだけでAIへの注入が完了したとは扱わない。必要な文書の検索・選択・読み込みや、指示ファイルへの反映は、各スキルとCLIの利用手順として定義する。
 
-CopilotとClaude Codeはスキル・CLI・共通知識の配布物を共用し、setupの配置先だけを製品ごとに選択する。既定は従来の`setup-manifest.json`とし、Copilotは`--product copilot`で同梱の`setup-manifest.copilot.json`を明示的に選ぶ。未同梱の製品を他製品へ読み替えない。管理記録は製品ごと、Babel内の配布文書と書き手のロックはプラグインごとに共有する。
+CopilotとClaude Codeはスキル・CLI・共通知識の配布物を共用し、setupの配置先だけを製品ごとに選択する。既定は従来の`setup-manifest.json`とし、Copilotは`--product copilot`で同梱の`setup-manifest.copilot.json`を明示的に選ぶ。未同梱の製品を他製品へ読み替えない。管理記録は製品ごと、Memory内の共通知識とsetupのロックは製品間で共有する。setupはMemoryの書き込みロックも取得し、未復旧のMemory書き込みがある場合は更新を止める。
 
 同梱エージェントは `devlow-worker` と `comment-curator`。前者はdevlowの全体フローを読んで担当単位を実行し、後者はno-commentsの保存・照合・削除を担当する。CodexのTOMLとClaude形式のMarkdownで同じ役割を定義し、固定モデルや権限変更を埋め込まない。親から実際のスキルの絶対パスを渡し、既存設計・承認・所有範囲を引き継ぐ。CopilotにはClaude形式を同梱する。形式・配置の確認と各クライアントでの起動・実行互換性は区別して検証する。hooksは追加していない。
 
 ## TypeScriptのまま生成し、mainから配布する
 
-`scripts/build.ts` は `skills/`・`space/` をコピーし、`packaging/` の製品別定義を組み合わせる。TypeScriptからJavaScriptへの変換や、単一バイナリへの変換は行わない。CLIが必要とする `lib/`・資料・依存定義・ロックファイルを含める。
+`scripts/build.ts` は `skills/`・`cli/`・`space/` をコピーし、`packaging/` の製品別定義を組み合わせる。TypeScriptからJavaScriptへの変換や、単一バイナリへの変換は行わない。CLIが必要とする `lib/`・資料・依存定義・ロックファイルを含める。
 
 テスト、開発用ファイル、開発リポジトリ自身の `.space/`、すべての `node_modules/` は配布物に含めない。natural-japaneseは原版のスキル一式を保持するため、原版に含まれる校正スクリプトとfixturesをそのまま同梱する。`node_modules/`・`__pycache__/`・`.venv/`など実行時に生成する依存・キャッシュはGit管理と配布から除外する。
 
@@ -184,7 +193,11 @@ GitHub Actionsではテスト・型や定義の検証に加え、配布物を再
 
 natural-japaneseは原版ファイルとの一致と、リポジトリ外にコピーした配布物のuvによる実行を確認する。Bunのbootstrap・lock更新検査は適用せず、入力文書と利用先の依存定義が変更されないことを確かめる。
 
-## 現行実装との差と変更時の判断
+## 移行と変更時の判断
+
+2026-11-01の依頼により、mainを起点にdevelopからTasks・Memory・defaultの配置を選択的に取り込む。旧Babelがある利用先ではsetupを止め、明示した移行で全ファイルと内容を照合する。旧orchの台帳は形式が異なるため自動変換せず、必要な未完了の仕事を実態と照合して登録する。旧スキル名は案内だけを残し、旧CLIは配布しない。[取り込み記録](main-tasks-memory-port.md)で実装と検証を区別する。
+
+以下は移行前の経緯であり、現在のCLI配置を表さない。
 
 2026-09-21の確認時点では `skills/okf-agent-memory/` にOKF CLIがあり、実行時の依存定義はスキル直下の `package.json`、ロックはルートの `bun.lock` にある。`scripts/` 単位の依存管理・bootstrap、タスク用CLI、setup、配布生成・カタログ・CIは、この目標構成に向けた実装・移行事項として扱う。既存CLIまで未実装として扱わない。2026-09-23にorchの専用CLI・bootstrapを追加した。orchの外部依存は空であり、初回は定義の確認だけを行う。同日、OKFのscripts内への依存移行、setup、配布生成・カタログ・CI定義を実装した。ローカルの検証と実際の公開状態は[配布の実装記録](distribution-implementation.md)で区別する。[orchの実装記録](skills/orch/implementation.md)に確認範囲を残す。
 

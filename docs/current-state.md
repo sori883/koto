@@ -1,4 +1,6 @@
-# kotoの現状
+# kotoの現状（2026-10-30時点）
+
+この資料の旧orch・旧Memory・Babelの説明は移行前の記録。2026-11-01のmain向けTasks・Memory移植の状態は[取り込み記録](main-tasks-memory-port.md)を参照する。
 
 kotoは、開発作業のフロー、タスク台帳、知識管理、プロジェクトへの導入をCodex・Claude Code・GitHub Copilot in VS Codeへ配布するプラグインである。CopilotはClaude形式の配布物を共用する。目的と配置方針の正本は[architecture.md](architecture.md)、導入・生成方法は[distribution.md](distribution.md)に置く。
 

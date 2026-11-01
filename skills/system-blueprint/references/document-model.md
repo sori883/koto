@@ -2,7 +2,7 @@
 
 ## 保存先とconcept
 
-利用先の `.space/babel/` を一つのOKF bundleとして使う。新規文書の標準保存先は、構成・動作の説明が `knowledge/systems/<system>/`、根拠のある設計判断が `decisions/systems/<system>/`。いずれもbundle内の相対パスである。
+選択した管理ルート・projectの `.space/<project>/memory/` を使う。新規文書の標準保存先は、構成・動作の説明が `knowledge/systems/<system>/`、根拠のある設計判断が `decisions/systems/<system>/`。いずれもMemory内の相対パスである。
 
 `<system>` には、対象システムを表すファイルパス用の識別名を入れる。単一システムでも省略せず、同じ対象ではknowledgeとdecisionで同じ識別名を使う。次の基準で決める。
 
@@ -22,15 +22,15 @@
 | `knowledge/systems/<system>/deployment` | `knowledge` | 実行単位・起動・配置・環境差 |
 | `decisions/systems/<system>/<decision>` | `decision` | 確認できた一つの判断と、その理由・制約・影響 |
 
-実ファイルはbundle内のconcept IDに `.md` を付けた場所へ保存される。例えば、全体像は `.space/babel/knowledge/systems/<system>/blueprint.md` となる。`blueprint` は目次の代用ではなく、全体を理解するための説明を持つknowledgeである。
+実ファイルはMemory内のconcept IDに `.md` を付けた場所へ保存される。例えば、全体像は `.space/<project>/memory/knowledge/systems/<system>/blueprint.md` となる。`blueprint` は目次の代用ではなく、全体を理解するための説明を持つknowledgeである。
 
 既存conceptの検索結果を優先し、同じ対象・責務の文書が別の場所にあっても、そのIDを使って更新・参照する。標準配置に合わせるためだけの移動・複製は行わない。
 
-## OKFスキルによる保存
+## Memoryスキルによる保存
 
-[OKFスキル](../../okf-agent-memory/SKILL.md)の手順に従い、OKF CLIを使って、上表のconcept IDとtypeでファイルを作成する。既存文書は検索で確認したIDで更新する。対象bundleは利用先の `.space/babel/` とし、標準配置のサブディレクトリを別のbundleにしない。
+[Memoryスキル](../../memory/SKILL.md)の手順に従い、Memory CLIを使って、上表のconcept IDとtypeでファイルを作成する。管理ルート・projectを明示し、各文書の用途に合わせたscopeを渡す。既存文書は検索で確認したIDとshowのcontent_hashを使って更新する。標準配置のサブディレクトリを別の管理ルートとして初期化しない。
 
-CLIの準備、コマンド書式・引数、作成・更新・関連付け・形式検証の実行方法は、OKFスキルを正本とする。この文書ではブループリント固有の保存先・concept ID・typeを定義する。
+CLIの準備、コマンド書式・引数、作成・更新・関連付け・形式検証の実行方法は、Memoryスキルを正本とする。この文書ではブループリント固有の保存先・concept ID・typeを定義する。
 
 ## 分割の判断
 

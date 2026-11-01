@@ -25,8 +25,8 @@ beforeEach(async () => {
   await put("skills/example/scripts/__pycache__/lint.cpython-313.pyc", "Do not distribute\n");
   await put("skills/example/scripts/.venv/pyvenv.cfg", "Do not distribute\n");
   await put("docs/private.md", "Maintainer notes\n");
-  await put(".space/babel/private.md", "Project knowledge\n");
-  await put("space/babel/index.md", "# Shared knowledge\n");
+  await put(".space/default/memory/private.md", "Project knowledge\n");
+  await put("space/default/index.md", "# Shared knowledge\n");
 });
 afterEach(async () => { await rm(root, { recursive: true, force: true }); });
 
@@ -38,9 +38,9 @@ test("builds both self-contained products and creates catalogs with the root ver
     expect(manifest.version).toBe("1.2.3");
     expect(await Bun.file(join(dist, "skills/example/scripts/main.ts")).exists()).toBe(true);
     expect(await Bun.file(join(dist, "skills/example/UNICODE-LICENSE.txt")).text()).toBe("Unicode copyright and permission notice\n");
-    for (const path of ["docs/private.md", ".space/babel/private.md", "skills/example/tests/private.test.ts", "skills/example/scripts/node_modules/private/index.js", "skills/example/scripts/__pycache__/lint.cpython-313.pyc", "skills/example/scripts/.venv/pyvenv.cfg"]) expect(await Bun.file(join(dist, path)).exists()).toBe(false);
+    for (const path of ["docs/private.md", ".space/default/memory/private.md", "skills/example/tests/private.test.ts", "skills/example/scripts/node_modules/private/index.js", "skills/example/scripts/__pycache__/lint.cpython-313.pyc", "skills/example/scripts/.venv/pyvenv.cfg"]) expect(await Bun.file(join(dist, path)).exists()).toBe(false);
     const setup = JSON.parse(await readFile(join(dist, "setup-manifest.json"), "utf8"));
-    expect(setup.files).toContainEqual({ source: "space/babel/index.md", destination: ".space/babel/index.md", mode: "merge-index" });
+    expect(setup.files).toContainEqual({ source: "space/default/index.md", destination: ".space/default/memory/index.md", mode: "merge-index" });
     expect(setup.product).toBe(product);
   }
   const codex = JSON.parse(await readFile(join(root, ".agents/plugins/marketplace.json"), "utf8"));
@@ -50,7 +50,7 @@ test("builds both self-contained products and creates catalogs with the root ver
   const copilot = JSON.parse(await readFile(join(root, "dist/claude-code/koto/setup-manifest.copilot.json"), "utf8"));
   expect(copilot).toMatchObject({ schemaVersion: 1, plugin: "koto", product: "copilot", version: "1.2.3" });
   expect(copilot.files).toContainEqual({ source: "templates/copilot-instructions.md", destination: ".github/copilot-instructions.md", mode: "managed-block" });
-  expect(copilot.files).toContainEqual({ source: "space/babel/index.md", destination: ".space/babel/index.md", mode: "merge-index" });
+  expect(copilot.files).toContainEqual({ source: "space/default/index.md", destination: ".space/default/memory/index.md", mode: "merge-index" });
   expect(copilot.files.some((entry: { destination: string }) => entry.destination === "CLAUDE.md")).toBe(false);
   expect(await Bun.file(join(root, "dist/claude-code/koto/templates/copilot-instructions.md")).text()).toContain("in Copilot");
   expect(await Bun.file(join(root, "dist/codex/koto/setup-manifest.copilot.json")).exists()).toBe(false);

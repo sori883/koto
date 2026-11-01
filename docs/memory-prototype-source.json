@@ -1,0 +1,25 @@
+{
+  "source": "/Users/const/sori883/agent-memory",
+  "note": "Hashes of the uncommitted prototype files used as reference. Original repository is not modified.",
+  "files": {
+    "src/cli.ts": "dfdcfb4ab1236f133935c629e80c75c4c716765eb0ece8d01e08616987e469ca",
+    "src/code-refs.ts": "da4bfca95f4e156d29952b8f2e7c58e532d969f94a118d9addd0c153a6d68495",
+    "src/documents.ts": "98b24907c25f7c8cb8d279d5e66022e52eecbb0b507f73bbb698d3f5e1e6c0c2",
+    "src/files.ts": "bf314b02a7a2bb13deb821ad1146e042304d278ec777e69d0dccbedcb7fc61e1",
+    "src/filter.ts": "0ad0c5b1789c402ee84624e9aa825d772ffb5d4eac49e082f3c83ce9c1286336",
+    "src/frontmatter.ts": "4abe4e9110c68b95c58ab51d43b3439b22ed595da15fd3116dde5167d570cda0",
+    "src/memory.ts": "62e402a6fa967fefb4bb1012dd447e30ca4a780007e1387c59417838b6323d52",
+    "src/mutate.ts": "6991e0f240f71ac0849bb0e028a1351a28bfbb952f20e0291c1fc1bc7ff0b608",
+    "src/references.ts": "adb4590261523d0db4afb42b470f03ea41ee60c18c5e3544722c18012da88363",
+    "src/search.ts": "721453b2f0ac9ccdbf43be986b9c4f3296358d06c7636add6db9fa9e7b977cc7",
+    "src/validate.ts": "c61e9b89bbb1d350bf230815eade0689ac19094dab0f67eb90ec456b4c951848",
+    "tests/cli.test.ts": "cfdb6e6ba2154db3e2ed26ec1f5e04618b839025fcebd5446dcf6d581aaf1dbd",
+    "tests/files.test.ts": "ae411161f27b34460bc02ff6c5448bec39cb8670da0223773bacec8b80214f0a",
+    "tests/filter.test.ts": "5f84ad0cf7f909593e37652aecc4bec8d311ed58884cfda8e43b2d4da3ffb1dd",
+    "tests/frontmatter.test.ts": "24497f50c498716b867736b16d69483a209822a36af4522400529faa2788c1b5",
+    "tests/mutate.test.ts": "36f1f673a1ed27fd4c5b73978ffbc74864875c5cc25294a660f5b4d8affdfa77",
+    "tests/references.test.ts": "e8e2889912f519f272c162e13bb39d381fa6c7900c977c6e00466fdcb3618b3f",
+    "tests/remaining.test.ts": "0677d59f7c056925d838b6a8927c7648b89f8afee1d1fc8d41e0740c0fa6cd86",
+    "tests/search.test.ts": "8178e6072cd48cdf274afbb49fa979a77c71087ecb8b33786f4d6c88a8550fcf"
+  }
+}

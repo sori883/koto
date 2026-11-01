@@ -16,7 +16,7 @@ async function fixture(product: Product) {
   await mkdir(project); await mkdir(join(pluginRoot, "skills/example"), { recursive: true });
   await mkdir(join(pluginRoot, "templates"));
   await writeFile(join(pluginRoot, "skills/example/SKILL.md"), "# Example\n");
-  await writeFile(join(pluginRoot, "templates/instructions.md"), "Read {{SKILL_ROOT}}/example/SKILL.md and {{BABEL_BUNDLE}}.\n");
+  await writeFile(join(pluginRoot, "templates/instructions.md"), "Read {{SKILL_ROOT}}/example/SKILL.md and {{MEMORY_ROOT}}.\n");
   const common = { schemaVersion: 1, plugin: "koto", product, version: "1.0.0" };
   const instructions = { source: "templates/instructions.md", destination: instruction, mode: "managed-block" };
   await writeFile(join(pluginRoot, "setup-manifest.json"), JSON.stringify({ ...common, files: [instructions] }));
@@ -38,7 +38,7 @@ for (const product of ["codex", "claude-code"] as const) {
     const instructions = await readFile(join(f.project, f.instruction), "utf8");
     expect(instructions).toStartWith("User instructions\n");
     expect(instructions).toContain(`${f.skillRoot}/example/SKILL.md`);
-    expect(instructions).toContain(".space/babel");
+    expect(instructions).toContain(".space/default/memory");
     expect(instructions).not.toContain(f.project); expect(instructions).not.toContain(f.pluginRoot);
     await f.run("apply");
     expect((await f.run("status")).actions.every(action => action.action === "unchanged")).toBe(true);

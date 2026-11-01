@@ -13,10 +13,10 @@
 | やりたいこと | 機能 |
 | --- | --- |
 | 機能追加や修正を、依頼の整理から完了報告まで進めたい | **devlow**：必要な工程を選び、調査・設計・実装・検証などを進める |
-| 大きな仕事を分け、進捗を把握したい | **orch**：作業ごとの担当、依存関係、確認結果、成果物の受け入れを管理する |
+| 大きな仕事を分け、進捗を把握したい | **tasks**：タスク、依存関係、進捗、成果物参照、checkpointを管理する |
 | 既存のコードを理解したい | **how / why**：「どう動くか」「なぜこの設計にしたか」を根拠とともに調べる |
 | システムの説明資料を作りたい | **system-blueprint**：コードや設定から、構成と動作を説明する文書を作る |
-| 設計や判断理由を、次の開発でも参照したい | **okf-agent-memory（OKF）**：知識をMarkdownで保存・検索・更新する |
+| 設計や判断理由を、次の開発でも参照したい | **memory（OKF）**：知識をMarkdownで保存・検索・更新する |
 | 作業を中断し、後で再開したい | **checkpoint-safely**：再開に必要な状況と、作業記録への参照を残す |
 | 作業の現在地を取り戻し、仕組みを理解したい | **recall / teach**：記録と現在の状態を照合し、仕組みと理由をつなげて説明する |
 | 変更の影響や見落としを確認したい | **blast-radius / interrogate**：影響経路と安全性の前提を確かめ、独立した指摘を照合する |
@@ -87,7 +87,7 @@ AIに次のように依頼します。
 kotoのsetupを使って、今開いているこのプロジェクトに初期設定を適用してください。
 ```
 
-setupは共通の開発原則を`.space/babel/principles/`へ、共通知識をBabel内の対応する分類へ配置し、AIがスキルを使うための指示を追加します。既存の指示・知識・目次・履歴を保持し、変更が衝突する場合は適用前に知らせます。初期設定は、kotoを使うプロジェクトごとに行います。
+setupは共通の開発原則を`.space/default/memory/principles/`へ、共通知識をMemory内の対応する分類へ配置し、AIがスキルを使うための指示を追加します。既存の指示・知識・目次・履歴を保持し、変更が衝突する場合は適用前に知らせます。初期設定は、kotoを使うプロジェクトごとに行います。
 
 Copilotでは「GitHub Copilot向けに、setupの`--product copilot`を使って初期設定してください」と伝えます。指示は`.github/copilot-instructions.md`に配置されます。更新・状態確認でも同じ製品指定を使います。
 
@@ -115,11 +115,12 @@ system-blueprintを使って、このプロジェクトの構成と主要な処�
 
 | 保存先 | 残すもの |
 | --- | --- |
-| `.space/tasks/<task-id>/` | 今回の作業の目的・進捗を記す `task.md` と、必要に応じた設計案・計画・検証結果 |
-| `.space/babel/` | 共通の開発原則と、OKFで管理するシステムの構成・採用した設計と理由・重要な変更の歴史 |
-| `.space/checkpoint/` | 中断・引き継ぎ時に、どこから再開するかを伝える記録 |
+| `.space/default/tasks/state.json` | タスクの目的・状態・依存関係・成果物参照と操作履歴 |
+| `.space/default/tasks/<task-id>/` | 必要に応じたtask.md、設計案・計画・検証結果 |
+| `.space/default/memory/` | 共通の開発原則と、OKFで管理するシステムの構成・採用した設計と理由・重要な変更の歴史 |
+| `.space/default/checkpoint/` | 中断・引き継ぎ時に、どこから再開するかを伝える記録 |
 
-`task.md`は標準（中規模）・大規模の作業で作成します。会話中の小さな修正では新しく作りません。複数の作業を分担するときは、必要に応じてorchの台帳で管理し、TSVやMarkdownの一覧を出力できます。
+ソースコードを変更する仕事は規模に関係なく編集前にTasksへ登録します。task.mdなどの文書は必要な場合だけ作成し、コードを変更しない調査は自動でタスク化しません。原則として必要な検証とPR／MRのマージ確認後に完了とし、ユーザーが明示的に完了した場合も実際の状態を残します。
 
 作業中の試行や途中の結果はtasks側に置き、後からシステムを理解するために必要な結論をOKFへ残します。たとえば「テストを何回実行したか」は作業記録、「なぜこのデータ構造を採用したか」は設計の知識として整理します。
 
@@ -128,3 +129,18 @@ system-blueprintを使って、このプロジェクトの構成と主要な処�
 - [開発作業の全体フロー](skills/devlow/references/workflow.md)：工程の選び方と成果物
 - [導入・更新の詳細](docs/distribution.md)：ローカルからの導入やCLIの実行方法
 - [目的と配布設計](docs/architecture.md)：koto自体を開発する人向けの設計方針
+
+## TasksとMemoryを直接使う
+
+kotoリポジトリを取得した場所では、次のように実行できます。プラグインから使う場合の入口は、配布物内のcli/tasks/tasks.ts・cli/memory/memory.tsです。
+
+```sh
+bun run tasks -- setup --root /path/to/repository --json
+bun run tasks -- task add task-001 --title "APIを修正する" --operation-id add-task-001 --root /path/to/repository --json
+bun run memory -- setup --root /path/to/repository --json
+bun run memory -- search --for-path src/api.ts --root /path/to/repository --json
+```
+
+両CLIはBunだけで動き、実行時の外部依存を持ちません。既存リポジトリのソースを移動せず、defaultプロジェクトからルート相対で参照できます。知識の用途はshared・dev・ops、利用ログはMemoryのusage list/statsで確認できます。
+
+旧Babelがある利用先は、[setupの移行手順](skills/setup/references/setup.md#既存の知識を移行する)を確認してください。旧orch台帳は新Tasksと形式が異なるため自動変換しません。[今回の取り込み範囲](docs/main-tasks-memory-port.md)、[Tasksの手順](cli/tasks/README.md)、[Memoryの手順](cli/memory/README.md)を参照してください。

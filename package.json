@@ -8,11 +8,12 @@
     "bun": ">=1.4.2"
   },
   "scripts": {
-    "okf": "bun skills/okf-agent-memory/scripts/okf.ts",
     "build": "bun scripts/build.ts",
     "build:check": "bun scripts/build.ts --check",
-    "test": "bun test skills/okf-agent-memory/tests skills/orch/tests skills/setup/tests tests/distribution",
-    "typecheck": "tsc --noEmit"
+    "test": "bun test tests/memory tests/tasks skills/setup/tests tests/distribution",
+    "typecheck": "tsc --noEmit",
+    "tasks": "bun cli/tasks/tasks.ts",
+    "memory": "bun cli/memory/memory.ts"
   },
   "devDependencies": {
     "@types/bun": "1.4.2",

@@ -9,15 +9,18 @@ function digest(value: unknown): string { if (typeof value !== "string" || !/^[a
 export function allowedEntry(value: unknown, manifest: Pick<Manifest, "plugin" | "product" | "scope">, installed = false): Entry {
   const entry = object(value); exact(entry, installed ? ["source", "destination", "mode", "hash", "indexSource"] : ["source", "destination", "mode"]);
   const source = relativePath(entry.source), destination = relativePath(entry.destination);
+  const knowledgePath = installed ? destination.replace(/^\.space\/babel\//, ".space/default/memory/") : destination;
   if (!["copy", "managed-block", "merge-index", "seed"].includes(String(entry.mode))) throw new SetupError("INVALID_DATA", "Invalid entry mode");
-  const index = /^\.space\/babel\/(?:(?:rules|principles|knowledge|procedures|decisions)\/(?:[^/]+\/)*)?index\.md$/.test(destination);
-  const document = /^\.space\/babel\/(rules|principles|knowledge|procedures|decisions)\/.+\.md$/.test(destination) && !/\/(index|log)\.md$/.test(destination);
+  const index = /^\.space\/default\/memory\/(?:(?:rules|principles|knowledge|procedures|decisions)\/(?:[^/]+\/)*)?index\.md$/.test(knowledgePath);
+  const document = /^\.space\/default\/memory\/(rules|principles|knowledge|procedures|decisions)\/.+\.md$/.test(knowledgePath) && !/\/(index|log)\.md$/.test(knowledgePath);
   const skills = projectSkillRoot(manifest.product);
-  const projectFile = manifest.scope === "project" && (skills !== undefined && destination.startsWith(`${skills}/`) && destination.slice(skills.length + 1).split("/").length >= 2 || manifest.product === "claude-code" && destination.startsWith(".claude/agents/"));
+  const cliRoot = skills?.replace(/\/skills$/, "/cli");
+  const projectCli = cliRoot !== undefined && ["memory", "tasks"].some(name => destination.startsWith(`${cliRoot}/${name}/`));
+  const projectFile = manifest.scope === "project" && (projectCli || skills !== undefined && destination.startsWith(`${skills}/`) && destination.slice(skills.length + 1).split("/").length >= 2 || manifest.product === "claude-code" && destination.startsWith(".claude/agents/"));
   const allowed = entry.mode === "managed-block" ? destination === instructionFiles[manifest.product]
     : entry.mode === "merge-index" ? index
-    : entry.mode === "seed" ? [".space/babel/log.md", ".space/babel/LICENSE"].includes(destination)
-    : document || projectFile || (installed ? setupPlugins(manifest.plugin) : [manifest.plugin]).some(plugin => destination.startsWith(`.space/babel/vendor/${plugin}/`)) || manifest.product === "codex" && destination.startsWith(".codex/agents/");
+    : entry.mode === "seed" ? [".space/default/memory/log.md", ".space/default/memory/LICENSE"].includes(knowledgePath)
+    : document || projectFile || (installed ? setupPlugins(manifest.plugin) : [manifest.plugin]).some(plugin => knowledgePath.startsWith(`.space/default/memory/vendor/${plugin}/`)) || manifest.product === "codex" && destination.startsWith(".codex/agents/");
   if (!allowed) throw new SetupError("DESTINATION", `Destination is outside allowed locations: ${destination}`);
   if (entry.indexSource !== undefined && (entry.mode !== "merge-index" || typeof entry.indexSource !== "string")) throw new SetupError("INVALID_DATA", "Invalid index source baseline");
   return { source, destination, mode: entry.mode as Entry["mode"] };
