@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "plugin": "koto",
   "product": "claude-code",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "files": [
     {
       "source": "space/default/LICENSE",
@@ -153,6 +153,11 @@
       "source": "space/default/procedures/index.md",
       "destination": ".space/default/memory/procedures/index.md",
       "mode": "merge-index"
+    },
+    {
+      "source": "space/default/procedures/record-design-decisions.md",
+      "destination": ".space/default/memory/procedures/record-design-decisions.md",
+      "mode": "copy"
     },
     {
       "source": "space/default/rules/index.md",
