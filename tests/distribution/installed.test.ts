@@ -45,8 +45,17 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   const freshValidation = await run(okf, ["--root", freshProject, "validate", "--strict", "--drift", "--json"], freshProject);
   expect(freshValidation.code).toBe(0);
   expect(JSON.parse(freshValidation.out).data).toMatchObject({
-    concept_count: 23, errors: [], warnings: [], gate_findings: [], broken_links: [], orphans: [], gate_passed: true,
+    concept_count: 24, errors: [], warnings: [], gate_findings: [], broken_links: [], orphans: [], gate_passed: true,
   });
+  const decisionGuide = "procedures/record-design-decisions";
+  const guide = await run(okf, ["--root", freshProject, "show", decisionGuide, "--json"], freshProject);
+  expect(guide.code).toBe(0);
+  expect(JSON.parse(guide.out).data.metadata).toMatchObject({ type: "procedure", scope: "shared" });
+  for (const scope of ["dev", "ops"]) {
+    const found = await run(okf, ["--root", freshProject, "search", "ADR", "--type", "procedure", "--scope", scope, "--json"], freshProject);
+    expect(found.code).toBe(0);
+    expect(JSON.parse(found.out).data).toContainEqual(expect.objectContaining({ concept_id: decisionGuide }));
+  }
   const plan = await run(setup, ["plan", ...setupArgs], project);
   expect(plan.code).toBe(0); expect(await Bun.file(join(bundle, "principles/minimize-reader-load.md")).exists()).toBe(false);
   const apply = await run(setup, ["apply", ...setupArgs], project); expect(apply.code).toBe(0);
@@ -86,7 +95,7 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   expect(principles.code).toBe(0); expect(JSON.parse(principles.out).data).toHaveLength(23);
   const validation = await run(okf, ["--root", project, "validate", "--drift", "--json"], project);
   expect(validation.code).toBe(0);
-  expect(JSON.parse(validation.out).data).toMatchObject({ concept_count: 24, errors: [], warnings: [], broken_links: [], is_conformant: true });
+  expect(JSON.parse(validation.out).data).toMatchObject({ concept_count: 25, errors: [], warnings: [], broken_links: [], is_conformant: true });
   const strict = await run(okf, ["--root", project, "validate", "--strict", "--drift", "--json"], project);
   expect(strict.code).toBe(1); expect(JSON.parse(strict.out).data.orphans).toEqual(["knowledge/existing"]);
   const personal = join(project, ".space/default/memory");
