@@ -1,0 +1,293 @@
+{
+  "schemaVersion": 1,
+  "projectId": "default",
+  "storeId": "cc25d939-1113-47ff-b958-628dcd398fcc",
+  "revision": 7,
+  "tasks": {
+    "improve-decision-records": {
+      "id": "improve-decision-records",
+      "title": "設計判断の記録とレビュー手順を改善する",
+      "description": "記事の指摘を既存の設計と照合し、共通手順と各スキルの導線、配布物、導入検証を更新する。完了条件は記録の粒度・根拠・状態・後継関係の明確化と配布検証の成功。",
+      "state": "completed",
+      "version": 7,
+      "attempt": 1,
+      "dependencies": [],
+      "inputs": {},
+      "workspace": null,
+      "artifacts": [
+        {
+          "id": "decision-records-review",
+          "ref": "docs/skills/memory/decision-records.md",
+          "description": "設計判断の記録手順の採否とローカル検証結果",
+          "attempt": 1,
+          "createdAt": "2026-11-03T02:27:48.615Z"
+        },
+        {
+          "id": "pull-request",
+          "ref": "https://github.com/sori883/koto/pull/32",
+          "description": "0.1.9の設計判断記録改善をmainへ統合するPR",
+          "attempt": 1,
+          "createdAt": "2026-11-03T02:33:44.632Z"
+        }
+      ],
+      "result": "PR #32をmainへマージし、マージ後のCI成功を確認。koto 0.1.9をこのMacのCodexへ導入し、公開版192ファイルとの一致、28スキル、installed/enabled、既存設定の保持、導入済みCLIと新しい手順の取得・strict/drift検証を確認した。",
+      "reason": "",
+      "next": "",
+      "createdAt": "2026-11-03T02:22:55.742Z",
+      "updatedAt": "2026-11-03T02:38:10.990Z"
+    }
+  },
+  "checkpoints": {},
+  "operations": {
+    "add-improve-decision-records": {
+      "id": "add-improve-decision-records",
+      "hash": "e379b0375a9cac7e0d3dc339f792be76149c02d69fa4227b21f9a9916afb4a15",
+      "actor": "unspecified",
+      "command": "task add",
+      "taskId": "improve-decision-records",
+      "revision": 1,
+      "at": "2026-11-03T02:22:55.742Z",
+      "data": {
+        "task": {
+          "id": "improve-decision-records",
+          "title": "設計判断の記録とレビュー手順を改善する",
+          "description": "記事の指摘を既存の設計と照合し、共通手順と各スキルの導線、配布物、導入検証を更新する。完了条件は記録の粒度・根拠・状態・後継関係の明確化と配布検証の成功。",
+          "state": "pending",
+          "version": 1,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": null,
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-03T02:22:55.742Z",
+          "updatedAt": "2026-11-03T02:22:55.742Z"
+        }
+      }
+    },
+    "start-improve-decision-records": {
+      "id": "start-improve-decision-records",
+      "hash": "48de69e1c6e95f30f04f7a359f797029e08bb87b9032997f6dc98b0c06b74323",
+      "actor": "unspecified",
+      "command": "task start",
+      "taskId": "improve-decision-records",
+      "revision": 2,
+      "at": "2026-11-03T02:22:55.796Z",
+      "data": {
+        "task": {
+          "id": "improve-decision-records",
+          "title": "設計判断の記録とレビュー手順を改善する",
+          "description": "記事の指摘を既存の設計と照合し、共通手順と各スキルの導線、配布物、導入検証を更新する。完了条件は記録の粒度・根拠・状態・後継関係の明確化と配布検証の成功。",
+          "state": "running",
+          "version": 2,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-03T02:22:55.742Z",
+          "updatedAt": "2026-11-03T02:22:55.796Z"
+        }
+      }
+    },
+    "artifact-improve-decision-records": {
+      "id": "artifact-improve-decision-records",
+      "hash": "e67209fba91b166f8f4cde2c1c6e3a0d1f043c9e3725d63335a85ba6f3c62645",
+      "actor": "unspecified",
+      "command": "artifact add",
+      "taskId": "improve-decision-records",
+      "revision": 3,
+      "at": "2026-11-03T02:27:48.615Z",
+      "data": {
+        "task": {
+          "id": "improve-decision-records",
+          "title": "設計判断の記録とレビュー手順を改善する",
+          "description": "記事の指摘を既存の設計と照合し、共通手順と各スキルの導線、配布物、導入検証を更新する。完了条件は記録の粒度・根拠・状態・後継関係の明確化と配布検証の成功。",
+          "state": "running",
+          "version": 3,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "decision-records-review",
+              "ref": "docs/skills/memory/decision-records.md",
+              "description": "設計判断の記録手順の採否とローカル検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-03T02:27:48.615Z"
+            }
+          ],
+          "result": null,
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-03T02:22:55.742Z",
+          "updatedAt": "2026-11-03T02:27:48.615Z"
+        }
+      }
+    },
+    "wait-improve-decision-records": {
+      "id": "wait-improve-decision-records",
+      "hash": "ac696a502e2b791f5aa99d7607bc3a790e6341f767f67a76732ba206c23e1ac3",
+      "actor": "unspecified",
+      "command": "task set",
+      "taskId": "improve-decision-records",
+      "revision": 4,
+      "at": "2026-11-03T02:27:48.668Z",
+      "data": {
+        "task": {
+          "id": "improve-decision-records",
+          "title": "設計判断の記録とレビュー手順を改善する",
+          "description": "記事の指摘を既存の設計と照合し、共通手順と各スキルの導線、配布物、導入検証を更新する。完了条件は記録の粒度・根拠・状態・後継関係の明確化と配布検証の成功。",
+          "state": "waiting",
+          "version": 4,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "decision-records-review",
+              "ref": "docs/skills/memory/decision-records.md",
+              "description": "設計判断の記録手順の採否とローカル検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-03T02:27:48.615Z"
+            }
+          ],
+          "result": null,
+          "reason": "ローカルの手順改善・配布物生成・310件のテストと各検証は完了。PR作成・マージ・公開は今回実施していない。",
+          "next": "変更を公開する際に差分をPRへまとめ、マージと必要な検証を確認する。",
+          "createdAt": "2026-11-03T02:22:55.742Z",
+          "updatedAt": "2026-11-03T02:27:48.668Z"
+        }
+      }
+    },
+    "resume-release-decision-records": {
+      "id": "resume-release-decision-records",
+      "hash": "90b95b758e2a310ba84698119fcdfc73c04ca7b610036eba8eaac84b2fcaeb61",
+      "actor": "unspecified",
+      "command": "task start",
+      "taskId": "improve-decision-records",
+      "revision": 5,
+      "at": "2026-11-03T02:32:22.657Z",
+      "data": {
+        "task": {
+          "id": "improve-decision-records",
+          "title": "設計判断の記録とレビュー手順を改善する",
+          "description": "記事の指摘を既存の設計と照合し、共通手順と各スキルの導線、配布物、導入検証を更新する。完了条件は記録の粒度・根拠・状態・後継関係の明確化と配布検証の成功。",
+          "state": "running",
+          "version": 5,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "decision-records-review",
+              "ref": "docs/skills/memory/decision-records.md",
+              "description": "設計判断の記録手順の採否とローカル検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-03T02:27:48.615Z"
+            }
+          ],
+          "result": null,
+          "reason": "ユーザーがmainへのマージとこのMacへの導入を依頼したため再開する。",
+          "next": "",
+          "createdAt": "2026-11-03T02:22:55.742Z",
+          "updatedAt": "2026-11-03T02:32:22.657Z"
+        }
+      }
+    },
+    "artifact-pr32-decision-records": {
+      "id": "artifact-pr32-decision-records",
+      "hash": "490677235bb8fb6092ed5526fc803b84afbd6ab6ad8578a6fb59c09034d13f13",
+      "actor": "unspecified",
+      "command": "artifact add",
+      "taskId": "improve-decision-records",
+      "revision": 6,
+      "at": "2026-11-03T02:33:44.632Z",
+      "data": {
+        "task": {
+          "id": "improve-decision-records",
+          "title": "設計判断の記録とレビュー手順を改善する",
+          "description": "記事の指摘を既存の設計と照合し、共通手順と各スキルの導線、配布物、導入検証を更新する。完了条件は記録の粒度・根拠・状態・後継関係の明確化と配布検証の成功。",
+          "state": "running",
+          "version": 6,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "decision-records-review",
+              "ref": "docs/skills/memory/decision-records.md",
+              "description": "設計判断の記録手順の採否とローカル検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-03T02:27:48.615Z"
+            },
+            {
+              "id": "pull-request",
+              "ref": "https://github.com/sori883/koto/pull/32",
+              "description": "0.1.9の設計判断記録改善をmainへ統合するPR",
+              "attempt": 1,
+              "createdAt": "2026-11-03T02:33:44.632Z"
+            }
+          ],
+          "result": null,
+          "reason": "ユーザーがmainへのマージとこのMacへの導入を依頼したため再開する。",
+          "next": "",
+          "createdAt": "2026-11-03T02:22:55.742Z",
+          "updatedAt": "2026-11-03T02:33:44.632Z"
+        }
+      }
+    },
+    "complete-release-decision-records": {
+      "id": "complete-release-decision-records",
+      "hash": "e1a7a53c1f70df0ba4736a53753462a12a0f20758ed272758894022245011e6f",
+      "actor": "unspecified",
+      "command": "task complete",
+      "taskId": "improve-decision-records",
+      "revision": 7,
+      "at": "2026-11-03T02:38:10.990Z",
+      "data": {
+        "task": {
+          "id": "improve-decision-records",
+          "title": "設計判断の記録とレビュー手順を改善する",
+          "description": "記事の指摘を既存の設計と照合し、共通手順と各スキルの導線、配布物、導入検証を更新する。完了条件は記録の粒度・根拠・状態・後継関係の明確化と配布検証の成功。",
+          "state": "completed",
+          "version": 7,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "decision-records-review",
+              "ref": "docs/skills/memory/decision-records.md",
+              "description": "設計判断の記録手順の採否とローカル検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-03T02:27:48.615Z"
+            },
+            {
+              "id": "pull-request",
+              "ref": "https://github.com/sori883/koto/pull/32",
+              "description": "0.1.9の設計判断記録改善をmainへ統合するPR",
+              "attempt": 1,
+              "createdAt": "2026-11-03T02:33:44.632Z"
+            }
+          ],
+          "result": "PR #32をmainへマージし、マージ後のCI成功を確認。koto 0.1.9をこのMacのCodexへ導入し、公開版192ファイルとの一致、28スキル、installed/enabled、既存設定の保持、導入済みCLIと新しい手順の取得・strict/drift検証を確認した。",
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-03T02:22:55.742Z",
+          "updatedAt": "2026-11-03T02:38:10.990Z"
+        }
+      }
+    }
+  }
+}

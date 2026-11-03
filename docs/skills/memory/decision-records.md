@@ -55,6 +55,20 @@ CLIとOKFの形式は変更しない。`status` の既存値を保ち、判断�
 
 ## 0.1.9としての公開
 
-同日、ユーザーからmainへのマージと、このMacへの導入を依頼された。版数を0.1.9へ更新して製品別配布物を再生成する。Macの更新対象は、導入済みのCodexプラグイン `koto@koto`。既存のGitマーケットプレイス登録を使ってmainから取得し、設定と有効化状態を保持する。PR・公開結果と導入検証は実施後に記録する。
+同日、ユーザーからmainへのマージと、このMacへの導入を依頼された。版数を0.1.9へ更新して製品別配布物を再生成した。Macの更新対象は、導入済みのCodexプラグイン `koto@koto`。既存のGitマーケットプレイス登録を使ってmainから取得し、設定と有効化状態を保持した。
 
 版数更新後の初回CIでは、開発用Memory CLIが返す版数とルートの版数の不一致を既存テストが検出した。配布物のCLI版数はbuildで一致していたが、正本側のpackage.jsonもMemory・Tasksとも0.1.9へそろえる必要があったため修正した。
+
+修正後はローカルの全310件と[PRのCI](https://github.com/sori883/koto/actions/runs/41567019291)が成功した。[PR #32](https://github.com/sori883/koto/pull/32)をmainへマージし、マージコミットは `703cce6bd66098476ce8b2b5faab120fe3bc8631`。公開対象の版数は0.1.9。
+
+[マージ後のmainのCI](https://github.com/sori883/koto/actions/runs/41567158793)も成功した。
+
+Macでは[公式CLIのプラグイン操作](https://learn.chatgpt.com/docs/developer-commands#codex-plugin)でkotoのマーケットプレイスを更新し、`codex plugin add koto@koto --json`で導入した。
+
+- 導入先：`~/.codex/plugins/cache/koto/koto/0.1.9`。
+- 起動前の192ファイルがmainのCodex配布物とバイト単位で一致し、28スキルを含む。
+- 導入済みCLIをリポジトリ外の一時プロジェクトで実行し、setup、Memoryの版数0.1.9、新しい共通手順の取得、Tasksの起動を確認した。
+- 一時プロジェクトの24文書がMemoryのstrict・drift検証に成功した。
+- `codex plugin list`で0.1.9・installed・enabledを確認した。`~/.codex/config.toml`は更新前後で同一。
+
+既存プロジェクトへのsetupの適用、既存チャットのスキル再読込、各クライアントのAIによる実行評価はこの導入検証に含めない。
