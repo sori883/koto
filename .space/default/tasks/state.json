@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "projectId": "default",
   "storeId": "cc25d939-1113-47ff-b958-628dcd398fcc",
-  "revision": 7,
+  "revision": 12,
   "tasks": {
     "improve-decision-records": {
       "id": "improve-decision-records",
@@ -35,6 +35,31 @@
       "next": "",
       "createdAt": "2026-11-03T02:22:55.742Z",
       "updatedAt": "2026-11-03T02:38:10.990Z"
+    },
+    "archive-completed-task-folders": {
+      "id": "archive-completed-task-folders",
+      "title": "完了タスクの資料フォルダを自動アーカイブする",
+      "description": "task completeで標準の資料フォルダをtasks/archiveへ移し、reopenで復元する。登録済みの成果物参照、履歴、途中失敗の再実行、既存完了タスクの明示的な移動を扱い、設計・利用手順・配布物を更新して検証する。",
+      "state": "running",
+      "version": 5,
+      "attempt": 1,
+      "dependencies": [],
+      "inputs": {},
+      "workspace": null,
+      "artifacts": [
+        {
+          "id": "archive-design",
+          "ref": "docs/tasks-archive.md",
+          "description": "完了タスク資料の配置、移動途中の復旧、互換性とローカル検証結果",
+          "attempt": 1,
+          "createdAt": "2026-11-04T06:20:39.305Z"
+        }
+      ],
+      "result": null,
+      "reason": "ユーザーがmainへのマージとこのMacへの反映を依頼したため、公開と導入を進める。",
+      "next": "",
+      "createdAt": "2026-11-04T06:11:50.570Z",
+      "updatedAt": "2026-11-04T06:33:47.540Z"
     }
   },
   "checkpoints": {},
@@ -286,6 +311,170 @@
           "next": "",
           "createdAt": "2026-11-03T02:22:55.742Z",
           "updatedAt": "2026-11-03T02:38:10.990Z"
+        }
+      }
+    },
+    "add-task-folder-archive-20261104": {
+      "id": "add-task-folder-archive-20261104",
+      "hash": "6153f77ac5589ec35eab58dd5351ed682befbdb5f18d90fdb4dcb54854ba93d5",
+      "actor": "unspecified",
+      "command": "task add",
+      "taskId": "archive-completed-task-folders",
+      "revision": 8,
+      "at": "2026-11-04T06:11:50.570Z",
+      "data": {
+        "task": {
+          "id": "archive-completed-task-folders",
+          "title": "完了タスクの資料フォルダを自動アーカイブする",
+          "description": "task completeで標準の資料フォルダをtasks/archiveへ移し、reopenで復元する。登録済みの成果物参照、履歴、途中失敗の再実行、既存完了タスクの明示的な移動を扱い、設計・利用手順・配布物を更新して検証する。",
+          "state": "pending",
+          "version": 1,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": null,
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-04T06:11:50.570Z",
+          "updatedAt": "2026-11-04T06:11:50.570Z"
+        }
+      }
+    },
+    "start-task-folder-archive-20261104": {
+      "id": "start-task-folder-archive-20261104",
+      "hash": "bee75c4061670e8447ade6c363d378174eb949d38ef16302602fdbc7f88f7eaf",
+      "actor": "unspecified",
+      "command": "task start",
+      "taskId": "archive-completed-task-folders",
+      "revision": 9,
+      "at": "2026-11-04T06:11:50.589Z",
+      "data": {
+        "task": {
+          "id": "archive-completed-task-folders",
+          "title": "完了タスクの資料フォルダを自動アーカイブする",
+          "description": "task completeで標準の資料フォルダをtasks/archiveへ移し、reopenで復元する。登録済みの成果物参照、履歴、途中失敗の再実行、既存完了タスクの明示的な移動を扱い、設計・利用手順・配布物を更新して検証する。",
+          "state": "running",
+          "version": 2,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-04T06:11:50.570Z",
+          "updatedAt": "2026-11-04T06:11:50.589Z"
+        }
+      }
+    },
+    "record-task-folder-archive-design-20261104": {
+      "id": "record-task-folder-archive-design-20261104",
+      "hash": "92930c97d0a6129e0b999846ab19cff15ac22de0291720e8f38a25fffee96dcd",
+      "actor": "unspecified",
+      "command": "artifact add",
+      "taskId": "archive-completed-task-folders",
+      "revision": 10,
+      "at": "2026-11-04T06:20:39.305Z",
+      "data": {
+        "task": {
+          "id": "archive-completed-task-folders",
+          "title": "完了タスクの資料フォルダを自動アーカイブする",
+          "description": "task completeで標準の資料フォルダをtasks/archiveへ移し、reopenで復元する。登録済みの成果物参照、履歴、途中失敗の再実行、既存完了タスクの明示的な移動を扱い、設計・利用手順・配布物を更新して検証する。",
+          "state": "running",
+          "version": 3,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "archive-design",
+              "ref": "docs/tasks-archive.md",
+              "description": "完了タスク資料の配置、移動途中の復旧、互換性とローカル検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-04T06:20:39.305Z"
+            }
+          ],
+          "result": null,
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-04T06:11:50.570Z",
+          "updatedAt": "2026-11-04T06:20:39.305Z"
+        }
+      }
+    },
+    "wait-task-folder-archive-integration-20261104": {
+      "id": "wait-task-folder-archive-integration-20261104",
+      "hash": "2f1f759dc3da0af94f709ad5e6f390630e7903e251bdfabd35068edfaf426b63",
+      "actor": "unspecified",
+      "command": "task set",
+      "taskId": "archive-completed-task-folders",
+      "revision": 11,
+      "at": "2026-11-04T06:20:39.322Z",
+      "data": {
+        "task": {
+          "id": "archive-completed-task-folders",
+          "title": "完了タスクの資料フォルダを自動アーカイブする",
+          "description": "task completeで標準の資料フォルダをtasks/archiveへ移し、reopenで復元する。登録済みの成果物参照、履歴、途中失敗の再実行、既存完了タスクの明示的な移動を扱い、設計・利用手順・配布物を更新して検証する。",
+          "state": "waiting",
+          "version": 4,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "archive-design",
+              "ref": "docs/tasks-archive.md",
+              "description": "完了タスク資料の配置、移動途中の復旧、互換性とローカル検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-04T06:20:39.305Z"
+            }
+          ],
+          "result": null,
+          "reason": "自動アーカイブ・再開時の復元・参照更新・途中失敗の再実行を実装。全320テスト、型検査、配布物の生成と一致確認が成功。変更はローカルで未マージ・未公開。",
+          "next": "依頼された範囲の変更をレビューし、公開する場合は統合・CI・利用先更新を確認する。",
+          "createdAt": "2026-11-04T06:11:50.570Z",
+          "updatedAt": "2026-11-04T06:20:39.322Z"
+        }
+      }
+    },
+    "resume-task-folder-archive-release-20261104": {
+      "id": "resume-task-folder-archive-release-20261104",
+      "hash": "946f8c14c139c7627f8823455db16e990d0f0b456b071cff749916578479ea15",
+      "actor": "unspecified",
+      "command": "task start",
+      "taskId": "archive-completed-task-folders",
+      "revision": 12,
+      "at": "2026-11-04T06:33:47.540Z",
+      "data": {
+        "task": {
+          "id": "archive-completed-task-folders",
+          "title": "完了タスクの資料フォルダを自動アーカイブする",
+          "description": "task completeで標準の資料フォルダをtasks/archiveへ移し、reopenで復元する。登録済みの成果物参照、履歴、途中失敗の再実行、既存完了タスクの明示的な移動を扱い、設計・利用手順・配布物を更新して検証する。",
+          "state": "running",
+          "version": 5,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "archive-design",
+              "ref": "docs/tasks-archive.md",
+              "description": "完了タスク資料の配置、移動途中の復旧、互換性とローカル検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-04T06:20:39.305Z"
+            }
+          ],
+          "result": null,
+          "reason": "ユーザーがmainへのマージとこのMacへの反映を依頼したため、公開と導入を進める。",
+          "next": "",
+          "createdAt": "2026-11-04T06:11:50.570Z",
+          "updatedAt": "2026-11-04T06:33:47.540Z"
         }
       }
     }
