@@ -1,6 +1,6 @@
 import { link, lstat, mkdir, open, readFile, realpath, rename, rm } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
-import { identifier, requireThat, TasksError, validateState, type Checkpoint, type State } from "./model.ts";
+import { identifier, requireThat, taskDirectory, TasksError, validateState, type Checkpoint, type DirectoryMove, type State } from "./model.ts";
 
 export async function exists(path: string): Promise<boolean> {
   try { await lstat(path); return true; }
@@ -74,14 +74,26 @@ export class Store {
       await lock.writeFile(JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString() }) + "\n");
       await lock.sync();
       const { state, result, unchanged } = await action();
-      if (unchanged) return result;
-      validateState(state, this.project);
-      const file = await open(temporary, "wx", 0o600);
-      try { await file.writeFile(JSON.stringify(state, null, 2) + "\n"); await file.sync(); } finally { await file.close(); }
-      await options.beforeReplace?.();
-      await safePath(this.root, this.path);
-      await rename(temporary, this.path);
-      await syncDirectory(this.directory);
+      const save = async (beforeReplace?: () => Promise<void>) => {
+        validateState(state, this.project);
+        const file = await open(temporary, "wx", 0o600);
+        try { await file.writeFile(JSON.stringify(state, null, 2) + "\n"); await file.sync(); } finally { await file.close(); }
+        await beforeReplace?.();
+        await safePath(this.root, this.path);
+        await rename(temporary, this.path);
+        await syncDirectory(this.directory);
+      };
+      if (!unchanged) await save(options.beforeReplace);
+      const move = state.pendingDirectoryMove;
+      if (move) {
+        try {
+          await this.moveTaskDirectory(move);
+          delete state.pendingDirectoryMove;
+          await save();
+        } catch (error) {
+          throw new TasksError("TASK_DIRECTORY_MOVE_FAILED", "Task state is saved, but its directory move is incomplete. Resolve the conflict and retry the identical operation.", 1, { saved: true, taskId: move.taskId, operationId: move.operationId, cause: error instanceof TasksError ? error.code : "IO_ERROR" });
+        }
+      }
       return result;
     } finally {
       await rm(temporary, { force: true });
@@ -93,11 +105,44 @@ export class Store {
     return this.transact(async () => {
       if (await exists(this.path)) {
         const state = await this.load();
+        this.requireDirectoryMoveRetry(state);
         return { state, unchanged: true, result: { revision: state.revision, data: { project: this.project, store: this.path, changed: false } } };
       }
       const state: State = { schemaVersion: 1, projectId: this.project, storeId: crypto.randomUUID(), revision: 0, tasks: {}, checkpoints: {}, operations: {} };
       return { state, result: { revision: 0, data: { project: this.project, store: this.path, changed: true } } };
     }, { initialize: true });
+  }
+  requireDirectoryMoveRetry(state: State, operationId?: string) {
+    const move = state.pendingDirectoryMove;
+    if (move && move.operationId !== operationId) throw new TasksError("TASK_DIRECTORY_MOVE_PENDING", "Retry the saved directory move with its original operation ID and input before other updates.", 2, { saved: true, taskId: move.taskId, operationId: move.operationId });
+  }
+  async planTaskDirectoryMove(state: State, taskId: string, archive: boolean, operationId: string): Promise<DirectoryMove | undefined> {
+    requireThat(taskId !== "archive" && !Object.hasOwn(state.tasks, "archive"), "TASK_DIRECTORY_CONFLICT", "A legacy task uses the reserved archive name. Resolve its directory ownership before archiving.");
+    const source = await safePath(this.root, taskDirectory(this.project, taskId, !archive));
+    const target = await safePath(this.root, taskDirectory(this.project, taskId, archive));
+    requireThat(!await exists(target), "TASK_DIRECTORY_CONFLICT", "The destination already exists; it will not be replaced or merged.");
+    if (!await exists(source)) return undefined;
+    const info = await lstat(source, { bigint: true });
+    requireThat(info.isDirectory(), "UNSAFE_PATH", "Task documents must be a directory.");
+    return { taskId, operationId, archive, device: String(info.dev), inode: String(info.ino) };
+  }
+  async moveTaskDirectory(move: DirectoryMove) {
+    const source = await safePath(this.root, taskDirectory(this.project, move.taskId, !move.archive));
+    const target = await safePath(this.root, taskDirectory(this.project, move.taskId, move.archive));
+    const sourceExists = await exists(source), targetExists = await exists(target);
+    requireThat(sourceExists !== targetExists, "TASK_DIRECTORY_CONFLICT", "Expected exactly one copy of the task directory; neither location will be overwritten.");
+    const info = await lstat(sourceExists ? source : target, { bigint: true });
+    requireThat(info.isDirectory() && String(info.dev) === move.device && String(info.ino) === move.inode, "TASK_DIRECTORY_CONFLICT", "The directory changed since the move was recorded.");
+    if (sourceExists) {
+      await directory(this.root, dirname(target));
+      await safePath(this.root, source); await safePath(this.root, target);
+      const current = await lstat(source, { bigint: true });
+      requireThat(current.isDirectory() && String(current.dev) === move.device && String(current.ino) === move.inode, "TASK_DIRECTORY_CONFLICT", "The source directory changed before moving.");
+      requireThat(!await exists(target), "TASK_DIRECTORY_CONFLICT", "The destination already exists; it will not be replaced.");
+      await rename(source, target);
+    }
+    await syncDirectory(dirname(source));
+    await syncDirectory(dirname(target));
   }
   async checkpointPath(entry: Pick<Checkpoint, "taskId" | "id">) {
     identifier(entry.taskId); identifier(entry.id);
@@ -128,9 +173,10 @@ export class Store {
     } finally { await rm(temporary, { force: true }); }
   }
   async doctor(state: State) {
-    const problems: { code: string; checkpoint?: string }[] = [];
+    const problems: { code: string; checkpoint?: string; task?: string; operationId?: string }[] = [];
     await safePath(this.root, this.lockPath);
     if (await exists(this.lockPath)) problems.push({ code: "LOCKED" });
+    if (state.pendingDirectoryMove) problems.push({ code: "TASK_DIRECTORY_MOVE_PENDING", task: state.pendingDirectoryMove.taskId, operationId: state.pendingDirectoryMove.operationId });
     for (const [id, entry] of Object.entries(state.checkpoints)) {
       try {
         const path = await this.checkpointPath(entry);

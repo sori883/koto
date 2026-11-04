@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { blockers, describe, identifier, number, reference, requireThat, STATES, TasksError, text, type Data, type Progress, type Request, type Result, type State, type Task } from "./model.ts";
+import { blockers, currentReference, describe, identifier, number, reference, requireThat, STATES, TasksError, text, type Data, type Progress, type Request, type Result, type State, type Task } from "./model.ts";
 import { exists, Store } from "./store.ts";
 
 export const READ = new Set(["task list", "task show", "artifact list", "checkpoint list", "checkpoint show", "history", "status", "doctor"]);
@@ -22,7 +22,7 @@ async function read(store: Store, request: Request): Promise<Result> {
     data = Object.values(state.tasks).sort((a, b) => a.id.localeCompare(b.id)).map(t => describe(state, t)).filter(t => (!request.state || t.task.state === request.state) && (!request.ready || t.ready));
   } else if (request.command === "status") {
     const tasks = Object.values(state.tasks).map(t => describe(state, t));
-    data = { project: store.project, total: tasks.length, counts: Object.fromEntries(STATES.map(s => [s, tasks.filter(t => t.task.state === s).length])), ready: tasks.filter(t => t.ready).map(t => t.task.id), invalidatedCompleted: tasks.filter(t => t.task.state === "completed" && !t.completionCurrent).map(t => t.task.id) };
+    data = { project: store.project, total: tasks.length, counts: Object.fromEntries(STATES.map(s => [s, tasks.filter(t => t.task.state === s).length])), ready: tasks.filter(t => t.ready).map(t => t.task.id), invalidatedCompleted: tasks.filter(t => t.task.state === "completed" && !t.completionCurrent).map(t => t.task.id), ...(state.pendingDirectoryMove ? { pendingDirectoryMove: state.pendingDirectoryMove } : {}) };
   } else if (request.command === "doctor") data = await store.doctor(state);
   else {
     const task = taskIn(state, request.id);
@@ -54,11 +54,14 @@ export async function execute(store: Store, request: Request): Promise<Result> {
     if (Object.hasOwn(state.operations, operationId)) {
       const prior = state.operations[operationId]!;
       requireThat(prior.hash === hash, "OPERATION_CONFLICT", "The operation ID already belongs to different input.");
+      store.requireDirectoryMoveRetry(state, operationId);
       return { state, unchanged: true, result: { revision: prior.revision, data: prior.data, replayed: true } };
     }
+    store.requireDirectoryMoveRetry(state);
     const now = new Date().toISOString();
     let task: Task;
     if (request.command === "task add") {
+      requireThat(request.id !== "archive", "INVALID_INPUT", "archive is reserved for completed task directories.");
       requireThat(!Object.hasOwn(state.tasks, request.id!), "ALREADY_EXISTS", "The task ID is already registered.");
       text(request.title, "title"); text(request.description ?? "", "description", true);
       task = { id: request.id!, title: request.title, description: request.description ?? "", state: "pending", version: 1, attempt: 1, dependencies: [], inputs: null, workspace: null, artifacts: [], result: null, reason: "", next: "", createdAt: now, updatedAt: now };
@@ -69,6 +72,7 @@ export async function execute(store: Store, request: Request): Promise<Result> {
       requireThat(task.version === request.ifVersion, "VERSION_CONFLICT", "The task changed. Read it again before choosing a new update.", 3);
     }
     let checkpoint: Data["checkpoint"];
+    let archive: boolean | undefined;
     switch (request.command) {
       case "task add": break;
       case "task update":
@@ -97,10 +101,17 @@ export async function execute(store: Store, request: Request): Promise<Result> {
         requireThat(blocked.length === 0, "STALE_DEPENDENCY", "Dependencies changed: " + blocked.join(", ") + ". Recheck the work in a new attempt.");
         text(request.result, "result");
         task.state = "completed"; task.result = request.result; task.reason = ""; task.next = "";
+        archive = true;
         break;
       }
+      case "task archive":
+        requireThat(task.state === "completed", "INVALID_TRANSITION", "Only completed task documents can be archived.");
+        requireThat(task.archived !== true, "ALREADY_EXISTS", "Task documents are already archived.");
+        archive = true;
+        break;
       case "task reopen":
         requireThat(["waiting", "paused", "completed", "cancelled"].includes(task.state), "INVALID_TRANSITION", "Pause running work before reopening it.");
+        if (task.archived) archive = false;
         text(request.reason, "reason"); task.state = "pending"; task.attempt++; task.inputs = null; task.result = null; task.reason = request.reason; task.next = "";
         break;
       case "dependency add": {
@@ -129,7 +140,7 @@ export async function execute(store: Store, request: Request): Promise<Result> {
       case "artifact add":
         editable(task); identifier(request.childId); reference(request.ref, store.project); text(request.description, "description");
         requireThat(!task.artifacts.some(a => a.id === request.childId), "ALREADY_EXISTS", "The artifact ID already exists; retain it and use a new ID for a new artifact.");
-        task.artifacts.push({ id: request.childId, ref: request.ref, description: request.description, attempt: task.attempt, createdAt: now }); break;
+        task.artifacts.push({ id: request.childId, ref: currentReference(state, request.ref), description: request.description, attempt: task.attempt, createdAt: now }); break;
       case "checkpoint save": {
         identifier(request.childId); text(request.summary, "summary"); text(request.next, "next");
         const key = task.id + "/" + request.childId;
@@ -141,7 +152,13 @@ export async function execute(store: Store, request: Request): Promise<Result> {
       }
       default: throw new TasksError("INVALID_INPUT", "Unknown command.");
     }
-    if (!["task add", "checkpoint save"].includes(request.command)) { task.version++; task.updatedAt = now; }
+    if (archive !== undefined) {
+      const move = await store.planTaskDirectoryMove(state, task.id, archive, operationId);
+      if (move) state.pendingDirectoryMove = move;
+      task.archived = archive;
+      for (const current of Object.values(state.tasks)) for (const artifact of current.artifacts) artifact.ref = currentReference(state, artifact.ref);
+    }
+    if (!["task add", "checkpoint save", "task archive"].includes(request.command)) { task.version++; task.updatedAt = now; }
     const data: Data = { task: structuredClone(task), ...(checkpoint ? { checkpoint } : {}) };
     state.revision++;
     state.operations[operationId] = { id: operationId, hash, actor, command: request.command, taskId: task.id, revision: state.revision, at: now, data };

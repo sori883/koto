@@ -11,6 +11,7 @@ export const help = "koto-tasks — project task records\n\n" +
   "  task update <id> [--title TEXT] [--description TEXT]\n" +
   "  task start <id> [--reason TEXT]\n  task set <id> --state waiting|paused|cancelled --reason TEXT [--next TEXT]\n" +
   "  task complete <id> --result TEXT | task reopen <id> --reason TEXT\n" +
+  "  task archive <id>\n" +
   "  dependency add <id> --on <task-id>\n  dependency remove <id> --on <task-id> --reason TEXT\n" +
   "  workspace link <id> --repo <repository-id> [--repo <repository-id> ...]\n" +
   "  artifact add <id> <artifact-id> --ref REF --description TEXT | artifact list <id>\n" +
@@ -66,6 +67,7 @@ const specs: Record<string, Spec> = {
   "task add": { count: 3, flags: ["title", "description"] }, "task list": { count: 2, flags: ["state", "ready"] }, "task show": { count: 3, flags: [] },
   "task update": { count: 3, flags: ["title", "description"] }, "task start": { count: 3, flags: ["reason"] },
   "task set": { count: 3, flags: ["state", "reason", "next"] }, "task complete": { count: 3, flags: ["result"] }, "task reopen": { count: 3, flags: ["reason"] },
+  "task archive": { count: 3, flags: [] },
   "dependency add": { count: 3, flags: ["on"] }, "dependency remove": { count: 3, flags: ["on", "reason"] },
   "workspace link": { count: 3, flags: ["repo"] }, "artifact add": { count: 4, flags: ["ref", "description"] }, "artifact list": { count: 3, flags: [] },
   "checkpoint save": { count: 4, flags: ["summary", "next"] }, "checkpoint list": { count: 3, flags: [] }, "checkpoint show": { count: 4, flags: [] },

@@ -130,6 +130,22 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   expect((await run(tasks, ["setup", "--root", project, "--json"], project)).code).toBe(0);
   const status = await run(tasks, ["status", "--root", project, "--json"], project);
   expect(status.code).toBe(0); expect(JSON.parse(status.out).data.total).toBe(0);
+  const taskRequest = async (command: string[], fields: Record<string, unknown> = {}) => {
+    const result = await run(tasks, ["--input-json", JSON.stringify({ root: project, command, ...fields })], project);
+    expect(result.code).toBe(0);
+    return JSON.parse(result.out);
+  };
+  await taskRequest(["task", "add", "archive-smoke"], { title: "Archive smoke", operationId: "add-archive-smoke" });
+  const activeDocs = join(project, ".space/default/tasks/archive-smoke");
+  await mkdir(activeDocs, { recursive: true }); await writeFile(join(activeDocs, "task.md"), "Keep task evidence.\n");
+  await taskRequest(["task", "start", "archive-smoke"], { ifVersion: 1, operationId: "start-archive-smoke" });
+  await taskRequest(["task", "complete", "archive-smoke"], { ifVersion: 2, result: "Verified", operationId: "complete-archive-smoke" });
+  const archivedDocs = join(project, ".space/default/tasks/archive/archive-smoke");
+  expect(await readFile(join(archivedDocs, "task.md"), "utf8")).toBe("Keep task evidence.\n");
+  expect(await Bun.file(join(activeDocs, "task.md")).exists()).toBe(false);
+  await taskRequest(["task", "reopen", "archive-smoke"], { ifVersion: 3, reason: "Resume", operationId: "reopen-archive-smoke" });
+  expect(await readFile(join(activeDocs, "task.md"), "utf8")).toBe("Keep task evidence.\n");
+  expect(await Bun.file(join(archivedDocs, "task.md")).exists()).toBe(false);
   const recorded = await run(okf, ["search", "--root", project, "--for-path", "src/retry.ts", "--record-usage", "--usage-source", "devlow", "--json"], project);
   expect(recorded.code).toBe(0);
   const usage = await run(okf, ["usage", "stats", "--root", project, "--json"], project);

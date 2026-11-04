@@ -8,13 +8,16 @@ export type Task = {
   dependencies: string[]; inputs: Record<string, number> | null;
   workspace: { taskId: string; repositoryIds: string[] } | null;
   artifacts: Artifact[]; result: string | null; reason: string; next: string; createdAt: string; updatedAt: string;
+  archived?: boolean;
 };
+export type DirectoryMove = { taskId: string; operationId: string; archive: boolean; device: string; inode: string };
 export type Checkpoint = { id: string; taskId: string; taskVersion: number; summary: string; next: string; createdAt: string; snapshot: Task };
 export type Data = { task: Task; checkpoint?: Checkpoint };
 export type Operation = { id: string; hash: string; actor: string; command: string; taskId: string; revision: number; at: string; data: Data };
 export type State = {
   schemaVersion: 1; projectId: string; storeId: string; revision: number;
   tasks: Record<string, Task>; checkpoints: Record<string, Checkpoint>; operations: Record<string, Operation>;
+  pendingDirectoryMove?: DirectoryMove;
 };
 export type Request = {
   command: string; id?: string; childId?: string; operationId?: string; ifVersion?: number; actor?: string;
@@ -67,10 +70,11 @@ export function reference(value: unknown, project: string, code = "INVALID_INPUT
 }
 export function validateTask(value: unknown, project: string): asserts value is Task {
   object(value);
-  keys(value, ["id", "title", "description", "state", "version", "attempt", "dependencies", "inputs", "workspace", "artifacts", "result", "reason", "next", "createdAt", "updatedAt"]);
+  keys(value, ["id", "title", "description", "state", "version", "attempt", "dependencies", "inputs", "workspace", "artifacts", "result", "reason", "next", "createdAt", "updatedAt"], ["archived"]);
   identifier(value.id, "INVALID_STATE"); text(value.title, "title", false, "INVALID_STATE");
   for (const key of ["description", "reason", "next"]) text(value[key], key, true, "INVALID_STATE");
   requireThat(STATES.includes(value.state as Progress), "INVALID_STATE", "Unknown task state.");
+  if (value.archived !== undefined) requireThat(typeof value.archived === "boolean" && (!value.archived || value.state === "completed" && value.id !== "archive"), "INVALID_STATE", "Only completed task documents can be archived.");
   number(value.version); number(value.attempt); ids(value.dependencies);
   requireThat(!value.dependencies.includes(value.id), "INVALID_STATE", "A task cannot depend on itself.");
   if (value.inputs !== null) {
@@ -107,7 +111,7 @@ function checkpoint(value: unknown, project: string): asserts value is Checkpoin
   requireThat(value.snapshot.id === value.taskId && value.snapshot.version === value.taskVersion, "INVALID_STATE", "Checkpoint snapshot identity mismatch.");
 }
 export function validateState(value: unknown, project: string): State {
-  object(value); keys(value, ["schemaVersion", "projectId", "storeId", "revision", "tasks", "checkpoints", "operations"]);
+  object(value); keys(value, ["schemaVersion", "projectId", "storeId", "revision", "tasks", "checkpoints", "operations"], ["pendingDirectoryMove"]);
   requireThat(value.schemaVersion === 1 && value.projectId === project, "INVALID_STATE", "Unsupported schema or project identity mismatch.");
   identifier(project, "INVALID_STATE"); text(value.storeId, "storeId", false, "INVALID_STATE"); number(value.revision, "INVALID_STATE", true);
   object(value.tasks); object(value.checkpoints); object(value.operations);
@@ -143,7 +147,30 @@ export function validateState(value: unknown, project: string): State {
     }
   }
   requireThat(revisions.size === state.revision, "INVALID_STATE", "Incomplete operation history.");
+  if (value.pendingDirectoryMove !== undefined) {
+    const move = value.pendingDirectoryMove;
+    object(move); keys(move, ["taskId", "operationId", "archive", "device", "inode"]);
+    identifier(move.taskId, "INVALID_STATE"); identifier(move.operationId, "INVALID_STATE");
+    requireThat(move.taskId !== "archive" && typeof move.archive === "boolean", "INVALID_STATE", "Invalid task directory move.");
+    for (const field of [move.device, move.inode]) requireThat(typeof field === "string" && /^[0-9]+$/.test(field), "INVALID_STATE", "Invalid directory identity.");
+    const op = state.operations[move.operationId], task = state.tasks[move.taskId];
+    requireThat(op && task && op.taskId === task.id && op.revision === state.revision && op.data.task.archived === move.archive && task.archived === move.archive && (move.archive ? ["task complete", "task archive"] : ["task reopen"]).includes(op.command), "INVALID_STATE", "Directory move does not match the saved operation.");
+  }
   return state;
+}
+
+export function taskDirectory(project: string, id: string, archive: boolean) {
+  return ".space/" + project + "/tasks/" + (archive ? "archive/" : "") + id;
+}
+export function currentReference(state: State, ref: string): string {
+  const prefix = ".space/" + state.projectId + "/tasks/";
+  if (!ref.startsWith(prefix)) return ref;
+  const parts = ref.slice(prefix.length).split("/"), archive = parts[0] === "archive";
+  const id = parts[archive ? 1 : 0];
+  if (!id || !Object.hasOwn(state.tasks, id)) return ref;
+  const task = state.tasks[id]!;
+  if (task.archived === undefined || task.archived === archive) return ref;
+  return taskDirectory(state.projectId, id, task.archived) + ref.slice(taskDirectory(state.projectId, id, archive).length);
 }
 
 export function blockers(state: State, task: Task): string[] {
@@ -158,5 +185,5 @@ export function blockers(state: State, task: Task): string[] {
 }
 export function describe(state: State, task: Task) {
   const blockedBy = blockers(state, task);
-  return { task, blockedBy, ready: task.state === "pending" && blockedBy.length === 0, completionCurrent: task.state === "completed" && blockedBy.length === 0 };
+  return { task, blockedBy, ready: task.state === "pending" && blockedBy.length === 0, completionCurrent: task.state === "completed" && blockedBy.length === 0, ...(state.pendingDirectoryMove?.taskId === task.id ? { pendingDirectoryMove: state.pendingDirectoryMove } : {}) };
 }

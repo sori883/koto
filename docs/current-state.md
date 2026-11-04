@@ -2,6 +2,8 @@
 
 この資料の旧orch・旧Memory・Babelの説明は移行前の記録。2026-11-01のmain向けTasks・Memory移植の状態は[取り込み記録](main-tasks-memory-port.md)を参照する。
 
+2026-11-04の完了タスク資料の自動アーカイブは[変更記録](tasks-archive.md)を参照する。
+
 kotoは、開発作業のフロー、タスク台帳、知識管理、プロジェクトへの導入をCodex・Claude Code・GitHub Copilot in VS Codeへ配布するプラグインである。CopilotはClaude形式の配布物を共用する。目的と配置方針の正本は[architecture.md](architecture.md)、導入・生成方法は[distribution.md](distribution.md)に置く。
 
 2026-10-30時点の作業ツリーを対象とする。ローカル版数は0.1.8で、natural-japaneseの原版への置換、yomiyasu、全スキルのプロジェクト導入を含む。これらはリモート未公開であり、手元のorigin/mainは25スキルを含む0.1.7を指している。名称・配布IDはkoto。0.1.7のexplain-before-shortenと、0.1.6の共通原則の関連リンク・新規導入後のstrict検証の修正を保持している。以下はローカル実装の状態であり、最新変更のmainへの公開やリモートCIの成功を意味しない。今回の確認は[ローカル変更の反映記録](local-plugin-update-2026-10-30.md)、詳細な検証結果は[原則の関連付け](principle-relationships.md)、[改名記録](rename-koto.md)、[配布の実装記録](distribution-implementation.md)、[Copilot対応記録](copilot-support.md)、[Babel統合の記録](babel-distribution.md)、[pstackスキルの採用記録](skills/pstack-adoption.md)、[natural-japaneseの取込記録](skills/natural-japanese/upstream-import.md)、[yomiyasuの取込記録](skills/yomiyasu/upstream-import.md)、[explain-before-shortenの取込記録](skills/explain-before-shorten/upstream-import.md)を参照する。
