@@ -29,8 +29,19 @@ CLIを使わずスキルが移動する案では、CLIだけの利用時に配�
 - `bun run test`：320テスト、0失敗。Codex・Claude Code・Copilot向け配布物をリポジトリ外へコピーし、そのCLIで資料の自動移動と復元を確認。
 - `bun run typecheck`、`bun run build`、`bun run build:check`、`git diff --check`：成功。生成した388ファイルがソースと一致。
 
-この記録はローカルの実装・検証結果であり、mainへのマージ、公開、利用先のインストール更新は未実施。
+以上は公開前のローカル検証結果。公開とこのMacへの導入結果は以下に記録する。
 
-## 0.1.10の公開準備
+## 0.1.10の公開とMacへの導入
 
-同日、ユーザーからmainへのマージとこのMacへの反映を依頼された。ルート・Tasks・Memoryの版数を0.1.10へ揃え、製品別配布物とカタログを再生成する。対象はこのMacに導入済みのCodexプラグインkoto@kotoとし、既存のGitマーケットプレイスから公開版を取得する。PRとmainのCI、公開物とインストールしたファイルの一致、導入済みCLIによる完了時の移動・再開時の復元を確認する。
+同日、ユーザーからmainへのマージとこのMacへの反映を依頼された。ルート・Tasks・Memoryの版数を0.1.10へ揃え、製品別配布物とカタログを再生成した。版数更新後も全320テスト、型検査、配布物照合が成功した。
+
+[PR #33](https://github.com/sori883/koto/pull/33)の[CI](https://github.com/sori883/koto/actions/runs/41786585305)成功後にmainへマージした。マージコミットは `d4ccdbebac1dcdef3b65dbd86a57bbc59bd386e8`。[マージ後のCI](https://github.com/sori883/koto/actions/runs/41786737334)も成功した。
+
+Macでは[公式CLIのプラグイン操作](https://learn.chatgpt.com/docs/developer-commands#codex-plugin)を使い、既存のkotoマーケットプレイスをupgradeし、koto@kotoをaddした。取得元のコミットは上記のマージコミットと一致した。
+
+- 導入先：`~/.codex/plugins/cache/koto/koto/0.1.10`。
+- 配布物の全192ファイルとのバイト一致、28スキル、installed・enabledを確認。
+- 導入済みCLIをリポジトリ外の一時プロジェクトで実行し、完了時の資料移動、再開時の復元、成果物参照の往復、履歴の保持、doctorの正常結果を確認。
+- Memory CLIの版数0.1.10と、`~/.codex/config.toml`の更新前後の一致を確認。
+
+既存プロジェクトへのsetup適用や、過去に完了したタスクの一括アーカイブは行っていない。既存チャットのスキル一覧の再読込も検証対象に含めず、新しいチャットで新版を利用する。

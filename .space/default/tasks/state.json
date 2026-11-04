@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "projectId": "default",
   "storeId": "cc25d939-1113-47ff-b958-628dcd398fcc",
-  "revision": 12,
+  "revision": 14,
   "tasks": {
     "improve-decision-records": {
       "id": "improve-decision-records",
@@ -40,8 +40,8 @@
       "id": "archive-completed-task-folders",
       "title": "完了タスクの資料フォルダを自動アーカイブする",
       "description": "task completeで標準の資料フォルダをtasks/archiveへ移し、reopenで復元する。登録済みの成果物参照、履歴、途中失敗の再実行、既存完了タスクの明示的な移動を扱い、設計・利用手順・配布物を更新して検証する。",
-      "state": "running",
-      "version": 5,
+      "state": "completed",
+      "version": 7,
       "attempt": 1,
       "dependencies": [],
       "inputs": {},
@@ -53,13 +53,21 @@
           "description": "完了タスク資料の配置、移動途中の復旧、互換性とローカル検証結果",
           "attempt": 1,
           "createdAt": "2026-11-04T06:20:39.305Z"
+        },
+        {
+          "id": "pull-request",
+          "ref": "https://github.com/sori883/koto/pull/33",
+          "description": "0.1.10の自動アーカイブをmainへマージしたPR",
+          "attempt": 1,
+          "createdAt": "2026-11-04T06:37:41.166Z"
         }
       ],
-      "result": null,
-      "reason": "ユーザーがmainへのマージとこのMacへの反映を依頼したため、公開と導入を進める。",
+      "result": "PR #33をmainへマージし、PRとマージ後のCI成功を確認。0.1.10をこのMacのCodexへ導入し、公開版192ファイルとの一致、28スキル、installed/enabled、既存設定の保持、導入済みCLIによる完了時の資料移動・再開時の復元・参照更新・履歴保持・doctor正常を確認した。",
+      "reason": "",
       "next": "",
       "createdAt": "2026-11-04T06:11:50.570Z",
-      "updatedAt": "2026-11-04T06:33:47.540Z"
+      "updatedAt": "2026-11-04T06:39:34.931Z",
+      "archived": true
     }
   },
   "checkpoints": {},
@@ -475,6 +483,93 @@
           "next": "",
           "createdAt": "2026-11-04T06:11:50.570Z",
           "updatedAt": "2026-11-04T06:33:47.540Z"
+        }
+      }
+    },
+    "record-task-folder-archive-pr-20261104": {
+      "id": "record-task-folder-archive-pr-20261104",
+      "hash": "3eff3e8117ae11f76c12b41f7020480b9fbff4b576f13b5e733fd5713d370a4e",
+      "actor": "unspecified",
+      "command": "artifact add",
+      "taskId": "archive-completed-task-folders",
+      "revision": 13,
+      "at": "2026-11-04T06:37:41.166Z",
+      "data": {
+        "task": {
+          "id": "archive-completed-task-folders",
+          "title": "完了タスクの資料フォルダを自動アーカイブする",
+          "description": "task completeで標準の資料フォルダをtasks/archiveへ移し、reopenで復元する。登録済みの成果物参照、履歴、途中失敗の再実行、既存完了タスクの明示的な移動を扱い、設計・利用手順・配布物を更新して検証する。",
+          "state": "running",
+          "version": 6,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "archive-design",
+              "ref": "docs/tasks-archive.md",
+              "description": "完了タスク資料の配置、移動途中の復旧、互換性とローカル検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-04T06:20:39.305Z"
+            },
+            {
+              "id": "pull-request",
+              "ref": "https://github.com/sori883/koto/pull/33",
+              "description": "0.1.10の自動アーカイブをmainへマージしたPR",
+              "attempt": 1,
+              "createdAt": "2026-11-04T06:37:41.166Z"
+            }
+          ],
+          "result": null,
+          "reason": "ユーザーがmainへのマージとこのMacへの反映を依頼したため、公開と導入を進める。",
+          "next": "",
+          "createdAt": "2026-11-04T06:11:50.570Z",
+          "updatedAt": "2026-11-04T06:37:41.166Z"
+        }
+      }
+    },
+    "complete-task-folder-archive-release-20261104": {
+      "id": "complete-task-folder-archive-release-20261104",
+      "hash": "f0e6c225372bef33f9f927b61a1f19a17cdf3d55b608fcd08f4001bb9df4b201",
+      "actor": "unspecified",
+      "command": "task complete",
+      "taskId": "archive-completed-task-folders",
+      "revision": 14,
+      "at": "2026-11-04T06:39:34.931Z",
+      "data": {
+        "task": {
+          "id": "archive-completed-task-folders",
+          "title": "完了タスクの資料フォルダを自動アーカイブする",
+          "description": "task completeで標準の資料フォルダをtasks/archiveへ移し、reopenで復元する。登録済みの成果物参照、履歴、途中失敗の再実行、既存完了タスクの明示的な移動を扱い、設計・利用手順・配布物を更新して検証する。",
+          "state": "completed",
+          "version": 7,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "archive-design",
+              "ref": "docs/tasks-archive.md",
+              "description": "完了タスク資料の配置、移動途中の復旧、互換性とローカル検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-04T06:20:39.305Z"
+            },
+            {
+              "id": "pull-request",
+              "ref": "https://github.com/sori883/koto/pull/33",
+              "description": "0.1.10の自動アーカイブをmainへマージしたPR",
+              "attempt": 1,
+              "createdAt": "2026-11-04T06:37:41.166Z"
+            }
+          ],
+          "result": "PR #33をmainへマージし、PRとマージ後のCI成功を確認。0.1.10をこのMacのCodexへ導入し、公開版192ファイルとの一致、28スキル、installed/enabled、既存設定の保持、導入済みCLIによる完了時の資料移動・再開時の復元・参照更新・履歴保持・doctor正常を確認した。",
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-04T06:11:50.570Z",
+          "updatedAt": "2026-11-04T06:39:34.931Z",
+          "archived": true
         }
       }
     }
