@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "projectId": "default",
   "storeId": "cc25d939-1113-47ff-b958-628dcd398fcc",
-  "revision": 20,
+  "revision": 24,
   "tasks": {
     "improve-decision-records": {
       "id": "improve-decision-records",
@@ -73,18 +73,35 @@
       "id": "task-markdown-status",
       "title": "Tasksの状態表示と親子管理を整える",
       "description": "Tasksの状態をMarkdownに出力し、1件の依頼に属する子タスクを親のtasks.mdで確認できるようにする。親の完了時に資料一式を .archive に移し、再開時に復元する。既存データと配布版での動作も確認する。",
-      "state": "waiting",
-      "version": 6,
+      "state": "completed",
+      "version": 10,
       "attempt": 1,
       "dependencies": [],
       "inputs": {},
       "workspace": null,
-      "artifacts": [],
-      "result": null,
-      "reason": "状態表示と親子タスク管理の実装・検証を完了した。配布版を含む全329テスト成功。mainへの取り込み待ち。",
-      "next": "mainに取り込まれたら完了を記録する。",
+      "artifacts": [
+        {
+          "id": "pull-request",
+          "ref": "https://github.com/sori883/koto/pull/34",
+          "description": "Koto 0.1.11の変更をmainに取り込んだPR",
+          "attempt": 1,
+          "createdAt": "2026-11-10T04:14:40.132Z"
+        },
+        {
+          "id": "main-ci",
+          "ref": "https://github.com/sori883/koto/actions/runs/42754444352",
+          "description": "Koto 0.1.11のマージ後の配布検証",
+          "attempt": 1,
+          "createdAt": "2026-11-10T04:14:40.150Z"
+        }
+      ],
+      "result": "PR #34をmainへマージし、全329テストとマージ後のCIの成功を確認した。このMacのCodexでKoto 0.1.11を有効化し、公開版と全193ファイルが一致することを確認した。導入済みCLIで子の登録、親のtasks.mdへの反映、子の資料と成果物参照を含むアーカイブと復元、doctorの正常結果を確認した。",
+      "reason": "",
+      "next": "",
       "createdAt": "2026-11-10T02:12:14.109Z",
-      "updatedAt": "2026-11-10T02:31:37.670Z"
+      "updatedAt": "2026-11-10T04:14:40.166Z",
+      "archived": true,
+      "archiveRoot": ".archive"
     }
   },
   "checkpoints": {},
@@ -755,6 +772,158 @@
           "next": "mainに取り込まれたら完了を記録する。",
           "createdAt": "2026-11-10T02:12:14.109Z",
           "updatedAt": "2026-11-10T02:31:37.670Z"
+        }
+      }
+    },
+    "release-task-hierarchy": {
+      "id": "release-task-hierarchy",
+      "hash": "f69c7875313a13c759a5f7aee9507c7c374831a1b8ec8647e515dfd78a91b7dc",
+      "actor": "unspecified",
+      "command": "task start",
+      "taskId": "task-markdown-status",
+      "revision": 21,
+      "at": "2026-11-10T04:14:40.110Z",
+      "data": {
+        "task": {
+          "id": "task-markdown-status",
+          "title": "Tasksの状態表示と親子管理を整える",
+          "description": "Tasksの状態をMarkdownに出力し、1件の依頼に属する子タスクを親のtasks.mdで確認できるようにする。親の完了時に資料一式を .archive に移し、再開時に復元する。既存データと配布版での動作も確認する。",
+          "state": "running",
+          "version": 7,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "mainへの取り込みとこのMacへの反映を確認した。",
+          "next": "",
+          "createdAt": "2026-11-10T02:12:14.109Z",
+          "updatedAt": "2026-11-10T04:14:40.110Z"
+        }
+      }
+    },
+    "record-task-hierarchy-pr": {
+      "id": "record-task-hierarchy-pr",
+      "hash": "7c4b34492322653f13016cb923ef9295965135c65371ec3c05813f6694a70668",
+      "actor": "unspecified",
+      "command": "artifact add",
+      "taskId": "task-markdown-status",
+      "revision": 22,
+      "at": "2026-11-10T04:14:40.132Z",
+      "data": {
+        "task": {
+          "id": "task-markdown-status",
+          "title": "Tasksの状態表示と親子管理を整える",
+          "description": "Tasksの状態をMarkdownに出力し、1件の依頼に属する子タスクを親のtasks.mdで確認できるようにする。親の完了時に資料一式を .archive に移し、再開時に復元する。既存データと配布版での動作も確認する。",
+          "state": "running",
+          "version": 8,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "pull-request",
+              "ref": "https://github.com/sori883/koto/pull/34",
+              "description": "Koto 0.1.11の変更をmainに取り込んだPR",
+              "attempt": 1,
+              "createdAt": "2026-11-10T04:14:40.132Z"
+            }
+          ],
+          "result": null,
+          "reason": "mainへの取り込みとこのMacへの反映を確認した。",
+          "next": "",
+          "createdAt": "2026-11-10T02:12:14.109Z",
+          "updatedAt": "2026-11-10T04:14:40.132Z"
+        }
+      }
+    },
+    "record-task-hierarchy-ci": {
+      "id": "record-task-hierarchy-ci",
+      "hash": "664aace107c1fe4ccc4ae892dbd3b4dad34e04fea852855091aa76df870e831f",
+      "actor": "unspecified",
+      "command": "artifact add",
+      "taskId": "task-markdown-status",
+      "revision": 23,
+      "at": "2026-11-10T04:14:40.150Z",
+      "data": {
+        "task": {
+          "id": "task-markdown-status",
+          "title": "Tasksの状態表示と親子管理を整える",
+          "description": "Tasksの状態をMarkdownに出力し、1件の依頼に属する子タスクを親のtasks.mdで確認できるようにする。親の完了時に資料一式を .archive に移し、再開時に復元する。既存データと配布版での動作も確認する。",
+          "state": "running",
+          "version": 9,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "pull-request",
+              "ref": "https://github.com/sori883/koto/pull/34",
+              "description": "Koto 0.1.11の変更をmainに取り込んだPR",
+              "attempt": 1,
+              "createdAt": "2026-11-10T04:14:40.132Z"
+            },
+            {
+              "id": "main-ci",
+              "ref": "https://github.com/sori883/koto/actions/runs/42754444352",
+              "description": "Koto 0.1.11のマージ後の配布検証",
+              "attempt": 1,
+              "createdAt": "2026-11-10T04:14:40.150Z"
+            }
+          ],
+          "result": null,
+          "reason": "mainへの取り込みとこのMacへの反映を確認した。",
+          "next": "",
+          "createdAt": "2026-11-10T02:12:14.109Z",
+          "updatedAt": "2026-11-10T04:14:40.150Z"
+        }
+      }
+    },
+    "complete-task-hierarchy": {
+      "id": "complete-task-hierarchy",
+      "hash": "6ee361fb2a3e3f20c36930e434ca773cecd2563abd2e885ccedb68bd923b20b2",
+      "actor": "unspecified",
+      "command": "task complete",
+      "taskId": "task-markdown-status",
+      "revision": 24,
+      "at": "2026-11-10T04:14:40.166Z",
+      "data": {
+        "task": {
+          "id": "task-markdown-status",
+          "title": "Tasksの状態表示と親子管理を整える",
+          "description": "Tasksの状態をMarkdownに出力し、1件の依頼に属する子タスクを親のtasks.mdで確認できるようにする。親の完了時に資料一式を .archive に移し、再開時に復元する。既存データと配布版での動作も確認する。",
+          "state": "completed",
+          "version": 10,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "pull-request",
+              "ref": "https://github.com/sori883/koto/pull/34",
+              "description": "Koto 0.1.11の変更をmainに取り込んだPR",
+              "attempt": 1,
+              "createdAt": "2026-11-10T04:14:40.132Z"
+            },
+            {
+              "id": "main-ci",
+              "ref": "https://github.com/sori883/koto/actions/runs/42754444352",
+              "description": "Koto 0.1.11のマージ後の配布検証",
+              "attempt": 1,
+              "createdAt": "2026-11-10T04:14:40.150Z"
+            }
+          ],
+          "result": "PR #34をmainへマージし、全329テストとマージ後のCIの成功を確認した。このMacのCodexでKoto 0.1.11を有効化し、公開版と全193ファイルが一致することを確認した。導入済みCLIで子の登録、親のtasks.mdへの反映、子の資料と成果物参照を含むアーカイブと復元、doctorの正常結果を確認した。",
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-10T02:12:14.109Z",
+          "updatedAt": "2026-11-10T04:14:40.166Z",
+          "archived": true,
+          "archiveRoot": ".archive"
         }
       }
     }
