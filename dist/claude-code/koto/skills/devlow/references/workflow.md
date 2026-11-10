@@ -116,11 +116,11 @@ recallによる状況説明、CLIの操作成功、タスクのcompleted、成�
 
 ### タスクの状態と成果物
 
-最新の状態・version・attempt・依存・成果物参照はTasksの記録を正本とする。説明や計画が長い場合だけtask.md等の資料へ分け、Tasksのartifactから参照する。Markdownへ第二の最新状態を維持しない。
+最新の状態・version・attempt・依存・成果物参照はTasksの記録を正本とする。最上位タスクのtasks.mdで親子の進捗を確認できる。説明や計画が長い場合だけtask.md等の資料へ分け、Tasksのartifactから参照する。
 
-新しい資料の保存先は、指定がなければ `.space/<project>/tasks/<task-id>/`。task.md、design.md、plan.md、verification.md等を必要な分だけ置く。Tasks CLIは成果物本文を保存しないため、担当がファイルを作成・確認してから参照を登録する。[タスク記録](../assets/task-template.md)・[設計](../assets/design-template.md)・[計画](../assets/plan-template.md)・[検証](../assets/verification-template.md)のひな形は必要な節だけ使う。
+新しい資料の保存先は、指定がなければ最上位タスクの `.space/<project>/tasks/<task-id>/`。子専用の資料はその下の `children/<child-id>/` に置く。task.md、design.md、plan.md、verification.md等は、担当が必要な分だけ作成・確認して参照を登録する。[タスク記録](../assets/task-template.md)・[設計](../assets/design-template.md)・[計画](../assets/plan-template.md)・[検証](../assets/verification-template.md)のひな形は必要な節だけ使う。
 
-完了時はTasks CLIがこの資料フォルダを `.space/<project>/tasks/archive/<task-id>/` へ移し、reopenで元に戻す。移動後はTasksの現在の成果物参照を使い、本文のリンクも確認する。別の保存先の成果物とcheckpointは移動しない。詳しい対象・衝突・途中失敗の扱いは[tasks](../../tasks/SKILL.md)を参照する。
+最上位タスクの完了時はTasks CLIが子の資料を含むフォルダ一式を `.space/<project>/tasks/.archive/<task-id>/` へ移し、reopenで元に戻す。移動後はTasksの現在の成果物参照を使い、本文のリンクも確認する。別の保存先の成果物とcheckpointは移動しない。詳しい対象・衝突・途中失敗の扱いは[tasks](../../tasks/SKILL.md)を参照する。
 
 ### 中断と再開
 

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "plugin": "koto",
   "product": "claude-code",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "scope": "project",
   "files": [
     {
@@ -293,6 +293,11 @@
     {
       "source": "cli/tasks/lib/store.ts",
       "destination": ".claude/cli/tasks/lib/store.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "cli/tasks/lib/summary.ts",
+      "destination": ".claude/cli/tasks/lib/summary.ts",
       "mode": "copy"
     },
     {
