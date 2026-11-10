@@ -33,7 +33,7 @@ async function document(project = "default") {
 
 test("complete archives task documents and current references; reopen restores them without rewriting history", async () => {
   await running();
-  const active = await document(), archived = join(root, ".space/default/tasks/archive/job");
+  const active = await document(), archived = join(root, ".space/default/tasks/.archive/job");
   await run(["artifact", "add", "job", "report"], { ifVersion: 2, ref: ".space/default/tasks/job/task.md", description: "Report", operationId: "report" });
   await run(["artifact", "add", "job", "external"], { ifVersion: 3, ref: "docs/report.md", description: "External document", operationId: "external" });
   await run(["checkpoint", "save", "job", "before"], { ifVersion: 4, summary: "Before completion", next: "Complete", operationId: "checkpoint" });
@@ -42,17 +42,19 @@ test("complete archives task documents and current references; reopen restores t
   await run(["artifact", "add", "reader", "input"], { ifVersion: 1, ref: ".space/default/tasks/job/evidence/result.txt", description: "Input", operationId: "reader-input" });
   const done = await run(["task", "complete", "job"], { ...complete, ifVersion: 4 });
   expect(done.data.task).toMatchObject({ state: "completed", archived: true, version: 5 });
+  expect(await readFile(join(archived, "tasks.md"), "utf8")).toContain("完了（completed）");
   expect(await Bun.file(join(archived, "evidence/result.txt")).text()).toBe("Evidence\n");
   expect(await readdir(join(root, ".space/default/tasks"))).not.toContain("job");
-  expect((await run(["artifact", "list", "job"])).data.map((a: { ref: string }) => a.ref)).toEqual([".space/default/tasks/archive/job/task.md", "docs/report.md"]);
-  expect((await run(["task", "show", "reader"])).data.task).toMatchObject({ version: 2, artifacts: [{ ref: ".space/default/tasks/archive/job/evidence/result.txt" }] });
+  expect((await run(["artifact", "list", "job"])).data.map((a: { ref: string }) => a.ref)).toEqual([".space/default/tasks/.archive/job/task.md", "docs/report.md"]);
+  expect((await run(["task", "show", "reader"])).data.task).toMatchObject({ version: 2, artifacts: [{ ref: ".space/default/tasks/.archive/job/evidence/result.txt" }] });
   await run(["artifact", "add", "reader", "late"], { ifVersion: 2, ref: ".space/default/tasks/job/task.md", description: "Late reference", operationId: "late-ref" });
-  expect((await run(["artifact", "list", "reader"])).data[1].ref).toBe(".space/default/tasks/archive/job/task.md");
+  expect((await run(["artifact", "list", "reader"])).data[1].ref).toBe(".space/default/tasks/.archive/job/task.md");
   expect(await readFile(checkpointPath, "utf8")).toBe(checkpoint);
   expect((await run(["history", "job"])).data.find((op: { id: string }) => op.id === "report").data.task.artifacts[0].ref).toBe(".space/default/tasks/job/task.md");
   await run(["task", "reopen", "job"], { ifVersion: 5, reason: "Follow-up", operationId: "reopen" });
   expect(await readFile(join(active, "task.md"), "utf8")).toBe("# Task\n[Evidence](evidence/result.txt)\n");
-  expect(await readdir(join(root, ".space/default/tasks/archive"))).not.toContain("job");
+  expect(await readFile(join(active, "tasks.md"), "utf8")).toContain("Follow-up");
+  expect(await readdir(join(root, ".space/default/tasks/.archive"))).not.toContain("job");
   expect((await run(["artifact", "list", "reader"])).data[0].ref).toBe(".space/default/tasks/job/evidence/result.txt");
   expect((await run(["task", "complete", "job"], { ...complete, ifVersion: 4 })).replayed).toBe(true);
   expect(await Bun.file(join(active, "task.md")).exists()).toBe(true);
@@ -63,19 +65,20 @@ test("complete archives task documents and current references; reopen restores t
   expect((await run(["doctor"])).data.healthy).toBe(true);
 });
 
-test("completion without documents creates no folder, and cancellation leaves documents active", async () => {
+test("completion archives even a task with no hand-written documents, and cancellation keeps it active", async () => {
   await running();
   await run(["task", "complete", "job"], complete);
-  expect(await readdir(join(root, ".space/default/tasks"))).toEqual(["state.json"]);
+  const archived = join(root, ".space/default/tasks/.archive/job/tasks.md");
+  expect(await readFile(archived, "utf8")).toContain("Done");
   await run(["task", "reopen", "job"], { ifVersion: 3, reason: "Retry", operationId: "reopen" });
-  const active = await document();
   await run(["task", "set", "job"], { ifVersion: 4, state: "cancelled", reason: "Cancelled", operationId: "cancel" });
-  expect(await Bun.file(join(active, "task.md")).exists()).toBe(true);
+  expect(await Bun.file(archived).exists()).toBe(false);
+  expect(await readFile(join(root, ".space/default/tasks/job/tasks.md"), "utf8")).toContain("中止（cancelled）");
 });
 
 test("folder collisions and symlinks fail before completion and preserve both locations", async () => {
   await running();
-  const active = await document(), archive = join(root, ".space/default/tasks/archive");
+  const active = await document(), archive = join(root, ".space/default/tasks/.archive");
   await mkdir(join(archive, "job"), { recursive: true });
   const before = await readFile(join(root, ".space/default/tasks/state.json"), "utf8");
   expect((await run(["task", "complete", "job"], complete, 2)).error.code).toBe("TASK_DIRECTORY_CONFLICT");
@@ -107,7 +110,7 @@ test("unfinished moves are diagnosed, block other writes and resume only with th
   expect((await run(["task", "complete", "job"], { ...complete, result: "Different" }, 2)).error.code).toBe("OPERATION_CONFLICT");
   const replay = await run(["task", "complete", "job"], complete);
   expect(replay.replayed).toBe(true);
-  expect(await Bun.file(join(root, ".space/default/tasks/archive/job/task.md")).exists()).toBe(true);
+  expect(await Bun.file(join(root, ".space/default/tasks/.archive/job/task.md")).exists()).toBe(true);
   expect((await run(["history", "job"])).data).toHaveLength(3);
   expect((await run(["doctor"])).data.healthy).toBe(true);
 });
@@ -117,7 +120,7 @@ test("retry after a successful rename and interrupted final save does not move a
   const store = await Store.open(root, "default"), original = store.moveTaskDirectory.bind(store);
   store.moveTaskDirectory = async move => { await original(move); throw new Error("Interrupted after rename"); };
   await expect(execute(store, { command: "task complete", id: "job", ...complete })).rejects.toThrow();
-  expect(await Bun.file(join(root, ".space/default/tasks/archive/job/task.md")).exists()).toBe(true);
+  expect(await Bun.file(join(root, ".space/default/tasks/.archive/job/task.md")).exists()).toBe(true);
   expect((await run(["task", "complete", "job"], complete)).replayed).toBe(true);
   expect((await run(["doctor"])).data.healthy).toBe(true);
 });
@@ -126,8 +129,11 @@ test("archive is explicit for legacy completed tasks and does not invalidate dep
   await running();
   await run(["task", "complete", "job"], complete);
   const statePath = join(root, ".space/default/tasks/state.json"), state = JSON.parse(await readFile(statePath, "utf8"));
+  await rename(join(root, ".space/default/tasks/.archive/job"), join(root, ".space/default/tasks/job"));
   delete state.tasks.job.archived;
+  delete state.tasks.job.archiveRoot;
   delete state.operations[complete.operationId].data.task.archived;
+  delete state.operations[complete.operationId].data.task.archiveRoot;
   await writeFile(statePath, JSON.stringify(state));
   const active = await document();
   await run(["setup"]);
@@ -140,14 +146,14 @@ test("archive is explicit for legacy completed tasks and does not invalidate dep
   const archived = await run(["task", "archive", "job"], { ifVersion: 3, operationId: "archive-job" });
   expect(archived.data.task).toMatchObject({ archived: true, version: 3, state: "completed" });
   await run(["task", "complete", "next"], { ifVersion: 3, result: "Next done", operationId: "complete-next" });
-  expect(await Bun.file(join(root, ".space/default/tasks/archive/job/task.md")).exists()).toBe(true);
+  expect(await Bun.file(join(root, ".space/default/tasks/.archive/job/task.md")).exists()).toBe(true);
 });
 
 test("projects stay isolated and archive cannot be used as a new task ID", async () => {
   await running("client");
   await document("client"); await document("default");
   await run(["task", "complete", "job"], { ...complete, project: "client" });
-  expect(await Bun.file(join(root, ".space/client/tasks/archive/job/task.md")).exists()).toBe(true);
+  expect(await Bun.file(join(root, ".space/client/tasks/.archive/job/task.md")).exists()).toBe(true);
   expect(await Bun.file(join(root, ".space/default/tasks/job/task.md")).exists()).toBe(true);
   expect((await run(["task", "add", "archive"], { project: "client", title: "Reserved", operationId: "reserved" }, 2)).error.code).toBe("INVALID_INPUT");
 });
@@ -183,7 +189,7 @@ test("recovery rejects a replacement folder and corrupt move records without los
   expect(await readFile(join(active, "new.txt"), "utf8")).toBe("keep");
   expect(await readFile(store.path, "utf8")).toBe(saved);
   await rm(active, { recursive: true }); await rename(parked, active);
-  for (const change of [{ taskId: "../outside" }, { archive: false }, { operationId: "start-job" }, { inode: "invalid" }]) {
+  for (const change of [{ taskId: "../outside" }, { archive: false }, { archiveRoot: "../outside" }, { operationId: "start-job" }, { inode: "invalid" }]) {
     const state = JSON.parse(saved);
     Object.assign(state.pendingDirectoryMove, change);
     const invalid = JSON.stringify(state); await writeFile(store.path, invalid);
@@ -196,14 +202,43 @@ test("recovery rejects a replacement folder and corrupt move records without los
   expect((await run(["doctor"])).data.healthy).toBe(true);
 });
 
-test("legacy archive task IDs remain readable and prevent ambiguous directory ownership", async () => {
+test("a legacy task named archive stays separate from the new archive", async () => {
   await running(); await document();
   await run(["task", "add", "legacy"], { title: "Legacy", operationId: "add-legacy" });
   const path = join(root, ".space/default/tasks/state.json");
   const fixture = (await readFile(path, "utf8")).replaceAll('"legacy"', '"archive"');
   await writeFile(path, fixture);
   expect((await run(["task", "show", "archive"])).data.task.title).toBe("Legacy");
-  expect((await run(["task", "complete", "job"], complete, 2)).error.code).toBe("TASK_DIRECTORY_CONFLICT");
-  expect(await readFile(path, "utf8")).toBe(fixture);
-  expect(await Bun.file(join(root, ".space/default/tasks/job/task.md")).exists()).toBe(true);
+  await mkdir(join(root, ".space/default/tasks/archive"), { recursive: true });
+  await writeFile(join(root, ".space/default/tasks/archive/notes.md"), "Legacy task notes");
+  await run(["task", "complete", "job"], complete);
+  expect(await readFile(join(root, ".space/default/tasks/archive/notes.md"), "utf8")).toBe("Legacy task notes");
+  expect(await Bun.file(join(root, ".space/default/tasks/.archive/job/task.md")).exists()).toBe(true);
+});
+
+test("recovers a pending legacy archive, reopens it, and subsequently completes into .archive/", async () => {
+  await running();
+  await document();
+  await run(["artifact", "add", "job", "report"], { ifVersion: 2, ref: ".space/default/tasks/job/task.md", description: "Report", operationId: "report" });
+  const store = await Store.open(root, "default");
+  store.moveTaskDirectory = async () => { throw new Error("Interrupted"); };
+  await expect(execute(store, { command: "task complete", id: "job", ...complete, ifVersion: 3 })).rejects.toThrow("directory move is incomplete");
+  const tasks = join(root, ".space/default/tasks");
+  const path = join(tasks, "state.json");
+  const state = JSON.parse((await readFile(path, "utf8")).replaceAll("tasks/.archive/", "tasks/archive/"));
+  delete state.tasks.job.archiveRoot;
+  delete state.operations[complete.operationId].data.task.archiveRoot;
+  delete state.pendingDirectoryMove.archiveRoot;
+  await writeFile(path, JSON.stringify(state));
+  await rm(join(tasks, "job/tasks.md"));
+  expect((await run(["task", "complete", "job"], { ...complete, ifVersion: 3 })).replayed).toBe(true);
+  expect(await readFile(join(tasks, "archive/job/tasks.md"), "utf8")).toContain("Done");
+  expect(await Bun.file(join(tasks, ".archive/job/tasks.md")).exists()).toBe(false);
+  await run(["task", "reopen", "job"], { ifVersion: 4, reason: "Follow-up", operationId: "reopen" });
+  expect(await Bun.file(join(tasks, "job/task.md")).exists()).toBe(true);
+  expect(await readFile(join(tasks, "job/tasks.md"), "utf8")).toContain("Follow-up");
+  expect((await run(["artifact", "list", "job"])).data[0].ref).toBe(".space/default/tasks/job/task.md");
+  await run(["task", "start", "job"], { ifVersion: 5, operationId: "restart" });
+  await run(["task", "complete", "job"], { ...complete, ifVersion: 6, operationId: "complete-again" });
+  expect(await Bun.file(join(tasks, ".archive/job/task.md")).exists()).toBe(true);
 });

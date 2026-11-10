@@ -1,6 +1,7 @@
 import { link, lstat, mkdir, open, readFile, realpath, rename, rm } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
-import { identifier, requireThat, taskDirectory, TasksError, validateState, type Checkpoint, type DirectoryMove, type State } from "./model.ts";
+import { childrenByParent, identifier, requireThat, taskArchiveRoot, taskDirectory, taskMovePaths, TasksError, validateState, type Checkpoint, type DirectoryMove, type State, type Task } from "./model.ts";
+import { SUMMARY_FILE, SUMMARY_MARKER, taskSummary } from "./summary.ts";
 
 export async function exists(path: string): Promise<boolean> {
   try { await lstat(path); return true; }
@@ -59,7 +60,7 @@ export class Store {
     }
     return validateState(value, this.project);
   }
-  async transact<T>(action: () => Promise<{ state: State; result: T; unchanged?: boolean }>, options: { initialize?: boolean; beforeReplace?: () => Promise<void> } = {}): Promise<T> {
+  async transact<T>(action: () => Promise<{ state: State; result: T; unchanged?: boolean }>, options: { initialize?: boolean; beforeReplace?: () => Promise<void>; operationId?: string } = {}): Promise<T> {
     if (options.initialize) await directory(this.root, this.directory);
     await safePath(this.root, this.lockPath);
     let lock;
@@ -94,6 +95,14 @@ export class Store {
           throw new TasksError("TASK_DIRECTORY_MOVE_FAILED", "Task state is saved, but its directory move is incomplete. Resolve the conflict and retry the identical operation.", 1, { saved: true, taskId: move.taskId, operationId: move.operationId, cause: error instanceof TasksError ? error.code : "IO_ERROR" });
         }
       }
+      if (options.operationId) {
+        const { taskId } = state.operations[options.operationId]!;
+        const summaryTask = state.tasks[state.tasks[taskId]!.parentId ?? taskId]!;
+        try { await this.publishTaskSummary(summaryTask, childrenByParent(state).get(summaryTask.id) ?? []); }
+        catch (error) {
+          throw new TasksError("TASK_SUMMARY_OUTPUT_FAILED", "Task state is saved, but its Markdown summary could not be written. Resolve the output problem and retry the identical operation.", 1, { saved: true, taskId, summaryTaskId: summaryTask.id, operationId: options.operationId, cause: error instanceof TasksError ? error.code : "IO_ERROR" });
+        }
+      }
       return result;
     } finally {
       await rm(temporary, { force: true });
@@ -116,19 +125,21 @@ export class Store {
     const move = state.pendingDirectoryMove;
     if (move && move.operationId !== operationId) throw new TasksError("TASK_DIRECTORY_MOVE_PENDING", "Retry the saved directory move with its original operation ID and input before other updates.", 2, { saved: true, taskId: move.taskId, operationId: move.operationId });
   }
-  async planTaskDirectoryMove(state: State, taskId: string, archive: boolean, operationId: string): Promise<DirectoryMove | undefined> {
-    requireThat(taskId !== "archive" && !Object.hasOwn(state.tasks, "archive"), "TASK_DIRECTORY_CONFLICT", "A legacy task uses the reserved archive name. Resolve its directory ownership before archiving.");
-    const source = await safePath(this.root, taskDirectory(this.project, taskId, !archive));
-    const target = await safePath(this.root, taskDirectory(this.project, taskId, archive));
+  async planTaskDirectoryMove(state: State, taskId: string, archive: boolean, operationId: string, archiveRoot?: DirectoryMove["archiveRoot"]): Promise<DirectoryMove | undefined> {
+    requireThat(archiveRoot || !Object.hasOwn(state.tasks, "archive"), "TASK_DIRECTORY_CONFLICT", "A legacy task uses the reserved archive name. Resolve its directory ownership before moving documents.");
+    const [from, to] = taskMovePaths(this.project, { taskId, archive, archiveRoot });
+    const source = await safePath(this.root, from);
+    const target = await safePath(this.root, to);
     requireThat(!await exists(target), "TASK_DIRECTORY_CONFLICT", "The destination already exists; it will not be replaced or merged.");
     if (!await exists(source)) return undefined;
     const info = await lstat(source, { bigint: true });
     requireThat(info.isDirectory(), "UNSAFE_PATH", "Task documents must be a directory.");
-    return { taskId, operationId, archive, device: String(info.dev), inode: String(info.ino) };
+    return { taskId, operationId, archive, ...(archiveRoot ? { archiveRoot } : {}), device: String(info.dev), inode: String(info.ino) };
   }
   async moveTaskDirectory(move: DirectoryMove) {
-    const source = await safePath(this.root, taskDirectory(this.project, move.taskId, !move.archive));
-    const target = await safePath(this.root, taskDirectory(this.project, move.taskId, move.archive));
+    const [from, to] = taskMovePaths(this.project, move);
+    const source = await safePath(this.root, from);
+    const target = await safePath(this.root, to);
     const sourceExists = await exists(source), targetExists = await exists(target);
     requireThat(sourceExists !== targetExists, "TASK_DIRECTORY_CONFLICT", "Expected exactly one copy of the task directory; neither location will be overwritten.");
     const info = await lstat(sourceExists ? source : target, { bigint: true });
@@ -143,6 +154,31 @@ export class Store {
     }
     await syncDirectory(dirname(source));
     await syncDirectory(dirname(target));
+  }
+  async checkTaskSummary(task: Task) {
+    const path = await safePath(this.root, taskDirectory(this.project, task.id, taskArchiveRoot(task)), SUMMARY_FILE);
+    if (!await exists(path)) return { path, previous: undefined };
+    requireThat((await lstat(path)).isFile(), "TASK_SUMMARY_FILE_CONFLICT", "Expected a Markdown file at the task summary path.");
+    const previous = await readFile(path, "utf8");
+    requireThat(previous.startsWith(SUMMARY_MARKER), "TASK_SUMMARY_FILE_CONFLICT", "An existing Markdown file is not managed by Tasks; it was not overwritten.");
+    return { path, previous };
+  }
+  async publishTaskSummary(task: Task, children: Task[]) {
+    const { path, previous } = await this.checkTaskSummary(task);
+    const body = taskSummary(task, children);
+    if (previous === body) return;
+    const folder = dirname(path);
+    await directory(this.root, folder);
+    const temporary = join(folder, ".tasks-" + crypto.randomUUID() + ".tmp");
+    try {
+      const file = await open(temporary, "wx", 0o600);
+      try { await file.writeFile(body); await file.sync(); } finally { await file.close(); }
+      const current = await this.checkTaskSummary(task);
+      requireThat(current.previous === previous, "TASK_SUMMARY_FILE_CONFLICT", "The Markdown file changed during publication; it was not overwritten.");
+      if (previous === undefined) await link(temporary, path);
+      else await rename(temporary, path);
+      await syncDirectory(folder);
+    } finally { await rm(temporary, { force: true }); }
   }
   async checkpointPath(entry: Pick<Checkpoint, "taskId" | "id">) {
     identifier(entry.taskId); identifier(entry.id);

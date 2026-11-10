@@ -6,8 +6,8 @@ import { Store } from "./store.ts";
 export const help = "koto-tasks — project task records\n\n" +
   "Usage: koto-tasks <command> [--root PATH] [--project ID] [--json]\n" +
   "       koto-tasks --input-json '{\"command\":[\"status\"],\"root\":\"/path\"}'\n\n" +
-  "  setup\n  task add <id> --title TEXT [--description TEXT]\n" +
-  "  task list [--state STATE] [--ready] | task show <id>\n" +
+  "  setup\n  task add <id> --title TEXT [--description TEXT] [--parent ID]\n" +
+  "  task list [--parent ID] [--state STATE] [--ready] | task show <id>\n" +
   "  task update <id> [--title TEXT] [--description TEXT]\n" +
   "  task start <id> [--reason TEXT]\n  task set <id> --state waiting|paused|cancelled --reason TEXT [--next TEXT]\n" +
   "  task complete <id> --result TEXT | task reopen <id> --reason TEXT\n" +
@@ -34,7 +34,7 @@ function expand(args: string[]): string[] {
     input = JSON.parse(values["input-json"]!);
   } catch { throw new TasksError("INVALID_INPUT", "Pass one JSON request with --input-json; do not mix it with other inputs."); }
   object(input, "INVALID_INPUT");
-  requireThat(Object.keys(input).every(k => ["command", "root", "project", "operationId", "ifVersion", "actor", "title", "description", "state", "reason", "next", "result", "on", "repo", "ref", "summary", "ready"].includes(k)), "INVALID_INPUT", "Unknown JSON input field.");
+  requireThat(Object.keys(input).every(k => ["command", "root", "project", "operationId", "ifVersion", "actor", "title", "description", "parent", "state", "reason", "next", "result", "on", "repo", "ref", "summary", "ready"].includes(k)), "INVALID_INPUT", "Unknown JSON input field.");
   requireThat(Array.isArray(input.command) && input.command.length > 0 && input.command.every(v => typeof v === "string"), "INVALID_INPUT", "command must be a nonempty string array.");
   const parts = input.command as string[];
   const grouped = ["task", "dependency", "workspace", "artifact", "checkpoint"].includes(parts[0] ?? "");
@@ -64,7 +64,7 @@ function expand(args: string[]): string[] {
 type Spec = { count: number; flags: string[] };
 const specs: Record<string, Spec> = {
   setup: { count: 1, flags: [] },
-  "task add": { count: 3, flags: ["title", "description"] }, "task list": { count: 2, flags: ["state", "ready"] }, "task show": { count: 3, flags: [] },
+  "task add": { count: 3, flags: ["title", "description", "parent"] }, "task list": { count: 2, flags: ["parent", "state", "ready"] }, "task show": { count: 3, flags: [] },
   "task update": { count: 3, flags: ["title", "description"] }, "task start": { count: 3, flags: ["reason"] },
   "task set": { count: 3, flags: ["state", "reason", "next"] }, "task complete": { count: 3, flags: ["result"] }, "task reopen": { count: 3, flags: ["reason"] },
   "task archive": { count: 3, flags: [] },
@@ -82,7 +82,7 @@ export async function main(argv: string[]): Promise<number> {
       parsed = parseArgs({ args, strict: true, allowPositionals: true, options: {
         root: { type: "string" }, project: { type: "string" }, json: { type: "boolean" }, help: { type: "boolean" },
         "operation-id": { type: "string" }, "if-version": { type: "string" }, actor: { type: "string" },
-        title: { type: "string" }, description: { type: "string" }, state: { type: "string" }, reason: { type: "string" },
+        title: { type: "string" }, description: { type: "string" }, parent: { type: "string" }, state: { type: "string" }, reason: { type: "string" },
         next: { type: "string" }, result: { type: "string" }, on: { type: "string" }, repo: { type: "string", multiple: true },
         ref: { type: "string" }, summary: { type: "string" }, ready: { type: "boolean" },
       } });
@@ -105,6 +105,7 @@ export async function main(argv: string[]): Promise<number> {
     }
     if (values.repo !== undefined) request.repo = values.repo;
     if (values.ready !== undefined) request.ready = values.ready;
+    if (values.parent !== undefined) { identifier(values.parent); request.parent = values.parent; }
     if (request.id !== undefined) identifier(request.id);
     if (request.childId !== undefined) identifier(request.childId);
     if (request.state !== undefined) requireThat(STATES.includes(request.state as typeof STATES[number]), "INVALID_INPUT", "Unknown task state.");

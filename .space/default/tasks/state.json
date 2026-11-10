@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "projectId": "default",
   "storeId": "cc25d939-1113-47ff-b958-628dcd398fcc",
-  "revision": 14,
+  "revision": 20,
   "tasks": {
     "improve-decision-records": {
       "id": "improve-decision-records",
@@ -68,6 +68,23 @@
       "createdAt": "2026-11-04T06:11:50.570Z",
       "updatedAt": "2026-11-04T06:39:34.931Z",
       "archived": true
+    },
+    "task-markdown-status": {
+      "id": "task-markdown-status",
+      "title": "Tasksの状態表示と親子管理を整える",
+      "description": "Tasksの状態をMarkdownに出力し、1件の依頼に属する子タスクを親のtasks.mdで確認できるようにする。親の完了時に資料一式を .archive に移し、再開時に復元する。既存データと配布版での動作も確認する。",
+      "state": "waiting",
+      "version": 6,
+      "attempt": 1,
+      "dependencies": [],
+      "inputs": {},
+      "workspace": null,
+      "artifacts": [],
+      "result": null,
+      "reason": "状態表示と親子タスク管理の実装・検証を完了した。配布版を含む全329テスト成功。mainへの取り込み待ち。",
+      "next": "mainに取り込まれたら完了を記録する。",
+      "createdAt": "2026-11-10T02:12:14.109Z",
+      "updatedAt": "2026-11-10T02:31:37.670Z"
     }
   },
   "checkpoints": {},
@@ -570,6 +587,174 @@
           "createdAt": "2026-11-04T06:11:50.570Z",
           "updatedAt": "2026-11-04T06:39:34.931Z",
           "archived": true
+        }
+      }
+    },
+    "add-task-markdown-status": {
+      "id": "add-task-markdown-status",
+      "hash": "3991fc4a06ececc68b8e3f4ccd91bd2bc7e3f22e976d7e7ec3e7cf66d2f552f4",
+      "actor": "unspecified",
+      "command": "task add",
+      "taskId": "task-markdown-status",
+      "revision": 15,
+      "at": "2026-11-10T02:12:14.109Z",
+      "data": {
+        "task": {
+          "id": "task-markdown-status",
+          "title": "タスクの状態をMarkdownで自動出力する",
+          "description": "Tasksでタスクの状態をMarkdownに出力し、完了時に資料フォルダごと .archive へ移す。旧アーカイブからの再開と配布版での動作を検証する。",
+          "state": "pending",
+          "version": 1,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": null,
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-10T02:12:14.109Z",
+          "updatedAt": "2026-11-10T02:12:14.109Z"
+        }
+      }
+    },
+    "start-task-markdown-status": {
+      "id": "start-task-markdown-status",
+      "hash": "74a111c95dc6e8e6bc2d4567ce77c0aba3cc90c9ac4ccb002ce65ec99ab94093",
+      "actor": "unspecified",
+      "command": "task start",
+      "taskId": "task-markdown-status",
+      "revision": 16,
+      "at": "2026-11-10T02:12:14.131Z",
+      "data": {
+        "task": {
+          "id": "task-markdown-status",
+          "title": "タスクの状態をMarkdownで自動出力する",
+          "description": "Tasksでタスクの状態をMarkdownに出力し、完了時に資料フォルダごと .archive へ移す。旧アーカイブからの再開と配布版での動作を検証する。",
+          "state": "running",
+          "version": 2,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-10T02:12:14.109Z",
+          "updatedAt": "2026-11-10T02:12:14.131Z"
+        }
+      }
+    },
+    "verify-task-markdown-status": {
+      "id": "verify-task-markdown-status",
+      "hash": "d3a9e3461c43f1cf84c4c6d835720cdef507404447148ea4fe2998bc089ce14a",
+      "actor": "unspecified",
+      "command": "task set",
+      "taskId": "task-markdown-status",
+      "revision": 17,
+      "at": "2026-11-10T02:17:58.778Z",
+      "data": {
+        "task": {
+          "id": "task-markdown-status",
+          "title": "タスクの状態をMarkdownで自動出力する",
+          "description": "Tasksでタスクの状態をMarkdownに出力し、完了時に資料フォルダごと .archive へ移す。旧アーカイブからの再開と配布版での動作を検証する。",
+          "state": "waiting",
+          "version": 3,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "実装と配布物の検証が完了した。全324テスト成功。mainへの取り込み待ち。",
+          "next": "mainに取り込まれたら完了を記録する。",
+          "createdAt": "2026-11-10T02:12:14.109Z",
+          "updatedAt": "2026-11-10T02:17:58.778Z"
+        }
+      }
+    },
+    "extend-task-markdown-status": {
+      "id": "extend-task-markdown-status",
+      "hash": "180f582e6209e4df6cad33589bdb5d636dc1bce8311f9d2b569c373a5f63b5c1",
+      "actor": "unspecified",
+      "command": "task update",
+      "taskId": "task-markdown-status",
+      "revision": 18,
+      "at": "2026-11-10T02:25:22.147Z",
+      "data": {
+        "task": {
+          "id": "task-markdown-status",
+          "title": "Tasksの状態表示と親子管理を整える",
+          "description": "Tasksの状態をMarkdownに出力し、1件の依頼に属する子タスクを親のtasks.mdで確認できるようにする。親の完了時に資料一式を .archive に移し、再開時に復元する。既存データと配布版での動作も確認する。",
+          "state": "waiting",
+          "version": 4,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "実装と配布物の検証が完了した。全324テスト成功。mainへの取り込み待ち。",
+          "next": "mainに取り込まれたら完了を記録する。",
+          "createdAt": "2026-11-10T02:12:14.109Z",
+          "updatedAt": "2026-11-10T02:25:22.147Z"
+        }
+      }
+    },
+    "start-task-hierarchy-work": {
+      "id": "start-task-hierarchy-work",
+      "hash": "deded98ef529dc96f2a05a7bc6e402796356f99ae3b6719470c0698ae5cafe17",
+      "actor": "unspecified",
+      "command": "task start",
+      "taskId": "task-markdown-status",
+      "revision": 19,
+      "at": "2026-11-10T02:25:22.166Z",
+      "data": {
+        "task": {
+          "id": "task-markdown-status",
+          "title": "Tasksの状態表示と親子管理を整える",
+          "description": "Tasksの状態をMarkdownに出力し、1件の依頼に属する子タスクを親のtasks.mdで確認できるようにする。親の完了時に資料一式を .archive に移し、再開時に復元する。既存データと配布版での動作も確認する。",
+          "state": "running",
+          "version": 5,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "親子タスク対応の実装を開始する。",
+          "next": "",
+          "createdAt": "2026-11-10T02:12:14.109Z",
+          "updatedAt": "2026-11-10T02:25:22.166Z"
+        }
+      }
+    },
+    "verify-task-hierarchy": {
+      "id": "verify-task-hierarchy",
+      "hash": "9e22fadab4cb0b7d5996dd83ae03294af15769defca4a12d8d25612ed519b2d5",
+      "actor": "unspecified",
+      "command": "task set",
+      "taskId": "task-markdown-status",
+      "revision": 20,
+      "at": "2026-11-10T02:31:37.670Z",
+      "data": {
+        "task": {
+          "id": "task-markdown-status",
+          "title": "Tasksの状態表示と親子管理を整える",
+          "description": "Tasksの状態をMarkdownに出力し、1件の依頼に属する子タスクを親のtasks.mdで確認できるようにする。親の完了時に資料一式を .archive に移し、再開時に復元する。既存データと配布版での動作も確認する。",
+          "state": "waiting",
+          "version": 6,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "状態表示と親子タスク管理の実装・検証を完了した。配布版を含む全329テスト成功。mainへの取り込み待ち。",
+          "next": "mainに取り込まれたら完了を記録する。",
+          "createdAt": "2026-11-10T02:12:14.109Z",
+          "updatedAt": "2026-11-10T02:31:37.670Z"
         }
       }
     }

@@ -13,7 +13,9 @@ description: kotoのCLIでプロジェクトのタスク、進捗、依存関係
 
 作業開始はtask start、待ち・中断・中止はtask set、完了は実際の結果を添えてtask completeを使う。readyは記録上の着手候補であり、実行の許可や手動の前提確認を代替しない。依存先が変わったらblockedBy・completionCurrentを確認し、作業を停止してからreopenで新しい試行に進める。完了の件数だけで全作業が有効に完了したと判断しない。
 
-task completeは標準の資料フォルダをtasks/archive/タスクID/へ移し、reopenで元へ戻す。完了・再開前に資料の編集を止め、移動後の参照はartifact listで取得する。本文中のリンクは自動更新されないため、必要な参照を確認・更新する。過去の完了タスクの移動は依頼された対象だけtask archiveを使う。途中失敗はCLIの利用手順に従い、pendingDirectoryMoveが残る間は別の更新をせず元の操作を再送する。
+1件の依頼に独立して進捗を追う作業がある場合、task add 子ID --parent 親IDで子を登録する。子の一覧はtask list --parent 親ID、個別の状態・履歴は子IDで確認する。親を完了する前に子の結果と全体の成果を確認する。完了済みの親の下で子をやり直す場合は、親を先にreopenする。
+
+Tasksは最上位タスクごとにtasks/タスクID/tasks.mdへ親子の状態を出力する。進捗の変更はCLIに入力し、手書きの説明や計画は別ファイルに残す。子専用の資料は親のフォルダのchildren/子ID/へ置ける。最上位タスクのtask completeで資料フォルダ一式をtasks/.archive/タスクID/へ移し、reopenで元へ戻す。完了・再開前に資料の編集を止め、移動後の参照はartifact listで取得する。本文中のリンクは自動更新されないため、必要な参照を確認・更新する。過去の完了タスクの移動は依頼された対象だけtask archiveを使う。途中失敗はCLIの利用手順に従い、pendingDirectoryMoveが残る間は別の更新をせず元の操作を再送する。
 
 既存リポジトリでは、そのルートを--root、コードの所属をdefaultとして使う。作業場所・ブランチ・参照コミットを説明やcheckpointに残し、Gitで実状態を確認する。workspace linkは登録済みの外部作業場所を参照する必要がある場合だけ使い、通常のリポジトリ利用では省く。参照登録は作業場所を作成せず、Tasksの完了は削除の許可を意味しない。
 
