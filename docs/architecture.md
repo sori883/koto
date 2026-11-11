@@ -4,7 +4,7 @@ koto（コト）は **Knowledge-Oriented Task Orchestration** の略であり、
 
 kotoは、AIエージェントが開発で使うスキル・CLI・共通知識・ルールを、Codex・Claude Code・GitHub Copilot in VS Code向けに配布するためのリポジトリである。利用先のプロジェクトで、知識管理、タスク分割・管理、必要な文書や設定の導入を行える道具を作る。
 
-**Tasks・Memoryは独立CLI、setupは専用スキル内のCLIとして提供し、配布物を `main` ブランチで管理する。Codex形式とClaude形式を生成し、Claude Code・CopilotはClaude形式を共用する。koto独自のCLIは配布後もTypeScriptとし、Bunで実行する。natural-japaneseとyomiyasuは原版のPythonスクリプトを保持する。natural-japaneseの依存はuvで準備し、yomiyasuは標準ライブラリだけで実行する。**
+**Tasks・Memoryは独立CLI、setupは専用スキル内のCLIとして提供し、配布物を `main` ブランチで管理する。Codex形式とClaude形式を生成し、Claude Code・CopilotはClaude形式を共用する。koto独自のCLIは配布後もTypeScriptとし、Bunで実行する。natural-japanese・critical-thinking・yomiyasuは原版のPythonスクリプトを保持する。natural-japaneseとcritical-thinkingの依存はuvで準備し、yomiyasuは標準ライブラリだけで実行する。**
 
 この文書を、何を作るか・どこに置くか・どう配布するかを判断するための設計方針の正本とする。以下は目標の構成であり、すべてが実装済みという意味ではない。実装状況や検証結果は [現状資料](current-state.md) や個別の開発資料に記録し、この設計と区別する。
 
@@ -65,7 +65,9 @@ devlowはTasksによる作業状態、Memoryによる関連知識、実際のGit
 
 koto独自のCLIはTypeScriptをBunで実行する。Tasks・Memoryには実行時npm依存とbootstrapを設けない。setupは既存のスキル内bootstrapを維持する。natural-japaneseは2026-10-13のユーザー指示により、独自のTypeScript移植を取りやめ、[coji/natural-japanese](https://github.com/coji/natural-japanese)のスキル一式を改変せず取り込む。Pythonスクリプトとインライン依存定義を保持し、uvが実行環境を準備する。原版のsemantic・calibrate・fixturesも同梱し、MIT LICENSEを添える。koto側の保守説明・出典の版・検証記録は配布物へ追記せず、[取込記録](skills/natural-japanese/upstream-import.md)で管理する。
 
-yomiyasuも同日のユーザー依頼で追加する。[nanaism/yomiyasu](https://github.com/nanaism/yomiyasu)のスキル本文・参照資料・assets・Pythonスクリプトを改変せず取り込み、MIT LICENSEとUnicodeの著作権・許諾通知を同梱する。原版の単独プラグイン用マニフェストは取り込まず、kotoの製品別定義で配布する。実行はPython標準ライブラリだけで完結し、Bunへの移植やbootstrapの追加は行わない。出典と検証は[取込記録](skills/yomiyasu/upstream-import.md)に置く。
+2026-11-11の更新依頼により、同リポジトリのv2.0.0からnatural-japaneseを更新し、critical-thinkingを独立したスキルとして同梱する。前者は日本語の執筆・推敲、後者は文書の論旨・前提の検査と改稿を担当し、原版の相互参照を維持する。正本はそれぞれ`skills/natural-japanese/`・`skills/critical-thinking/`に置き、スキル本文・参照資料・スクリプトとMIT LICENSEを同じ製品別ビルドで配布する。critical-thinkingの行番号照合スクリプトはPython 3.11以上とPyYAMLを使い、uvがスクリプトの依存定義から準備する。原版リポジトリの開発用評価資料・リリースノート・プラグイン設定は取り込まない。対象タグとコミット、変更内容、検証結果は前述の取込記録に残す。
+
+yomiyasuも2026-10-13のユーザー依頼で追加する。[nanaism/yomiyasu](https://github.com/nanaism/yomiyasu)のスキル本文・参照資料・assets・Pythonスクリプトを改変せず取り込み、MIT LICENSEとUnicodeの著作権・許諾通知を同梱する。原版の単独プラグイン用マニフェストは取り込まず、kotoの製品別定義で配布する。実行はPython標準ライブラリだけで完結し、Bunへの移植やbootstrapの追加は行わない。出典と検証は[取込記録](skills/yomiyasu/upstream-import.md)に置く。
 
 共通のトップレベルCLIは作らない。次の責務を別のスキルとCLIで提供する。
 
@@ -200,6 +202,8 @@ GitHub Actionsではテスト・型や定義の検証に加え、配布物を再
 完成確認では配布物を開発リポジトリの外へコピーし、初回の依存導入、2回目の起動、ロックファイル変更後の再導入を検証する。依存がスキル内に入り、成果物が利用先に保存されること、setupの再実行・更新で重複や既存データの消失が起きないことも確認する。
 
 natural-japaneseは原版ファイルとの一致と、リポジトリ外にコピーした配布物のuvによる実行を確認する。Bunのbootstrap・lock更新検査は適用せず、入力文書と利用先の依存定義が変更されないことを確かめる。
+
+critical-thinkingも原版ファイルとライセンスの一致、配布物をリポジトリ外にコピーした状態での実行を確認する。行番号照合は、本文に対応しない行を検出する場合と、全行が対応して成功する場合の両方を扱い、入力文書と分析結果を変更しないことを確かめる。スクリプトの動作確認は、AIによる論旨の検査や文書改稿の品質評価とは区別する。
 
 ## 移行と変更時の判断
 

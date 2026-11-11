@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "plugin": "koto",
   "product": "codex",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "scope": "project",
   "files": [
     {
@@ -366,6 +366,36 @@
       "mode": "copy"
     },
     {
+      "source": "skills/critical-thinking/LICENSE",
+      "destination": ".agents/skills/critical-thinking/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/critical-thinking/SKILL.md",
+      "destination": ".agents/skills/critical-thinking/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/critical-thinking/references/foundations.md",
+      "destination": ".agents/skills/critical-thinking/references/foundations.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/critical-thinking/references/logic.md",
+      "destination": ".agents/skills/critical-thinking/references/logic.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/critical-thinking/references/somosomo.md",
+      "destination": ".agents/skills/critical-thinking/references/somosomo.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/critical-thinking/scripts/coverage.py",
+      "destination": ".agents/skills/critical-thinking/scripts/coverage.py",
+      "mode": "copy"
+    },
+    {
       "source": "skills/devlow/LICENSE",
       "destination": ".agents/skills/devlow/LICENSE",
       "mode": "copy"
@@ -556,58 +586,18 @@
       "mode": "copy"
     },
     {
-      "source": "skills/natural-japanese/references/eval-rubric.md",
-      "destination": ".agents/skills/natural-japanese/references/eval-rubric.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/examples.md",
-      "destination": ".agents/skills/natural-japanese/references/examples.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/forbidden-patterns.md",
-      "destination": ".agents/skills/natural-japanese/references/forbidden-patterns.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/genre-notes.md",
-      "destination": ".agents/skills/natural-japanese/references/genre-notes.md",
-      "mode": "copy"
-    },
-    {
       "source": "skills/natural-japanese/references/manual-checklist.md",
       "destination": ".agents/skills/natural-japanese/references/manual-checklist.md",
       "mode": "copy"
     },
     {
-      "source": "skills/natural-japanese/references/readability-antipatterns.md",
-      "destination": ".agents/skills/natural-japanese/references/readability-antipatterns.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/readability-principles.md",
-      "destination": ".agents/skills/natural-japanese/references/readability-principles.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/revision-guide.md",
-      "destination": ".agents/skills/natural-japanese/references/revision-guide.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/translationese.md",
-      "destination": ".agents/skills/natural-japanese/references/translationese.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/writing-constitution.md",
-      "destination": ".agents/skills/natural-japanese/references/writing-constitution.md",
-      "mode": "copy"
-    },
-    {
       "source": "skills/natural-japanese/scripts/calibrate.py",
       "destination": ".agents/skills/natural-japanese/scripts/calibrate.py",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/scripts/calques.py",
+      "destination": ".agents/skills/natural-japanese/scripts/calques.py",
       "mode": "copy"
     },
     {
@@ -626,8 +616,18 @@
       "mode": "copy"
     },
     {
+      "source": "skills/natural-japanese/scripts/newfacts.py",
+      "destination": ".agents/skills/natural-japanese/scripts/newfacts.py",
+      "mode": "copy"
+    },
+    {
       "source": "skills/natural-japanese/scripts/outline.py",
       "destination": ".agents/skills/natural-japanese/scripts/outline.py",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/natural-japanese/scripts/paragraphs.py",
+      "destination": ".agents/skills/natural-japanese/scripts/paragraphs.py",
       "mode": "copy"
     },
     {

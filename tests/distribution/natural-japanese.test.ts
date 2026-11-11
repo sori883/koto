@@ -3,10 +3,10 @@ import { resolve } from "node:path";
 
 const scripts = resolve(import.meta.dir, "../../skills/natural-japanese/scripts");
 
-// Expected counts come from upstream dev/check-fixtures.sh at 9a78a42964096da509b8f3e011f0085a5f080151.
+// Expected counts come from upstream v2.0.0, commit 1fb57128a2f0d160e61320154226fdc86343ee2a.
 for (const [fixture, experimental, expected] of [
-  ["ai-smelly.md", false, 25],
-  ["ai-smelly.md", true, 33],
+  ["ai-smelly.md", false, 22],
+  ["ai-smelly.md", true, 29],
   ["natural.md", false, 0],
   ["natural.md", true, 0],
 ] as const) {

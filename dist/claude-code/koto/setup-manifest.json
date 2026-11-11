@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "plugin": "koto",
   "product": "claude-code",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "files": [
     {
       "source": "space/default/LICENSE",
