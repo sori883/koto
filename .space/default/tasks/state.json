@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "projectId": "default",
   "storeId": "cc25d939-1113-47ff-b958-628dcd398fcc",
-  "revision": 24,
+  "revision": 29,
   "tasks": {
     "improve-decision-records": {
       "id": "improve-decision-records",
@@ -102,6 +102,31 @@
       "updatedAt": "2026-11-10T04:14:40.166Z",
       "archived": true,
       "archiveRoot": ".archive"
+    },
+    "update-natural-japanese-v2": {
+      "id": "update-natural-japanese-v2",
+      "title": "natural-japanese v2.0.0を取り込む",
+      "description": "原版v2.0.0のnatural-japaneseとcritical-thinkingを取り込み、利用資料・配布物・原版一致と外部配置での実行を検証する。作業ブランチ: codex/update-natural-japanese-v2。",
+      "state": "running",
+      "version": 5,
+      "attempt": 1,
+      "dependencies": [],
+      "inputs": {},
+      "workspace": null,
+      "artifacts": [
+        {
+          "id": "upstream-import",
+          "ref": "docs/skills/natural-japanese/upstream-import.md",
+          "description": "原版v2.0.0の取り込み範囲、実行条件、原版一致と全329テストの検証結果",
+          "attempt": 1,
+          "createdAt": "2026-11-11T15:02:28.150Z"
+        }
+      ],
+      "result": null,
+      "reason": "ユーザーからmainへの公開とこのMacへの反映を依頼されたため再開する。",
+      "next": "",
+      "createdAt": "2026-11-11T14:56:03.750Z",
+      "updatedAt": "2026-11-11T15:21:08.870Z"
     }
   },
   "checkpoints": {},
@@ -924,6 +949,170 @@
           "updatedAt": "2026-11-10T04:14:40.166Z",
           "archived": true,
           "archiveRoot": ".archive"
+        }
+      }
+    },
+    "add-natural-japanese-v2-20261111": {
+      "id": "add-natural-japanese-v2-20261111",
+      "hash": "9c1465281e4bb694fe6188d50a50847e7cb5089064baff22cb90d4c6b7b4cbac",
+      "actor": "unspecified",
+      "command": "task add",
+      "taskId": "update-natural-japanese-v2",
+      "revision": 25,
+      "at": "2026-11-11T14:56:03.750Z",
+      "data": {
+        "task": {
+          "id": "update-natural-japanese-v2",
+          "title": "natural-japanese v2.0.0を取り込む",
+          "description": "原版v2.0.0のnatural-japaneseとcritical-thinkingを取り込み、利用資料・配布物・原版一致と外部配置での実行を検証する。作業ブランチ: codex/update-natural-japanese-v2。",
+          "state": "pending",
+          "version": 1,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": null,
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-11T14:56:03.750Z",
+          "updatedAt": "2026-11-11T14:56:03.750Z"
+        }
+      }
+    },
+    "start-natural-japanese-v2-20261111": {
+      "id": "start-natural-japanese-v2-20261111",
+      "hash": "2bc54f10b2b70b27b99292c7f51d612c38e4e6b4b83d1ebe3f75db3cfe7a648c",
+      "actor": "unspecified",
+      "command": "task start",
+      "taskId": "update-natural-japanese-v2",
+      "revision": 26,
+      "at": "2026-11-11T14:56:03.774Z",
+      "data": {
+        "task": {
+          "id": "update-natural-japanese-v2",
+          "title": "natural-japanese v2.0.0を取り込む",
+          "description": "原版v2.0.0のnatural-japaneseとcritical-thinkingを取り込み、利用資料・配布物・原版一致と外部配置での実行を検証する。作業ブランチ: codex/update-natural-japanese-v2。",
+          "state": "running",
+          "version": 2,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [],
+          "result": null,
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-11T14:56:03.750Z",
+          "updatedAt": "2026-11-11T14:56:03.774Z"
+        }
+      }
+    },
+    "artifact-natural-japanese-v2-20261112": {
+      "id": "artifact-natural-japanese-v2-20261112",
+      "hash": "71bed552bd5e026455a38bac2e83f7d59ce5fff8459081a503a42b8d947e0771",
+      "actor": "unspecified",
+      "command": "artifact add",
+      "taskId": "update-natural-japanese-v2",
+      "revision": 27,
+      "at": "2026-11-11T15:02:28.150Z",
+      "data": {
+        "task": {
+          "id": "update-natural-japanese-v2",
+          "title": "natural-japanese v2.0.0を取り込む",
+          "description": "原版v2.0.0のnatural-japaneseとcritical-thinkingを取り込み、利用資料・配布物・原版一致と外部配置での実行を検証する。作業ブランチ: codex/update-natural-japanese-v2。",
+          "state": "running",
+          "version": 3,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "upstream-import",
+              "ref": "docs/skills/natural-japanese/upstream-import.md",
+              "description": "原版v2.0.0の取り込み範囲、実行条件、原版一致と全329テストの検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-11T15:02:28.150Z"
+            }
+          ],
+          "result": null,
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-11T14:56:03.750Z",
+          "updatedAt": "2026-11-11T15:02:28.150Z"
+        }
+      }
+    },
+    "verified-natural-japanese-v2-20261112": {
+      "id": "verified-natural-japanese-v2-20261112",
+      "hash": "bb37f846b1043bb3620ab8ed0b05d6596021a5762593af34d1da4a5ab9e375e3",
+      "actor": "unspecified",
+      "command": "task set",
+      "taskId": "update-natural-japanese-v2",
+      "revision": 28,
+      "at": "2026-11-11T15:02:28.411Z",
+      "data": {
+        "task": {
+          "id": "update-natural-japanese-v2",
+          "title": "natural-japanese v2.0.0を取り込む",
+          "description": "原版v2.0.0のnatural-japaneseとcritical-thinkingを取り込み、利用資料・配布物・原版一致と外部配置での実行を検証する。作業ブランチ: codex/update-natural-japanese-v2。",
+          "state": "waiting",
+          "version": 4,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "upstream-import",
+              "ref": "docs/skills/natural-japanese/upstream-import.md",
+              "description": "原版v2.0.0の取り込み範囲、実行条件、原版一致と全329テストの検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-11T15:02:28.150Z"
+            }
+          ],
+          "result": null,
+          "reason": "原版v2.0.0の取り込みと0.1.12配布物の生成、全329テスト・型検査・原版一致・外部配置での実行確認が完了。ローカルの作業ブランチに反映済み。",
+          "next": "mainへの反映と公開後のCI確認。導入済みプラグインの更新は別途行う。",
+          "createdAt": "2026-11-11T14:56:03.750Z",
+          "updatedAt": "2026-11-11T15:02:28.411Z"
+        }
+      }
+    },
+    "publish-natural-japanese-v2-20261112": {
+      "id": "publish-natural-japanese-v2-20261112",
+      "hash": "600705a222b72fee02d964e5c19eafc5ce54e1f74066807df2f9df3f814fb835",
+      "actor": "unspecified",
+      "command": "task start",
+      "taskId": "update-natural-japanese-v2",
+      "revision": 29,
+      "at": "2026-11-11T15:21:08.870Z",
+      "data": {
+        "task": {
+          "id": "update-natural-japanese-v2",
+          "title": "natural-japanese v2.0.0を取り込む",
+          "description": "原版v2.0.0のnatural-japaneseとcritical-thinkingを取り込み、利用資料・配布物・原版一致と外部配置での実行を検証する。作業ブランチ: codex/update-natural-japanese-v2。",
+          "state": "running",
+          "version": 5,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "upstream-import",
+              "ref": "docs/skills/natural-japanese/upstream-import.md",
+              "description": "原版v2.0.0の取り込み範囲、実行条件、原版一致と全329テストの検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-11T15:02:28.150Z"
+            }
+          ],
+          "result": null,
+          "reason": "ユーザーからmainへの公開とこのMacへの反映を依頼されたため再開する。",
+          "next": "",
+          "createdAt": "2026-11-11T14:56:03.750Z",
+          "updatedAt": "2026-11-11T15:21:08.870Z"
         }
       }
     }

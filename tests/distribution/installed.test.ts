@@ -12,10 +12,15 @@ async function run(cli: string, args: string[], cwd: string) {
   return { code, out, err };
 }
 
-async function runPython(cli: string, args: string[], cwd: string, runtime: "uv" | "python3" = "uv") {
+async function runPythonCommand(cli: string, args: string[], cwd: string, runtime: "uv" | "python3" = "uv") {
   const command = runtime === "uv" ? ["uv", "run"] : ["python3"];
   const child = Bun.spawn([...command, cli, ...args], { cwd, stdout: "pipe", stderr: "pipe" });
   const [code, out, err] = await Promise.all([child.exited, new Response(child.stdout).text(), new Response(child.stderr).text()]);
+  return { code, out, err };
+}
+
+async function runPython(cli: string, args: string[], cwd: string, runtime: "uv" | "python3" = "uv") {
+  const { code, out, err } = await runPythonCommand(cli, args, cwd, runtime);
   expect({ code, error: code === 0 ? "" : err }).toEqual({ code: 0, error: "" });
   return JSON.parse(out);
 }
@@ -173,8 +178,35 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   expect(outline.outline).toContainEqual(expect.objectContaining({ kind: "heading", text: "APIの確認" }));
   const terms = await runPython(join(dirname(japanese), "terms.py"), ["draft.md", "--json"], project);
   expect(terms.terms).toContainEqual(expect.objectContaining({ term: "API" }));
+  const paragraphs = await runPython(join(dirname(japanese), "paragraphs.py"), ["draft.md", "--json"], project);
+  expect(paragraphs).toContainEqual(expect.objectContaining({ line: 1, text: "# APIの確認" }));
+  const revised = "# APIの確認\n\n新しい入口に切り替えると、処理は42秒で完了します。\n";
+  await writeFile(join(project, "revised.md"), revised);
+  const calques = await runPython(join(dirname(japanese), "calques.py"), ["revised.md", "--json"], project);
+  expect(calques).toContainEqual(expect.objectContaining({ word: "入口", kind: "place", line: 3 }));
+  const newfacts = await runPython(join(dirname(japanese), "newfacts.py"), ["draft.md", "revised.md", "--json"], project);
+  expect(newfacts.new_items).toContainEqual(expect.objectContaining({ word: "42", lines: [expect.objectContaining({ line: 3 })] }));
   expect(await readFile(join(project, "draft.md"), "utf8")).toBe(draft);
+  expect(await readFile(join(project, "revised.md"), "utf8")).toBe(revised);
   expect(await Bun.file(join(plugin, "skills/natural-japanese/scripts/japanese.ts")).exists()).toBe(false);
+  expect(await Bun.file(join(project, "uv.lock")).exists()).toBe(false);
+  expect(await Bun.file(join(project, ".venv/pyvenv.cfg")).exists()).toBe(false);
+  const thinking = join(plugin, "skills/critical-thinking");
+  expect(await Bun.file(join(thinking, "LICENSE")).text()).toBe(await Bun.file(join(plugin, "skills/natural-japanese/LICENSE")).text());
+  expect(await Bun.file(join(thinking, "references/logic.md")).exists()).toBe(true);
+  const coverage = join(thinking, "scripts/coverage.py");
+  const incomplete = "主結論:\n  主張: APIを確認する\n  行: [1]\n";
+  await writeFile(join(project, "draft.md.logic.yaml"), incomplete);
+  const missingLine = await runPythonCommand(coverage, ["draft.md"], project);
+  expect(missingLine.code).toBe(1);
+  expect(missingLine.out).toContain("YAML に現れない行: 3");
+  expect(await readFile(join(project, "draft.md.logic.yaml"), "utf8")).toBe(incomplete);
+  const complete = incomplete + "対応なし:\n  - 行: 3\n    内容: APIで文章を確認する\n";
+  await writeFile(join(project, "draft.md.logic.yaml"), complete);
+  const covered = await runPythonCommand(coverage, ["draft.md"], project);
+  expect({ code: covered.code, out: covered.out.trim(), error: covered.code === 0 ? "" : covered.err }).toEqual({ code: 0, out: "OK", error: "" });
+  expect(await readFile(join(project, "draft.md.logic.yaml"), "utf8")).toBe(complete);
+  expect(await readFile(join(project, "draft.md"), "utf8")).toBe(draft);
   expect(await Bun.file(join(project, "uv.lock")).exists()).toBe(false);
   expect(await Bun.file(join(project, ".venv/pyvenv.cfg")).exists()).toBe(false);
   const yomiyasu = join(plugin, "skills/yomiyasu");
@@ -205,4 +237,4 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   expect((await run(setup, ["apply", ...setupArgs], project)).code).not.toBe(0);
   expect(await readFile(edited, "utf8")).toBe(modified);
   expect(await readFile(join(project, instruction), "utf8")).toBe(instructions);
-}, 20000);
+}, 60000);
