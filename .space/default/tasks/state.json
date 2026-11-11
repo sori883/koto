@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "projectId": "default",
   "storeId": "cc25d939-1113-47ff-b958-628dcd398fcc",
-  "revision": 29,
+  "revision": 32,
   "tasks": {
     "improve-decision-records": {
       "id": "improve-decision-records",
@@ -107,8 +107,8 @@
       "id": "update-natural-japanese-v2",
       "title": "natural-japanese v2.0.0を取り込む",
       "description": "原版v2.0.0のnatural-japaneseとcritical-thinkingを取り込み、利用資料・配布物・原版一致と外部配置での実行を検証する。作業ブランチ: codex/update-natural-japanese-v2。",
-      "state": "running",
-      "version": 5,
+      "state": "completed",
+      "version": 8,
       "attempt": 1,
       "dependencies": [],
       "inputs": {},
@@ -120,13 +120,29 @@
           "description": "原版v2.0.0の取り込み範囲、実行条件、原版一致と全329テストの検証結果",
           "attempt": 1,
           "createdAt": "2026-11-11T15:02:28.150Z"
+        },
+        {
+          "id": "pull-request",
+          "ref": "https://github.com/sori883/koto/pull/35",
+          "description": "natural-japanese v2.0.0とcritical-thinkingを0.1.12としてmainへ反映したPR",
+          "attempt": 1,
+          "createdAt": "2026-11-11T15:25:33.016Z"
+        },
+        {
+          "id": "main-ci",
+          "ref": "https://github.com/sori883/koto/actions/runs/43048013216",
+          "description": "0.1.12のmainマージ後に成功した配布検証",
+          "attempt": 1,
+          "createdAt": "2026-11-11T15:26:31.034Z"
         }
       ],
-      "result": null,
-      "reason": "ユーザーからmainへの公開とこのMacへの反映を依頼されたため再開する。",
+      "result": "PR #35をmainへマージし、PRとmainのCI成功を確認した。このMacのCodexでkoto 0.1.12を有効化し、公開版の全193ファイルとの一致、29スキル、既存設定の保持を確認した。導入済みnatural-japaneseの新しい検査とcritical-thinkingのcoverageの正常・不足行検出、入力文書の保持を確認した。",
+      "reason": "",
       "next": "",
       "createdAt": "2026-11-11T14:56:03.750Z",
-      "updatedAt": "2026-11-11T15:21:08.870Z"
+      "updatedAt": "2026-11-11T15:26:31.315Z",
+      "archived": true,
+      "archiveRoot": ".archive"
     }
   },
   "checkpoints": {},
@@ -1113,6 +1129,151 @@
           "next": "",
           "createdAt": "2026-11-11T14:56:03.750Z",
           "updatedAt": "2026-11-11T15:21:08.870Z"
+        }
+      }
+    },
+    "pr-natural-japanese-v2-20261112": {
+      "id": "pr-natural-japanese-v2-20261112",
+      "hash": "de9bd035590ba622c49ac06aefae9ca1595772ed1d77282430d34eefe35bcd5b",
+      "actor": "unspecified",
+      "command": "artifact add",
+      "taskId": "update-natural-japanese-v2",
+      "revision": 30,
+      "at": "2026-11-11T15:25:33.016Z",
+      "data": {
+        "task": {
+          "id": "update-natural-japanese-v2",
+          "title": "natural-japanese v2.0.0を取り込む",
+          "description": "原版v2.0.0のnatural-japaneseとcritical-thinkingを取り込み、利用資料・配布物・原版一致と外部配置での実行を検証する。作業ブランチ: codex/update-natural-japanese-v2。",
+          "state": "running",
+          "version": 6,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "upstream-import",
+              "ref": "docs/skills/natural-japanese/upstream-import.md",
+              "description": "原版v2.0.0の取り込み範囲、実行条件、原版一致と全329テストの検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-11T15:02:28.150Z"
+            },
+            {
+              "id": "pull-request",
+              "ref": "https://github.com/sori883/koto/pull/35",
+              "description": "natural-japanese v2.0.0とcritical-thinkingを0.1.12としてmainへ反映したPR",
+              "attempt": 1,
+              "createdAt": "2026-11-11T15:25:33.016Z"
+            }
+          ],
+          "result": null,
+          "reason": "ユーザーからmainへの公開とこのMacへの反映を依頼されたため再開する。",
+          "next": "",
+          "createdAt": "2026-11-11T14:56:03.750Z",
+          "updatedAt": "2026-11-11T15:25:33.016Z"
+        }
+      }
+    },
+    "ci-natural-japanese-v2-20261112": {
+      "id": "ci-natural-japanese-v2-20261112",
+      "hash": "6c3da0c34df5363e52c7b05547aba19a7b1a98b702c689a177eee3887d628253",
+      "actor": "unspecified",
+      "command": "artifact add",
+      "taskId": "update-natural-japanese-v2",
+      "revision": 31,
+      "at": "2026-11-11T15:26:31.034Z",
+      "data": {
+        "task": {
+          "id": "update-natural-japanese-v2",
+          "title": "natural-japanese v2.0.0を取り込む",
+          "description": "原版v2.0.0のnatural-japaneseとcritical-thinkingを取り込み、利用資料・配布物・原版一致と外部配置での実行を検証する。作業ブランチ: codex/update-natural-japanese-v2。",
+          "state": "running",
+          "version": 7,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "upstream-import",
+              "ref": "docs/skills/natural-japanese/upstream-import.md",
+              "description": "原版v2.0.0の取り込み範囲、実行条件、原版一致と全329テストの検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-11T15:02:28.150Z"
+            },
+            {
+              "id": "pull-request",
+              "ref": "https://github.com/sori883/koto/pull/35",
+              "description": "natural-japanese v2.0.0とcritical-thinkingを0.1.12としてmainへ反映したPR",
+              "attempt": 1,
+              "createdAt": "2026-11-11T15:25:33.016Z"
+            },
+            {
+              "id": "main-ci",
+              "ref": "https://github.com/sori883/koto/actions/runs/43048013216",
+              "description": "0.1.12のmainマージ後に成功した配布検証",
+              "attempt": 1,
+              "createdAt": "2026-11-11T15:26:31.034Z"
+            }
+          ],
+          "result": null,
+          "reason": "ユーザーからmainへの公開とこのMacへの反映を依頼されたため再開する。",
+          "next": "",
+          "createdAt": "2026-11-11T14:56:03.750Z",
+          "updatedAt": "2026-11-11T15:26:31.034Z"
+        }
+      }
+    },
+    "complete-natural-japanese-v2-20261112": {
+      "id": "complete-natural-japanese-v2-20261112",
+      "hash": "cb802ade997c07867210286a8e531a008d4eb1e48133c3df61f9618f35db2063",
+      "actor": "unspecified",
+      "command": "task complete",
+      "taskId": "update-natural-japanese-v2",
+      "revision": 32,
+      "at": "2026-11-11T15:26:31.315Z",
+      "data": {
+        "task": {
+          "id": "update-natural-japanese-v2",
+          "title": "natural-japanese v2.0.0を取り込む",
+          "description": "原版v2.0.0のnatural-japaneseとcritical-thinkingを取り込み、利用資料・配布物・原版一致と外部配置での実行を検証する。作業ブランチ: codex/update-natural-japanese-v2。",
+          "state": "completed",
+          "version": 8,
+          "attempt": 1,
+          "dependencies": [],
+          "inputs": {},
+          "workspace": null,
+          "artifacts": [
+            {
+              "id": "upstream-import",
+              "ref": "docs/skills/natural-japanese/upstream-import.md",
+              "description": "原版v2.0.0の取り込み範囲、実行条件、原版一致と全329テストの検証結果",
+              "attempt": 1,
+              "createdAt": "2026-11-11T15:02:28.150Z"
+            },
+            {
+              "id": "pull-request",
+              "ref": "https://github.com/sori883/koto/pull/35",
+              "description": "natural-japanese v2.0.0とcritical-thinkingを0.1.12としてmainへ反映したPR",
+              "attempt": 1,
+              "createdAt": "2026-11-11T15:25:33.016Z"
+            },
+            {
+              "id": "main-ci",
+              "ref": "https://github.com/sori883/koto/actions/runs/43048013216",
+              "description": "0.1.12のmainマージ後に成功した配布検証",
+              "attempt": 1,
+              "createdAt": "2026-11-11T15:26:31.034Z"
+            }
+          ],
+          "result": "PR #35をmainへマージし、PRとmainのCI成功を確認した。このMacのCodexでkoto 0.1.12を有効化し、公開版の全193ファイルとの一致、29スキル、既存設定の保持を確認した。導入済みnatural-japaneseの新しい検査とcritical-thinkingのcoverageの正常・不足行検出、入力文書の保持を確認した。",
+          "reason": "",
+          "next": "",
+          "createdAt": "2026-11-11T14:56:03.750Z",
+          "updatedAt": "2026-11-11T15:26:31.315Z",
+          "archived": true,
+          "archiveRoot": ".archive"
         }
       }
     }

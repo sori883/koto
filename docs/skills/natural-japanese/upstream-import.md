@@ -32,7 +32,20 @@ critical-thinkingは、論理構造の抽出、前提の検査、確認を経た
 
 公開前の追跡ファイル確認で、既存の`.gitignore`の`coverage.*`が新しい`coverage.py`にも一致していた。正本と両製品の当該ファイルを明示的に除外ルールの対象外とし、Gitで管理する。
 
-semanticのモデル取得・推論、calibrateのコーパス校正、AIによる文書改稿の品質評価は実施していない。今回の確認はローカルのソースと生成配布物が対象で、GitHubへの公開・CIと、このMacに導入済みのプラグイン更新は未実施。
+semanticのモデル取得・推論、calibrateのコーパス校正、AIによる文書改稿の品質評価は実施していない。以上は公開前のローカル検証結果。GitHubへの公開とこのMacへの導入結果は以下に記録する。
+
+### 0.1.12の公開とMacへの導入（2026-11-12）
+
+ユーザーからmainへの公開とこのMacへの反映を依頼された。Gitに記録した内容だけを一時ディレクトリへ展開し、配布関連12テスト・992 assertionsと生成物照合が成功した。GitHub連携のPR作成は権限不足のため、Macに設定済みのGitHub CLIで公開操作を行った。
+
+- [PR #35](https://github.com/sori883/koto/pull/35)をmainへマージした。マージコミットは`0076dd33b86cee6f88a7f9f8441bc901b43fd9a3`。
+- [PRのCI](https://github.com/sori883/koto/actions/runs/43047810544)と[マージ後のmainのCI](https://github.com/sori883/koto/actions/runs/43048013216)が成功した。テスト・型検査・生成物照合・空白検査を含む。
+- [公式CLIのプラグイン操作](https://learn.chatgpt.com/docs/developer-commands#codex-plugin)で既存のkotoマーケットプレイスを更新し、`koto@koto`を再導入した。取得したマーケットプレイスのコミットは上記マージコミットと一致した。
+- 導入先は`~/.codex/plugins/cache/koto/koto/0.1.12`。version 0.1.12、installed・enabled、29スキルを確認した。実行前の全193ファイルがmainのCodex配布物とバイト単位で一致した。
+- 導入済みのnatural-japaneseで、不自然な名詞表現の検出、段落の一覧、表現の候補、原文にない数値の検出を確認した。critical-thinkingのcoverageは、不足行の検出と全行対応時の成功を確認した。入力文書と分析結果は保持され、利用先への仮想環境・lockファイルの作成はなかった。
+- Memory CLIのバージョン0.1.12と、更新前後の`~/.codex/config.toml`のハッシュ一致を確認した。
+
+この会話が開始時に読み込んだスキル一覧の更新や、モデルによる自動選択は確認対象に含めない。更新したスキルを使う際は新しい会話を開く。
 
 ## 初回の原版への置換（2026-10-13）
 
