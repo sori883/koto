@@ -1,5 +1,7 @@
 # 標準配布をコア7スキルに絞る
 
+この文書は2026-11-14の整理記録。2026-11-15にuse-principlesを任意の補助へ分類し、コアからの参照を外した。現在の区分は[配布設計](../architecture.md#標準スキルと外部スキル)を参照する。
+
 2026-11-14。ユーザーの「補助全部消す」という指示により、標準配布をdevlaw・tasks・memory・use-principles・savepoint・recall・setupの7個に絞る。no-commentsも削除対象とする。設計の正本は[architecture.md](../architecture.md#標準スキルと外部スキル)。
 
 ## 削除するもの

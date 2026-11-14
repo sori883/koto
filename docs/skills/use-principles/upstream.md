@@ -1,5 +1,17 @@
 # 開発原則と運用ルールの参照元
 
+## 2026-11-15：任意の補助スキルとして配布する
+
+use-principlesは`skills/`と両製品の配布物に残し、コア6スキルに追加する補助1スキルとして扱う。AIが利用場面を判断できるdescriptionも維持する。examplesへ移さず、devlawの接続表と両形式のdevlaw-workerから直接参照を外す。
+
+devlawには作業開始時や対象・段階変更時に関係するルール・原則を確認する条件を残す。候補の選択・本文の確認・適用結果の受け渡しをmemoryやdevlawへ複製しない。use-principlesからMemoryの検索・参照を使う方向は維持する。自動選択される頻度や各クライアントでのAIの行動は、この依存整理だけで保証しない。
+
+Bun 1.4.2で配布テスト8件・486 assertions、生成物照合、差分の空白検査が成功した。ソースと両形式の配布物でコア・エージェントからのuse-principles参照がないこと、use-principlesの本文・descriptionが変更されていないこと、プロジェクト導入用manifestが7スキルを引き続き含むことも確認した。
+
+以下は初期移植時の記録であり、旧名・旧配置・当時の呼び出し関係を含む。現在の設計は[architecture.md](../../architecture.md#標準スキルと外部スキル)を正本とする。
+
+## 初期移植の参照元
+
 確認日：2026-09-21。原則の移植記録は2026-09-20、全体フローの責務分離は2026-09-21。
 
 Cursorのpstack、参照コミット `032be146865d973682535de75f2287da438550bf` の[23原則](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/docs/guide/08-principles.md)と[poteto-mode](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/SKILL.md)を基に、日本語の開発規約として配布する。
