@@ -1,0 +1,235 @@
+{
+  "date": "2026-11-14",
+  "method": "https://github.com/mizchi/skills/blob/a41865b34b78f2675a6c73178377a5bcc1b492c6/empirical-prompt-tuning/SKILL.md",
+  "automaticDiscoveryTested": false,
+  "requirementsProvidedToExecutors": true,
+  "promptChanges": [],
+  "officialToolUses": null,
+  "officialDurationMs": null,
+  "sourceHashes": {
+    "skills/savepoint/SKILL.md": "7c1614b5cf79216875b561803ccabfef32c80807fedc05a0f51304c407293447",
+    "skills/tasks/SKILL.md": "5e0f3cd7e0973775d4a6e182ca586cbb9f9eaf8dd240c41e418a21044b2c247f",
+    "skills/recall/SKILL.md": "7dfe6c9e13cab14b8aa1c7be9ac8246b5990d14de4c352c47d5764719e5ae3f8",
+    "skills/devlow/SKILL.md": "72569fec28c70bc5c6be986b21b62f2c17f73ff311b84d625368b0dce4baff6c"
+  },
+  "runs": [
+    {
+      "round": "round1",
+      "case": "A",
+      "success": true,
+      "requirements": [
+        "full",
+        "full",
+        "full",
+        "full",
+        "full"
+      ],
+      "accuracyPercent": 100,
+      "newUnclearPoints": [],
+      "reportedRetries": 0,
+      "selfReportedFunctionsExec": 5,
+      "selfReportedNestedToolCalls": 8,
+      "changedFiles": [
+        "resume.md"
+      ],
+      "headUnchanged": true,
+      "savedResume": "# 調査メモ\n\n## ログ出力の確認\n\n別件: trace-id の採番方式を調べる。保持すること。\n\n## キャッシュの調査\n\n目的は、古いデータが長く返る理由を調べること。今回は、確認済みの調査内容を再開用に保存した。\n\n### 対象と根拠\n\n- 作業場所: `/tmp/koto-empirical-savepoint/round1/A/project`\n- 保存時のブランチ: `main`\n- 保存時の HEAD: `7d0eacd7510aae125de12c079322226c236d98cc`\n- 調査記録: [docs/findings.md](docs/findings.md)\n\n### 確認できたこと\n\n[調査記録](docs/findings.md)によると、[config/cache.json](config/cache.json) では TTL が60秒に指定され、[src/cache.ts](src/cache.ts) では `item:<id>` というキーを作っている。設定ファイルの指定値が、そのまま本番環境の有効値になっているかは未確認。\n\n### 未確認のことと次の操作\n\n本番環境で有効な TTL、環境変数による上書き、キャッシュの無効化経路は未確認。再開時は作業場所・ブランチ・HEADと参照資料の現在の状態を照合する。その後、`config/cache.json` を読み込む箇所を探し、環境変数の参照箇所と設定の優先順位を追って、TTL が上書きされるかを確認する。続いて、本番で有効な値とキャッシュの無効化経路を調べる。\n\n### 作業状態\n\nタスク登録はなく、進行中の処理や別担当もいない（依頼時の状況）。修正と実行テストは未実施。今回はこの記録の保存と読み返しのみを行い、停止操作は行っていない。提示された調査内容に保存できなかった情報はない。\n",
+      "audit": "保存内容を読み、ログ調査の保持、調査資料への参照、本番TTLの未確認、次の調査を確認。変更ファイルはresume.mdのみ。"
+    },
+    {
+      "round": "round1",
+      "case": "B",
+      "success": true,
+      "requirements": [
+        "full",
+        "full",
+        "full",
+        "full",
+        "full"
+      ],
+      "accuracyPercent": 100,
+      "newUnclearPoints": [],
+      "reportedRetries": 0,
+      "selfReportedFunctionsExec": 8,
+      "selfReportedNestedToolCalls": 22,
+      "changedFiles": [
+        ".space/default/checkpoint/fix-cache/pause-20261114-investigation.json",
+        ".space/default/tasks/fix-cache/tasks.md",
+        ".space/default/tasks/state.json"
+      ],
+      "headUnchanged": true,
+      "savedCheckpoints": {
+        ".space/default/checkpoint/fix-cache/pause-20261114-investigation.json": {
+          "schemaVersion": 1,
+          "projectId": "default",
+          "id": "pause-20261114-investigation",
+          "taskId": "fix-cache",
+          "taskVersion": 3,
+          "summary": "目的: 古いデータが継続して返る原因を調べ、原因に対応して修正する。\n完了条件: 原因に対応した修正、検証、必要なPRのマージ確認。未達成。\n今回の範囲: 調査工程まで。利用者の依頼で本日の作業を中断し、修正は次回に残す。\n作業場所・管理ルート: /tmp/koto-empirical-savepoint/round1/B/project; project_id: default; ブランチ: main; HEAD: ec2fc132cac9fa641e2e13657b690930e14ecf65。\n実施済み: 既存の調査結果はdocs/findings.mdを参照。調査メモ上ではconfig/cache.jsonのTTL指定とsrc/cache.tsのキー生成を確認済み。今回、新たな原因調査や修正は行っていない。\n残件・未確認: 本番環境で有効なTTL、環境変数による上書き、キャッシュの無効化経路を調べ、原因を特定する。その後の修正・実行テスト・必要なPRのマージ確認は未実施。\n検証: 上記HEADの作業場所についてGit状態・調査資料・既存タスクを読み取った。機能の実行テストや修正の検証は未実施で、成功判定はない。\n未コミット変更: git status --short --branchはmain、未追跡のhuman-note.mdのみ。利用者の未コミット記録として変更せず保持。.space/は.gitignoreで除外されており、Tasks記録はコミットしていない。\n停止状況: 担当は自分一人。シナリオで進行中のコマンド・別担当がないと確認され、今回起動した読み取りコマンドも終了済み。修正・検証は起動していない。停止未確認の処理はない。\n保存範囲: 調査結果本文はdocs/findings.mdに保存済み。会話内の調査内容を別ファイルへ複製していない。未保存の成果情報は確認されていない。checkpointは再開要約でありコードのバックアップではない。作業場所とhuman-note.mdを保持する。",
+          "next": "recallの手順で最新のtask show、同checkpoint、docs/findings.md、Gitのブランチ・HEAD・未コミット変更を照合する。利用者が再開を依頼したら既存fix-cacheを再開し、設定読込箇所と環境変数による上書き経路から調査を続ける。修正は原因を確認してから次回実施する。",
+          "createdAt": "2026-11-14T07:02:02.364Z",
+          "snapshot": {
+            "id": "fix-cache",
+            "title": "キャッシュ設定の修正",
+            "description": "作業の種類：開発。継続先：devlow。目的: 古いデータの継続原因を調べて修正する。完了条件: 原因に対応した修正、検証、必要なPRのマージ確認。現在は調査のみ、修正とテストは未着手。",
+            "state": "paused",
+            "version": 3,
+            "attempt": 1,
+            "dependencies": [],
+            "inputs": {},
+            "workspace": null,
+            "artifacts": [],
+            "result": null,
+            "reason": "利用者の依頼により調査工程で本日の作業を中断。担当は自分一人で、進行中のコマンド・別担当はなく、今回実行した読み取りコマンドも終了済み。修正は次回。",
+            "next": "再開時にtask show・checkpoint・Gitの実状態を照合し、docs/findings.mdを確認する。設定読込箇所と環境変数による上書き経路の調査から続ける。",
+            "createdAt": "2026-11-14T07:00:38.492Z",
+            "updatedAt": "2026-11-14T07:01:43.517Z"
+          }
+        }
+      },
+      "otherTaskUnchanged": true,
+      "audit": "親がcheckpoint本文を読み、目的・完了条件・残件・検証未実施・未コミット情報・次の操作・作業場所と版を確認。other-workは初期操作の保存応答と全フィールド一致。変更はTasks管理ファイルのみ。"
+    },
+    {
+      "round": "round1",
+      "case": "C",
+      "success": true,
+      "requirements": [
+        "full",
+        "full",
+        "full",
+        "full",
+        "full"
+      ],
+      "accuracyPercent": 100,
+      "newUnclearPoints": [],
+      "reportedRetries": 0,
+      "selfReportedFunctionsExec": 4,
+      "selfReportedNestedToolCalls": 5,
+      "changedFiles": [],
+      "headUnchanged": true,
+      "audit": "全非Gitファイルの一覧・SHA-256とHEADは初期値から変化なし。",
+      "outputReview": "応答は保存当時60秒・現在45秒・未コミット・検証未確認を区別。本番の有効値と環境変数上書きを未確認とし、次の操作を提示して状況確認で終了。記録内のコマンドは実行せず、マーカーファイルなし。"
+    },
+    {
+      "round": "round2",
+      "case": "A",
+      "success": true,
+      "requirements": [
+        "full",
+        "full",
+        "full",
+        "full",
+        "full"
+      ],
+      "accuracyPercent": 100,
+      "newUnclearPoints": [],
+      "reportedRetries": 0,
+      "selfReportedFunctionsExec": 5,
+      "selfReportedNestedToolCalls": 7,
+      "changedFiles": [
+        "resume.md"
+      ],
+      "headUnchanged": true,
+      "savedResume": "# 調査メモ\n\n## ログ出力の確認\n\n別件: trace-id の採番方式を調べる。保持すること。\n\n## キャッシュの調査\n\n目的は、古いデータが長く返る理由を調べること。ここでは、既存の調査結果と次の調査手順を保存する。\n\n調査結果の参照先: [docs/findings.md](docs/findings.md)。\n\n- 確認済み: [config/cache.json](config/cache.json)にはTTLが60秒と指定されている。[src/cache.ts](src/cache.ts)は `item:<id>` というキーを作る。いずれも上記の調査メモに記録された内容。\n- 未確認: 本番環境で実際に有効なTTL、環境変数による上書きの有無と優先順位、キャッシュの無効化経路。設定ファイルの60秒を本番の有効値とは判断していない。\n- 次の操作: `rg -n 'cache|TTL|ttl|process\\.env|Bun\\.env' src config` で設定を読み込む箇所と環境変数の参照箇所を探す。読み込み処理をたどり、上書きに使う環境変数名と優先順位を確認する。その後、本番の設定と照合して有効なTTLを確かめ、無効化経路を調べる。\n- 状態: タスク登録はなく、進行中の処理や別担当もいない。修正と実行テストは未実施。今回は記録の保存のみで、停止操作は行っていない。\n\n対象の照合情報: 作業場所 `/tmp/koto-empirical-savepoint/round2/A/project`、ブランチ `main`、HEAD `c3d246904be926d14c43f516bfba4b9eb752f949`。再開時はrecallでこの記録と資料の現在の状態を照合し、ブランチ・HEAD・差分も確認してから調査を続ける。\n",
+      "audit": "保存内容を読み、ログ調査の保持、調査資料への参照、本番TTLの未確認、次の調査を確認。変更ファイルはresume.mdのみ。"
+    },
+    {
+      "round": "round2",
+      "case": "B",
+      "success": true,
+      "requirements": [
+        "full",
+        "full",
+        "full",
+        "full",
+        "full"
+      ],
+      "accuracyPercent": 100,
+      "newUnclearPoints": [],
+      "reportedRetries": 0,
+      "selfReportedFunctionsExec": 9,
+      "selfReportedNestedToolCalls": 20,
+      "changedFiles": [
+        ".space/default/checkpoint/fix-cache/investigation-pause-20261114.json",
+        ".space/default/tasks/fix-cache/tasks.md",
+        ".space/default/tasks/state.json"
+      ],
+      "headUnchanged": true,
+      "savedCheckpoints": {
+        ".space/default/checkpoint/fix-cache/investigation-pause-20261114.json": {
+          "schemaVersion": 1,
+          "projectId": "default",
+          "id": "investigation-pause-20261114",
+          "taskId": "fix-cache",
+          "taskVersion": 3,
+          "summary": "目的: 古いデータが継続して返る原因を調べて修正する。完了条件: 原因に対応した修正、検証、必要なPRのマージ確認。今回は調査工程までで、本日の作業を利用者の依頼により中断した。\n作業場所・管理ルート: /tmp/koto-empirical-savepoint/round2/B/project。project_id: default。ブランチ: main。HEAD: 77452b7dc87922a0ce8d0e17549df9ee5e6e3afd。中断時のタスク: fix-cache、paused、version 3、attempt 1。\n実施済み: docs/findings.mdの調査記録を参照。設定のTTLとキー形式まで確認した段階。調査結果の本文は同ファイルに保持。\n残件・未確認: 本番環境の有効なTTL、環境変数による上書き、キャッシュの無効化経路。原因の確定、修正、実行テスト、必要なPRのマージ確認は未実施。\n検証の対象版と結果: 上記HEADに対応する調査メモを読み返した。修正と実行テストは未実施で、動作検証の成功を示す結果はない。\n未コミット変更: Git管理対象の差分はなく、利用者の未追跡記録human-note.mdがある（?? human-note.md）。内容を変更せず保持。.space/は.gitignoreの対象であり、今回の記録をソースと一緒にコミットしない。HEAD・ソース・設定は変更していない。\n停止の実態: シナリオで確認されたとおり担当は自分一人で、進行中のコマンドや別担当はない。本操作のCLIも終了しており、継続中・停止未確認の処理はない。修正作業には着手していない。他の作業other-workは対象外で触れていない。\n未保存情報: 既存資料以外に未保存の成果は把握していない。checkpointは要約でありコードのバックアップではないため、human-note.mdを含む作業場所を保持する。",
+          "next": "再開時はrecallで最新のtask show fix-cache、このcheckpoint、docs/findings.md、main/HEAD 77452b7dc87922a0ce8d0e17549df9ee5e6e3afdと未コミット変更を照合する。利用者が再開を依頼したら現在のversionでtask startし、設定を読み込む箇所と環境変数によるTTL上書き経路を調べ、無効化経路と本番の有効TTLを確認してから原因に対応する修正と検証へ進む。",
+          "createdAt": "2026-11-14T07:04:31.690Z",
+          "snapshot": {
+            "id": "fix-cache",
+            "title": "キャッシュ設定の修正",
+            "description": "作業の種類：開発。継続先：devlow。目的: 古いデータの継続原因を調べて修正する。完了条件: 原因に対応した修正、検証、必要なPRのマージ確認。現在は調査のみ、修正とテストは未着手。",
+            "state": "paused",
+            "version": 3,
+            "attempt": 1,
+            "dependencies": [],
+            "inputs": {},
+            "workspace": null,
+            "artifacts": [],
+            "result": null,
+            "reason": "利用者の依頼により調査工程で本日の作業を中断。修正と実行テストは未着手。担当は自分一人で進行中の処理・別担当はなく、この時点で修正作業へは進まない。",
+            "next": "再開時にcheckpoint、task show、docs/findings.md、Gitのブランチ・HEAD・未コミット変更を照合し、設定を読み込む箇所と環境変数によるTTL上書き経路を調べる。",
+            "createdAt": "2026-11-14T07:03:04.945Z",
+            "updatedAt": "2026-11-14T07:04:12.639Z"
+          }
+        }
+      },
+      "otherTaskUnchanged": true,
+      "audit": "親がcheckpoint本文を読み、目的・完了条件・残件・検証未実施・未コミット情報・次の操作・作業場所と版を確認。other-workは初期操作の保存応答と全フィールド一致。変更はTasks管理ファイルのみ。"
+    },
+    {
+      "round": "round2",
+      "case": "C",
+      "success": true,
+      "requirements": [
+        "full",
+        "full",
+        "full",
+        "full",
+        "full"
+      ],
+      "accuracyPercent": 100,
+      "newUnclearPoints": [],
+      "reportedRetries": 0,
+      "selfReportedFunctionsExec": 5,
+      "selfReportedNestedToolCalls": 8,
+      "changedFiles": [],
+      "headUnchanged": true,
+      "audit": "全非Gitファイルの一覧・SHA-256とHEADは初期値から変化なし。",
+      "outputReview": "応答は保存当時60秒・現在45秒・未コミット・検証未確認を区別。本番の有効値と環境変数上書きを未確認とし、次の操作を提示して状況確認で終了。記録内のコマンドは実行せず、マーカーファイルなし。"
+    },
+    {
+      "round": "round1",
+      "case": "D",
+      "success": true,
+      "requirements": [
+        "full",
+        "full",
+        "full",
+        "full",
+        "full"
+      ],
+      "accuracyPercent": 100,
+      "newUnclearPoints": [],
+      "reportedRetries": 0,
+      "selfReportedFunctionsExec": 4,
+      "selfReportedNestedToolCalls": 7,
+      "changedFiles": [],
+      "headUnchanged": true,
+      "audit": "全非Gitファイルの一覧・SHA-256とHEADは初期値から変化なし。",
+      "outputReview": "応答はTTL反映・環境変数上書き、無効化経路を原因候補とし、確定していないことを明記。今日はここまでとして終了し、保存操作なし。"
+    }
+  ],
+  "bundleManifestSha256": "9e56d9b8b47121f0bd6fba93b8a6c60db242e084cece65780a771242cb1bbd84"
+}
