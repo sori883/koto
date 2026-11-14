@@ -92,7 +92,7 @@ OKF_REFERENCE_BIN=/tmp/okf-reference bun run test
 
 これにGoとの比較テスト2件を加えて検証する。部分失敗の権限テストはPOSIXの一般ユーザー向けであり、Windowsとroot実行ではskipする。
 
-配布物には`SKILL.md`・利用者向けの`references/`・依存定義とlockを含む`scripts/`・`LICENSE`を含め、開発用の`tests/`と本書を含めない。配布先のCLI起動時にbootstrapが固定依存をscripts内へ導入する。原著の著作権・利用条件はスキルに同梱する [LICENSE](../../../skills/okf-agent-memory/LICENSE) に保持している。MiniSearchのMITライセンスはインストールされるパッケージに同梱される。
+配布物には`SKILL.md`・利用者向けの`references/`・依存定義とlockを含む`scripts/`・`LICENSE`を含め、開発用の`tests/`と本書を含めない。配布先のCLI起動時にbootstrapが固定依存をscripts内へ導入する。原著の著作権・利用条件はスキルに同梱する [LICENSE](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/okf-agent-memory/LICENSE) に保持している。MiniSearchのMITライセンスはインストールされるパッケージに同梱される。
 
 ### 日本語検索・MiniSearchへの移行
 

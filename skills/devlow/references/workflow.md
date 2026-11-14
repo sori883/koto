@@ -122,9 +122,8 @@ recallによる状況説明、CLIの操作成功、タスクのcompleted、成�
 | コメントを整理する | [no-comments](../../no-comments/SKILL.md)へ対象差分・既存task_id・保存先を渡す |
 | 検証スキルを作成・更新する | [create-verification-skill](../../create-verification-skill/SKILL.md)または[maintain-verification-skill](../../maintain-verification-skill/SKILL.md)へ対象アプリ・版・操作範囲を渡す |
 | 判断の経緯を詳しく記録・照合する | [show-me-your-work](../../show-me-your-work/SKILL.md)へ既存タスクとログ・証拠を渡す |
-| 技術文書を構成する | [technical-writing](../../technical-writing/SKILL.md)へ読者・目的・成果物を渡す |
-| 説明や日本語を整える | 短い言い直しは[bro](../../bro/SKILL.md)、説明の組み立ては[explain-before-shorten](../../explain-before-shorten/SKILL.md)、文章の推敲は[unslop](../../unslop/SKILL.md)・[natural-japanese](../../natural-japanese/SKILL.md)・[yomiyasu](../../yomiyasu/SKILL.md)から目的に合うものを選ぶ |
-| 作業経験からスキルを改善する | 依頼された場合に[reflect](../../reflect/SKILL.md)、本人の作業スタイルなら[automate-me](../../automate-me/SKILL.md)へ根拠を渡す |
+
+文書の推敲や作業スタイルの整理を依頼された場合は、利用先で使える外部スキルを目的に応じて利用できる。対象・目的・根拠・守る条件を渡し、返された内容と元の資料を照合する。専用スキルがなくても、依頼された範囲で作成・確認を進める。作業結果から長く使う知識を残す場合は、[引き渡し](deliver.md#4-確定した知識を整理して保存する)の手順でMemoryへ保存する。
 
 全専門スキルを毎回呼ばない。実装の細かな手法は必要な専門スキルに任せ、工程側は入力・期待する成果・判定・失敗時の戻り先を持つ。管理ルート・project・用途と確認済みの知識、既存task_idを引き継ぎ、専門スキルを呼ぶためだけにタスクを増やさない。同じ文章へ複数の推敲スキルを自動で重ねない。利用できない手順や独立担当を実行済みとせず、満たせない条件を明示する。
 

@@ -4,7 +4,7 @@ koto（コト）は **Knowledge-Oriented Task Orchestration** の略であり、
 
 kotoは、AIエージェントが開発で使うスキル・CLI・共通知識・ルールを、Codex・Claude Code・GitHub Copilot in VS Code向けに配布するためのリポジトリである。利用先のプロジェクトで、知識管理、タスク分割・管理、必要な文書や設定の導入を行える道具を作る。
 
-**Tasks・Memoryは独立CLI、setupは専用スキル内のCLIとして提供し、配布物を `main` ブランチで管理する。Codex形式とClaude形式を生成し、Claude Code・CopilotはClaude形式を共用する。koto独自のCLIは配布後もTypeScriptとし、Bunで実行する。natural-japanese・critical-thinking・yomiyasuは原版のPythonスクリプトを保持する。natural-japaneseとcritical-thinkingの依存はuvで準備し、yomiyasuは標準ライブラリだけで実行する。**
+**Tasks・Memoryは独立CLI、setupは専用スキル内のCLIとして提供し、配布物を `main` ブランチで管理する。Codex形式とClaude形式を生成し、Claude Code・CopilotはClaude形式を共用する。koto独自のCLIは配布後もTypeScriptとし、Bunで実行する。標準スキルは作業の進行・検証と知識の継承に必要な範囲を持ち、文章の推敲や個人向けの作業支援はREADMEで外部スキルを紹介する。**
 
 この文書を、何を作るか・どこに置くか・どう配布するかを判断するための設計方針の正本とする。以下は目標の構成であり、すべてが実装済みという意味ではない。実装状況や検証結果は [現状資料](current-state.md) や個別の開発資料に記録し、この設計と区別する。
 
@@ -18,7 +18,7 @@ Codex・Claude Codeには、プラグイン方式に加えて、全スキルを�
 
 配布物には、その配布物を保守する人向けの記述を一切含めない。配布するスキル本文・参照資料・プロンプト・テンプレート等には、利用者または利用先で実行するAIに必要な内容だけを記載する。保守方針、原版との差分、変更経緯、開発時の検証記録などは、配布対象外の `docs/` 等で管理する。
 
-正式名称、リポジトリ名、プラグイン名、マーケットプレイス名は`koto`とする。配布先は`dist/<製品>/koto/`、GitHubの参照先は`sori883/koto`とする。Tasks・Memoryへの置換では、旧スキル名orch・okf-agent-memoryを新手順への入口として残す。利用先の知識は`.space/default/memory/`へ整理し、既存データは明示的な移行なしに変更しない。旧名で導入済みのsetup管理記録と指示ブロックは、新名での更新時に引き継ぎ、ローカル編集や未完了の適用は衝突として保護する。改名の範囲と切り替え手順は[改名記録](rename-koto.md)に置く。
+正式名称、リポジトリ名、プラグイン名、マーケットプレイス名は`koto`とする。配布先は`dist/<製品>/koto/`、GitHubの参照先は`sori883/koto`とする。Tasks・Memoryは現在のスキル名を入口とする。利用先の知識は`.space/default/memory/`へ整理し、既存データは明示的な移行なしに変更しない。旧名で導入済みのsetup管理記録と指示ブロックは、新名での更新時に引き継ぎ、ローカル編集や未完了の適用は衝突として保護する。改名の範囲と切り替え手順は[改名記録](rename-koto.md)に置く。
 
 ## 正本・配布物・利用先
 
@@ -39,7 +39,20 @@ Codex・Claude Codeには、プラグイン方式に加えて、全スキルを�
 
 共通知識の本文を `space/default/` と各スキルの `references/` に重複して管理しない。共通文書を修正するときは `space/default/` を変更し、配布物と利用先のコピーへ反映する。
 
-explain-before-shortenは、2026-10-29のユーザー指示により、Kazuki Otaの[紹介記事](https://zenn.dev/microsoft/articles/explain-before-shorten)で公開された`SKILL.md`を改変せず、独立したスキルとして同梱する。正本は`skills/explain-before-shorten/SKILL.md`に置き、既存の文章改善スキルへ統合しない。付属CLIや追加依存は設けず、既存の製品別ビルドで配布する。出典はスキル本文にも明記する。取得時点・原文との一致・検証結果は、配布対象外の[取込記録](skills/explain-before-shorten/upstream-import.md)に置く。
+## 標準スキルと外部スキル
+
+標準配布は18スキルとする。Tasks・Memoryの操作、作業の進行・検証、記録の保存・再利用を一緒に実行できる範囲を持つ。原版の出自にかかわらず、kotoのフローや保存した知識との連携を採用理由とする。
+
+- 進行と導入はdevlow・tasks・memory・setup。
+- 中断と再開はcheckpoint-safely・recall。
+- 理解と知識の継承はhow・why・teach・system-blueprint・use-principles・no-comments・show-me-your-work。
+- 実装と検証はtdd・blast-radius・interrogate・create-verification-skill・maintain-verification-skill。
+
+2026-11-14の配布範囲の見直しでは、yomiyasu・natural-japanese・critical-thinking・explain-before-shorten・technical-writing・unslop・bro・reflect・automate-meの9スキルをソースと生成物から削除し、READMEで原版の用途と導入先を紹介する。旧名の案内であるorch・okf-agent-memoryも削除する。過去の取込記録はdocsに保持する。
+
+kotoのフローは、利用先に外部スキルがなくても実行できる。外部スキルを使う場合は対象・目的・根拠・守る条件を渡し、結果を元の資料と照合する。作業状態はTasks、長く使う知識はMemoryに記録する責務をkotoが持つ。
+
+知識の保存には、確認した内容、根拠、適用条件、未確認事項を残す。文章の推敲や専門的な論旨の点検は利用者が目的に応じて追加する。
 
 ## 全体フローと工程の定義
 
@@ -69,11 +82,7 @@ devlowはTasksによる作業状態、Memoryによる関連知識、実際のGit
 
 ## 独立CLIと実行時の依存関係
 
-koto独自のCLIはTypeScriptをBunで実行する。Tasks・Memoryには実行時npm依存とbootstrapを設けない。setupは既存のスキル内bootstrapを維持する。natural-japaneseは2026-10-13のユーザー指示により、独自のTypeScript移植を取りやめ、[coji/natural-japanese](https://github.com/coji/natural-japanese)のスキル一式を改変せず取り込む。Pythonスクリプトとインライン依存定義を保持し、uvが実行環境を準備する。原版のsemantic・calibrate・fixturesも同梱し、MIT LICENSEを添える。koto側の保守説明・出典の版・検証記録は配布物へ追記せず、[取込記録](skills/natural-japanese/upstream-import.md)で管理する。
-
-2026-11-11の更新依頼により、同リポジトリのv2.0.0からnatural-japaneseを更新し、critical-thinkingを独立したスキルとして同梱する。前者は日本語の執筆・推敲、後者は文書の論旨・前提の検査と改稿を担当し、原版の相互参照を維持する。正本はそれぞれ`skills/natural-japanese/`・`skills/critical-thinking/`に置き、スキル本文・参照資料・スクリプトとMIT LICENSEを同じ製品別ビルドで配布する。critical-thinkingの行番号照合スクリプトはPython 3.11以上とPyYAMLを使い、uvがスクリプトの依存定義から準備する。原版リポジトリの開発用評価資料・リリースノート・プラグイン設定は取り込まない。対象タグとコミット、変更内容、検証結果は前述の取込記録に残す。
-
-yomiyasuも2026-10-13のユーザー依頼で追加する。[nanaism/yomiyasu](https://github.com/nanaism/yomiyasu)のスキル本文・参照資料・assets・Pythonスクリプトを改変せず取り込み、MIT LICENSEとUnicodeの著作権・許諾通知を同梱する。原版の単独プラグイン用マニフェストは取り込まず、kotoの製品別定義で配布する。実行はPython標準ライブラリだけで完結し、Bunへの移植やbootstrapの追加は行わない。出典と検証は[取込記録](skills/yomiyasu/upstream-import.md)に置く。
+koto独自のCLIはTypeScriptをBunで実行する。Tasks・Memoryには実行時npm依存とbootstrapを設けない。setupは既存のスキル内bootstrapを維持する。外部スキルの実行環境と依存関係は各配布元が案内する。
 
 共通のトップレベルCLIは作らない。次の責務を別のスキルとCLIで提供する。
 
@@ -139,7 +148,7 @@ system-blueprintが新規に作成する構成・動作の説明は、利用先�
 
 判断ログはshow-me-your-workが追記・訂正・照合を扱う。新規の既定はタスク側の `decisions.tsv` とし、既存記録の形式と場所は維持する。過去の誤記は訂正先IDを持つ新規行で訂正し、履歴を消さない。証拠の存在だけでなく主張・対象版との対応を照合する。マイルストーンやTasksの状態の正本にはしない。
 
-reflectは作業の学びから既存スキルの改善案を作り、automate-meは本人の明示した作業方針と対象範囲の記録から個人向けスキルを提案する。両者は新規作成・変更の前に、保存先・利用範囲・具体的な本文または差分を提示し、人間の明示的な承認を必須とする。承認前は会話または自動発見されない草案の場所に留め、利用されるスキルへ反映しない。承認済みの同じ案は再確認せず、内容・範囲・保存先が変われば再度承認を求める。共通の提示・承認・適用手順はreflectの `references/approval.md`が所有し、automate-meから参照する。これは2026-09-26の追加依頼に基づく利用時の手順である。
+作業経験からのスキル改善や個人向けの作業スタイルの作成は、利用先で選んだ外部スキルへ依頼できる。kotoは依頼された範囲の記録と根拠を渡し、得られた結論を保存するときは既存の知識化手順を使う。
 
 system-blueprintはブループリント固有の保存先・concept ID・typeを定義する。CLIの準備、コマンド書式・引数、作成・更新・関連付け・形式検証の実行方法はMemoryスキルを正本とし、system-blueprintに実行例や操作手順を複製しない。
 
@@ -189,7 +198,7 @@ CopilotとClaude Codeはスキル・CLI・共通知識の配布物を共用し�
 
 `scripts/build.ts` は `skills/`・`cli/`・`space/` をコピーし、`packaging/` の製品別定義を組み合わせる。TypeScriptからJavaScriptへの変換や、単一バイナリへの変換は行わない。CLIが必要とする `lib/`・資料・依存定義・ロックファイルを含める。
 
-テスト、開発用ファイル、開発リポジトリ自身の `.space/`、すべての `node_modules/` は配布物に含めない。natural-japaneseは原版のスキル一式を保持するため、原版に含まれる校正スクリプトとfixturesをそのまま同梱する。`node_modules/`・`__pycache__/`・`.venv/`など実行時に生成する依存・キャッシュはGit管理と配布から除外する。
+テスト、開発用ファイル、開発リポジトリ自身の `.space/`、すべての `node_modules/` は配布物に含めない。`node_modules/`・`__pycache__/`・`.venv/`など実行時に生成する依存・キャッシュはGit管理と配布から除外する。
 
 | 配布先 | 生成するカタログ | カタログが指す配布物 |
 | --- | --- | --- |
@@ -207,13 +216,11 @@ GitHub Actionsではテスト・型や定義の検証に加え、配布物を再
 
 完成確認では配布物を開発リポジトリの外へコピーし、初回の依存導入、2回目の起動、ロックファイル変更後の再導入を検証する。依存がスキル内に入り、成果物が利用先に保存されること、setupの再実行・更新で重複や既存データの消失が起きないことも確認する。
 
-natural-japaneseは原版ファイルとの一致と、リポジトリ外にコピーした配布物のuvによる実行を確認する。Bunのbootstrap・lock更新検査は適用せず、入力文書と利用先の依存定義が変更されないことを確かめる。
-
-critical-thinkingも原版ファイルとライセンスの一致、配布物をリポジトリ外にコピーした状態での実行を確認する。行番号照合は、本文に対応しない行を検出する場合と、全行が対応して成功する場合の両方を扱い、入力文書と分析結果を変更しないことを確かめる。スクリプトの動作確認は、AIによる論旨の検査や文書改稿の品質評価とは区別する。
+配布検証では標準18スキルとsetupの配置対象が一致すること、配布物内の参照が解決できることを確かめる。CLIの実行と既存データの保護は、リポジトリ外へコピーした配布物で確認する。
 
 ## 移行と変更時の判断
 
-2026-11-01の依頼により、mainを起点にdevelopからTasks・Memory・defaultの配置を選択的に取り込む。旧Babelがある利用先ではsetupを止め、明示した移行で全ファイルと内容を照合する。旧orchの台帳は形式が異なるため自動変換せず、必要な未完了の仕事を実態と照合して登録する。旧スキル名は案内だけを残し、旧CLIは配布しない。[取り込み記録](main-tasks-memory-port.md)で実装と検証を区別する。
+2026-11-01の依頼により、mainを起点にdevelopからTasks・Memory・defaultの配置を選択的に取り込む。旧Babelがある利用先ではsetupを止め、明示した移行で全ファイルと内容を照合する。旧orchの台帳は形式が異なるため自動変換せず、必要な未完了の仕事を実態と照合して登録する。旧スキル名の案内と旧CLIは標準配布に含めない。[取り込み記録](main-tasks-memory-port.md)で実装と検証を区別する。
 
 以下は移行前の経緯であり、現在のCLI配置を表さない。
 

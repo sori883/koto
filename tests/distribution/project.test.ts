@@ -60,8 +60,8 @@ test("both products install real project files, survive relocation, and update t
     const status = await run(localSetup, ["status", ...localArgs], project);
     expect(status.data.scope).toBe("project");
     expect(status.data.actions.every((action: { action: string }) => action.action === "unchanged")).toBe(true);
-    const skill = "bro/SKILL.md";
-    await writeFile(join(source, "skills", skill), "---\nname: bro\ndescription: Updated skill\n---\nUpdated content.\n");
+    const skill = "teach/SKILL.md";
+    await writeFile(join(source, "skills", skill), "---\nname: teach\ndescription: Updated skill\n---\nUpdated content.\n");
     await run(localSetup, ["apply", ...localArgs], project);
     expect(await readFile(join(project, skillRoot, skill), "utf8")).toContain("Updated content.");
     expect(await readFile(join(project, instruction), "utf8")).toBe(instructions);

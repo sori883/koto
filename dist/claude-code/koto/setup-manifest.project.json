@@ -311,16 +311,6 @@
       "mode": "copy"
     },
     {
-      "source": "skills/automate-me/LICENSE",
-      "destination": ".claude/skills/automate-me/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/automate-me/SKILL.md",
-      "destination": ".claude/skills/automate-me/SKILL.md",
-      "mode": "copy"
-    },
-    {
       "source": "skills/blast-radius/LICENSE",
       "destination": ".claude/skills/blast-radius/LICENSE",
       "mode": "copy"
@@ -328,16 +318,6 @@
     {
       "source": "skills/blast-radius/SKILL.md",
       "destination": ".claude/skills/blast-radius/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/bro/LICENSE",
-      "destination": ".claude/skills/bro/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/bro/SKILL.md",
-      "destination": ".claude/skills/bro/SKILL.md",
       "mode": "copy"
     },
     {
@@ -363,36 +343,6 @@
     {
       "source": "skills/create-verification-skill/assets/feature-template.md",
       "destination": ".claude/skills/create-verification-skill/assets/feature-template.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/critical-thinking/LICENSE",
-      "destination": ".claude/skills/critical-thinking/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/critical-thinking/SKILL.md",
-      "destination": ".claude/skills/critical-thinking/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/critical-thinking/references/foundations.md",
-      "destination": ".claude/skills/critical-thinking/references/foundations.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/critical-thinking/references/logic.md",
-      "destination": ".claude/skills/critical-thinking/references/logic.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/critical-thinking/references/somosomo.md",
-      "destination": ".claude/skills/critical-thinking/references/somosomo.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/critical-thinking/scripts/coverage.py",
-      "destination": ".claude/skills/critical-thinking/scripts/coverage.py",
       "mode": "copy"
     },
     {
@@ -486,11 +436,6 @@
       "mode": "copy"
     },
     {
-      "source": "skills/explain-before-shorten/SKILL.md",
-      "destination": ".claude/skills/explain-before-shorten/SKILL.md",
-      "mode": "copy"
-    },
-    {
       "source": "skills/how/LICENSE",
       "destination": ".claude/skills/how/LICENSE",
       "mode": "copy"
@@ -541,111 +486,6 @@
       "mode": "copy"
     },
     {
-      "source": "skills/natural-japanese/LICENSE",
-      "destination": ".claude/skills/natural-japanese/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/SKILL.md",
-      "destination": ".claude/skills/natural-japanese/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/assets/style-profile-template.md",
-      "destination": ".claude/skills/natural-japanese/assets/style-profile-template.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/diagnose.md",
-      "destination": ".claude/skills/natural-japanese/references/diagnose.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/doctypes/guide.md",
-      "destination": ".claude/skills/natural-japanese/references/doctypes/guide.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/doctypes/memo.md",
-      "destination": ".claude/skills/natural-japanese/references/doctypes/memo.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/doctypes/minutes.md",
-      "destination": ".claude/skills/natural-japanese/references/doctypes/minutes.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/doctypes/report.md",
-      "destination": ".claude/skills/natural-japanese/references/doctypes/report.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/doctypes/slide.md",
-      "destination": ".claude/skills/natural-japanese/references/doctypes/slide.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/references/manual-checklist.md",
-      "destination": ".claude/skills/natural-japanese/references/manual-checklist.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/scripts/calibrate.py",
-      "destination": ".claude/skills/natural-japanese/scripts/calibrate.py",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/scripts/calques.py",
-      "destination": ".claude/skills/natural-japanese/scripts/calques.py",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/scripts/fixtures/ai-smelly.md",
-      "destination": ".claude/skills/natural-japanese/scripts/fixtures/ai-smelly.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/scripts/fixtures/natural.md",
-      "destination": ".claude/skills/natural-japanese/scripts/fixtures/natural.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/scripts/lint.py",
-      "destination": ".claude/skills/natural-japanese/scripts/lint.py",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/scripts/newfacts.py",
-      "destination": ".claude/skills/natural-japanese/scripts/newfacts.py",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/scripts/outline.py",
-      "destination": ".claude/skills/natural-japanese/scripts/outline.py",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/scripts/paragraphs.py",
-      "destination": ".claude/skills/natural-japanese/scripts/paragraphs.py",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/scripts/semantic.py",
-      "destination": ".claude/skills/natural-japanese/scripts/semantic.py",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/scripts/terms.py",
-      "destination": ".claude/skills/natural-japanese/scripts/terms.py",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/natural-japanese/scripts/textcore.py",
-      "destination": ".claude/skills/natural-japanese/scripts/textcore.py",
-      "mode": "copy"
-    },
-    {
       "source": "skills/no-comments/LICENSE",
       "destination": ".claude/skills/no-comments/LICENSE",
       "mode": "copy"
@@ -656,21 +496,6 @@
       "mode": "copy"
     },
     {
-      "source": "skills/okf-agent-memory/LICENSE",
-      "destination": ".claude/skills/okf-agent-memory/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/okf-agent-memory/SKILL.md",
-      "destination": ".claude/skills/okf-agent-memory/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/orch/SKILL.md",
-      "destination": ".claude/skills/orch/SKILL.md",
-      "mode": "copy"
-    },
-    {
       "source": "skills/recall/LICENSE",
       "destination": ".claude/skills/recall/LICENSE",
       "mode": "copy"
@@ -678,21 +503,6 @@
     {
       "source": "skills/recall/SKILL.md",
       "destination": ".claude/skills/recall/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/reflect/LICENSE",
-      "destination": ".claude/skills/reflect/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/reflect/SKILL.md",
-      "destination": ".claude/skills/reflect/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/reflect/references/approval.md",
-      "destination": ".claude/skills/reflect/references/approval.md",
       "mode": "copy"
     },
     {
@@ -816,26 +626,6 @@
       "mode": "copy"
     },
     {
-      "source": "skills/technical-writing/LICENSE",
-      "destination": ".claude/skills/technical-writing/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/technical-writing/SKILL.md",
-      "destination": ".claude/skills/technical-writing/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/unslop/LICENSE",
-      "destination": ".claude/skills/unslop/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/unslop/SKILL.md",
-      "destination": ".claude/skills/unslop/SKILL.md",
-      "mode": "copy"
-    },
-    {
       "source": "skills/use-principles/LICENSE",
       "destination": ".claude/skills/use-principles/LICENSE",
       "mode": "copy"
@@ -888,66 +678,6 @@
     {
       "source": "skills/why/references/synthesizer-prompt.md",
       "destination": ".claude/skills/why/references/synthesizer-prompt.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/yomiyasu/LICENSE",
-      "destination": ".claude/skills/yomiyasu/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/yomiyasu/SKILL.md",
-      "destination": ".claude/skills/yomiyasu/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/yomiyasu/UNICODE-LICENSE.txt",
-      "destination": ".claude/skills/yomiyasu/UNICODE-LICENSE.txt",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/yomiyasu/assets/algo-artis.png",
-      "destination": ".claude/skills/yomiyasu/assets/algo-artis.png",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/yomiyasu/references/domains/business.md",
-      "destination": ".claude/skills/yomiyasu/references/domains/business.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/yomiyasu/references/domains/essay.md",
-      "destination": ".claude/skills/yomiyasu/references/domains/essay.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/yomiyasu/references/domains/tech.md",
-      "destination": ".claude/skills/yomiyasu/references/domains/tech.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/yomiyasu/references/gemini-syntax.md",
-      "destination": ".claude/skills/yomiyasu/references/gemini-syntax.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/yomiyasu/references/slop-catalog.md",
-      "destination": ".claude/skills/yomiyasu/references/slop-catalog.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/yomiyasu/scripts/markdown_visibility.py",
-      "destination": ".claude/skills/yomiyasu/scripts/markdown_visibility.py",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/yomiyasu/scripts/yomiyasu_diff.py",
-      "destination": ".claude/skills/yomiyasu/scripts/yomiyasu_diff.py",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/yomiyasu/scripts/yomiyasu_lint.py",
-      "destination": ".claude/skills/yomiyasu/scripts/yomiyasu_lint.py",
       "mode": "copy"
     }
   ]

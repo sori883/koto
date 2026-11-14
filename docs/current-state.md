@@ -2,6 +2,8 @@
 
 この資料の旧orch・旧Memory・Babelの説明は移行前の記録。2026-11-01のmain向けTasks・Memory移植の状態は[取り込み記録](main-tasks-memory-port.md)を参照する。
 
+2026-11-14の標準配布の見直しは[現在の配布設計](architecture.md#標準スキルと外部スキル)、外部スキルの用途と配布元は[README](../README.md#必要に応じて組み合わせる外部スキル)を参照する。
+
 2026-11-04の完了タスク資料の自動アーカイブは[変更記録](tasks-archive.md)を参照する。
 
 kotoは、開発作業のフロー、タスク台帳、知識管理、プロジェクトへの導入をCodex・Claude Code・GitHub Copilot in VS Codeへ配布するプラグインである。CopilotはClaude形式の配布物を共用する。目的と配置方針の正本は[architecture.md](architecture.md)、導入・生成方法は[distribution.md](distribution.md)に置く。
@@ -15,8 +17,8 @@ Codex・Claude Codeには、全スキルをプロジェクトへ実ファイル�
 | 構成物 | 役割・入口 |
 | --- | --- |
 | devlow | [全体フロー](../skills/devlow/references/workflow.md)。依頼整理・調査・設計・計画・実装・検証・レビュー・引き渡しを規模と依頼種別から選ぶ |
-| orch | [スキル](../skills/orch/SKILL.md)と専用CLI。unitの進行、確認結果、親の受け入れを分離して管理する |
-| okf-agent-memory | [スキル](../skills/okf-agent-memory/SKILL.md)と専用CLI。Markdownの知識を検索・保存・更新・関連付け・検証する |
+| orch | [スキル](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/orch/SKILL.md)と専用CLI。unitの進行、確認結果、親の受け入れを分離して管理する |
+| okf-agent-memory | [スキル](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/okf-agent-memory/SKILL.md)と専用CLI。Markdownの知識を検索・保存・更新・関連付け・検証する |
 | setup | [スキル](../skills/setup/SKILL.md)と専用CLI。同梱文書と指示を既存のプロジェクトへ導入・更新する |
 | system-blueprint / how / why | システムの構成文書、動作の調査、設計理由の調査を担当する |
 | use-principles / checkpoint-safely | 原則の選択・適用と、中断・引き継ぎの保存を担当する |

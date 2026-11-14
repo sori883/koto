@@ -23,12 +23,6 @@
 | 不具合を再現し、検証を繰り返せるようにしたい | **tdd / create-verification-skill / maintain-verification-skill**：失敗テストから修正し、アプリ専用の検証手順を作成・更新する |
 | 判断の経緯を追いたい | **show-me-your-work**：判断ログを追記・訂正し、証拠と照合する |
 | コードコメントにある理由や制約を知識として残したい | **no-comments**：必要な知識をOKFへ保存し、`code_refs`でコードと結び付けてからコメントを整理する |
-| 文書や説明を読みやすくしたい | **technical-writing / unslop / bro**：文書の構成、文章の推敲、直前の説明の言い換えを担当する |
-| 日本語の説明を、意味が伝わる短い文章に整えたい | **explain-before-shorten**：口頭で伝わる説明を組み立ててから、重要な条件を保って短くする |
-| 日本語の文章を書き、定型句や読みにくい箇所を確認したい | **natural-japanese**：執筆・推敲の手順と、Python・uvで動く文章検査・構成抽出・用語抽出・診断を提供する |
-| 提案書や稟議書を、決裁者の目で点検して直したい | **critical-thinking**：主張と根拠、矛盾、前提や他の選択肢を点検し、必要な確認を経て本文・短縮版・構成を見直した版を作る |
-| AIが生成した日本語を、意味や条件を保って読みやすく直したい | **yomiyasu**：不自然な比喩・主述関係・装飾を見直し、Pythonで文章と推敲前後の差分を検査する |
-| 作業の学びや自分の進め方をスキルにしたい | **reflect / automate-me**：改善案や本人向けの草案を示し、人間の承認後に作成・更新する |
 
 たとえばdevlowでは、次の工程から依頼に必要なものを選びます。
 
@@ -40,6 +34,21 @@
 
 分担が必要なときの担当として、開発作業を進める **devlow-worker** と、コメントの知識を保存して整理する **comment-curator** を同梱しています。担当へ渡す範囲と、参照するスキル・既存の判断をそろえて使います。
 
+## 必要に応じて組み合わせる外部スキル
+
+文章の推敲や個人向けの作業支援には、次の外部スキルを選べます。利用する環境への導入方法と必要な実行環境は、各配布元の案内を確認してください。
+
+| やりたいこと | スキル | 配布元・紹介記事 |
+| --- | --- | --- |
+| AIが生成した日本語を、意味や条件を保って推敲したい | yomiyasu | [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) |
+| 日本語の文書を書き、表現や構成を見直したい | natural-japanese | [coji/natural-japanese](https://github.com/coji/natural-japanese) |
+| 提案書などの主張・根拠・前提を点検したい | critical-thinking | [coji/natural-japanese](https://github.com/coji/natural-japanese) |
+| 説明を組み立ててから、意味を保って短くしたい | explain-before-shorten | [Kazuki Otaの紹介記事](https://zenn.dev/microsoft/articles/explain-before-shorten) |
+| 技術文書を構成し、文章や会話の説明を整えたい | technical-writing / unslop / bro | [pstack](https://github.com/cursor/plugins/tree/main/pstack) |
+| 作業経験や自分の進め方をスキルにしたい | reflect / automate-me | [pstack](https://github.com/cursor/plugins/tree/main/pstack) |
+
+kotoの開発フローは標準スキルだけで実行できます。外部スキルを使う場合は、対象の文書や作業記録、目的、守る条件を渡し、返された結果を元の根拠と照合します。
+
 ## 使い始める
 
 Codex・Claude Codeでは、プラグイン方式のほかに、**プロジェクトへ全スキルを実ファイルで配置する方式**も選べます。Codexは`.agents/skills/`、Claude Codeは`.claude/skills/`へ配置し、チームでGit管理できます。プラグインの登録は不要です。[プロジェクトへ直接導入する手順](docs/distribution.md#全スキルをプロジェクトへ直接導入する)を参照してください。以下はプラグイン方式の手順です。
@@ -47,12 +56,6 @@ Codex・Claude Codeでは、プラグイン方式のほかに、**プロジェ�
 ### 1. プラグインをインストールする
 
 使う製品と、付属ツールを動かすための **Bun 1.4.2以上**を用意してください。Codex・Claude Codeの以下のコマンドは、それぞれのCLIを用意してターミナルで実行します。1行目は配布元の登録、2行目はプラグインのインストールです。
-
-natural-japaneseの検査スクリプトには **uvとPython 3.10以上**が必要です。依存パッケージはuvが実行時に準備します。
-
-critical-thinkingの文書と分析結果を照合するスクリプトには **uvとPython 3.11以上**が必要です。PyYAMLはuvが実行時に準備します。
-
-yomiyasuの検査スクリプトは **Python 3**で動作し、外部ライブラリは不要です。
 
 **Codexの場合**
 

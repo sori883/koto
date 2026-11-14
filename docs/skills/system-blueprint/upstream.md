@@ -26,7 +26,7 @@
 | [pstack why](https://github.com/cursor/plugins/blob/6ed0f7a9504f577d7529064103cecce9be7dfc5e/pstack/skills/why/SKILL.md) | 採用理由を根拠から調べ、確度を区別する。別スキルを使う |
 | [acquire-codebase-knowledge](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/acquire-codebase-knowledge/SKILL.md) | 全体把握、項目別の調査、文書化、根拠の検証、既存資料の意図と実装の差の確認 |
 | [調査項目](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/skills/acquire-codebase-knowledge/references/inquiry-checkpoints.md) | 入口、依存、データフロー、バックグラウンド処理、外部連携などの確認観点 |
-| [OKF Agent Memory](../../../skills/okf-agent-memory/SKILL.md) | knowledge・decisionの分類、検索してから更新すること、CLIでの保存・関連付け・検証 |
+| [OKF Agent Memory](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/okf-agent-memory/SKILL.md) | knowledge・decisionの分類、検索してから更新すること、CLIでの保存・関連付け・検証 |
 
 acquire-codebase-knowledgeはそのまま翻訳する対象ではない。今回の目的に合わせ、7文書の固定出力、全依存の一覧、コーディング規約・テスト環境・技術的負債の網羅的な文書化、専用スキャンスクリプトは引き継がない。システム構成の理解に必要な根拠として関連する箇所を調べる。
 

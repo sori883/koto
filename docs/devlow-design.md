@@ -328,7 +328,7 @@ CLIを使わないタスクでは各タスクの記録または会話内の記�
 - [how](../skills/how/SKILL.md)、[why](../skills/why/SKILL.md)。既存調査スキルの入力・出力と、起動方法の移行事項を確認した。
 - [system-blueprintの文書モデル](../skills/system-blueprint/references/document-model.md)。現状の構成資料と判断記録の配置を継承した。
 - [checkpoint-safely](../skills/checkpoint-safely/SKILL.md)。保存と中断の区別、既存記録の扱いを確認した。
-- [OKFスキル](../skills/okf-agent-memory/SKILL.md)、[frontmatterの定義](../skills/okf-agent-memory/references/frontmatter.md)。既存のtypeと知識の保存責務を確認した。最終結果を残すという利用方針は今回の設計による。
+- [OKFスキル](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/okf-agent-memory/SKILL.md)、[frontmatterの定義](../skills/okf-agent-memory/references/frontmatter.md)。既存のtypeと知識の保存責務を確認した。最終結果を残すという利用方針は今回の設計による。
 - [pstackの入口](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/SKILL.md)。依頼の分類と専門手順への接続を参考にした。
 - [pstackのFeature](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/playbooks/feature.md)。作業単位と検証の区切りを参考にした。
 - [pstackのOrchestrate](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/playbooks/orchestrate.md)。大規模作業の管理、先行一単位、状態と証拠の記録を参考にした。専用CLI、モデル数、PR運用をそのまま移植する設計ではない。
