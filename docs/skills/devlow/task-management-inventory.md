@@ -150,7 +150,7 @@ checkpointは保存時点の要約であり、最新の進捗を常時管理す�
 | 下位ディレクトリの `index.md` | 階層に文書を保存する場合の目次。保存処理が必要な参照を管理 |
 | `log.md` | OKF文書を作成・更新等した操作履歴。タスクの進捗や作業結果の本文を入れる場所ではない |
 
-構成文書の名前は[system-blueprintの文書モデル](../../../skills/system-blueprint/references/document-model.md)、システム履歴の配置は[全体フロー](../../../skills/devlaw/references/workflow.md)、知識の選別は[OKFの保存判断](../../../skills/okf-agent-memory/references/remember.md)、目次・操作履歴の生成は[OKF CLI](../../../skills/okf-agent-memory/references/cli.md)に基づく。以前の `knowledge/work-results/` は新規の標準配置にせず、既存文書は同じIDで保持・参照する。上記以外の題材でも既存のconceptを使え、全知識の個別ファイル名を事前に固定する仕様ではない。
+構成文書の名前は[system-blueprintの文書モデル](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/system-blueprint/references/document-model.md)、システム履歴の配置は[全体フロー](../../../skills/devlaw/references/workflow.md)、知識の選別は[OKFの保存判断](../../../skills/okf-agent-memory/references/remember.md)、目次・操作履歴の生成は[OKF CLI](../../../skills/okf-agent-memory/references/cli.md)に基づく。以前の `knowledge/work-results/` は新規の標準配置にせず、既存文書は同じIDで保持・参照する。上記以外の題材でも既存のconceptを使え、全知識の個別ファイル名を事前に固定する仕様ではない。
 
 設計だけの依頼でも、引き渡し時に採用した内容と理由をdecisionへ整理できる。未実装・一部実装・実装確認済みの別を本文で示し、未実装の構成を現状のblueprintや実施済みの移行履歴にしない。途中の案・TODO・会話全文・checkpointはそのままOKFへ登録しない。テストを実行した等の操作だけならタスクの結果記録で足りる。
 

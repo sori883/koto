@@ -61,7 +61,7 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   expect(instructions).toContain("Keep these user instructions."); expect(instructions).toContain(join(plugin, "skills")); expect(instructions).not.toContain("{{");
   expect(instructions).toContain(bundle); expect(instructions).not.toContain("vendor");
   const installedAgents = new Map<string, string>();
-  for (const name of ["devlaw-worker", "comment-curator"]) {
+  for (const name of ["devlaw-worker"]) {
     const path = product === "codex" ? join(project, ".codex/agents", `${name}.toml`) : join(plugin, "agents", `${name}.md`);
     const content = await readFile(path, "utf8"); installedAgents.set(path, content);
     if (product === "codex") {
@@ -155,10 +155,7 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   const usage = await run(okf, ["usage", "stats", "--root", project, "--json"], project);
   expect(JSON.parse(usage.out).data.searches).toBe(1);
   expect((await readdir(join(plugin, "skills"))).sort()).toEqual([
-    "blast-radius", "create-verification-skill", "devlaw",
-    "how", "interrogate", "maintain-verification-skill", "memory", "no-comments",
-    "recall", "savepoint", "setup", "show-me-your-work", "system-blueprint", "tasks", "tdd",
-    "teach", "use-principles", "why",
+    "devlaw", "memory", "recall", "savepoint", "setup", "tasks", "use-principles",
   ]);
   expect(await readFile(join(project, "package.json"), "utf8")).toBe('{"name":"consumer","private":true}\n');
   expect(await Bun.file(join(project, "bun.lock")).exists()).toBe(false);

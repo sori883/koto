@@ -325,8 +325,8 @@ CLIを使わないタスクでは各タスクの記録または会話内の記�
 
 - [配布設計](architecture.md)。正本、スキル専用CLI、Babel、checkpointの配置に従った。
 - [use-principles](../skills/use-principles/SKILL.md)。現在の作業分類・原則参照・検証・報告の責務を確認した。
-- [how](../skills/how/SKILL.md)、[why](../skills/why/SKILL.md)。既存調査スキルの入力・出力と、起動方法の移行事項を確認した。
-- [system-blueprintの文書モデル](../skills/system-blueprint/references/document-model.md)。現状の構成資料と判断記録の配置を継承した。
+- [how](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/how/SKILL.md)、[why](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/why/SKILL.md)。既存調査スキルの入力・出力と、起動方法の移行事項を確認した。
+- [system-blueprintの文書モデル](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/system-blueprint/references/document-model.md)。現状の構成資料と判断記録の配置を継承した。
 - [checkpoint-safely](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/checkpoint-safely/SKILL.md)。保存と中断の区別、既存記録の扱いを確認した。
 - [OKFスキル](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/okf-agent-memory/SKILL.md)、[frontmatterの定義](../skills/okf-agent-memory/references/frontmatter.md)。既存のtypeと知識の保存責務を確認した。最終結果を残すという利用方針は今回の設計による。
 - [pstackの入口](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/SKILL.md)。依頼の分類と専門手順への接続を参考にした。

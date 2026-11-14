@@ -166,11 +166,6 @@
       "mode": "merge-index"
     },
     {
-      "source": "templates/agents/comment-curator.toml",
-      "destination": ".codex/agents/comment-curator.toml",
-      "mode": "copy"
-    },
-    {
       "source": "templates/agents/devlaw-worker.toml",
       "destination": ".codex/agents/devlaw-worker.toml",
       "mode": "copy"
@@ -311,31 +306,6 @@
       "mode": "copy"
     },
     {
-      "source": "skills/blast-radius/LICENSE",
-      "destination": ".agents/skills/blast-radius/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/blast-radius/SKILL.md",
-      "destination": ".agents/skills/blast-radius/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/create-verification-skill/LICENSE",
-      "destination": ".agents/skills/create-verification-skill/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/create-verification-skill/SKILL.md",
-      "destination": ".agents/skills/create-verification-skill/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/create-verification-skill/assets/feature-template.md",
-      "destination": ".agents/skills/create-verification-skill/assets/feature-template.md",
-      "mode": "copy"
-    },
-    {
       "source": "skills/devlaw/LICENSE",
       "destination": ".agents/skills/devlaw/LICENSE",
       "mode": "copy"
@@ -426,63 +396,8 @@
       "mode": "copy"
     },
     {
-      "source": "skills/how/LICENSE",
-      "destination": ".agents/skills/how/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/how/SKILL.md",
-      "destination": ".agents/skills/how/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/how/references/explainer-prompt.md",
-      "destination": ".agents/skills/how/references/explainer-prompt.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/how/references/explorer-prompt.md",
-      "destination": ".agents/skills/how/references/explorer-prompt.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/interrogate/LICENSE",
-      "destination": ".agents/skills/interrogate/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/interrogate/SKILL.md",
-      "destination": ".agents/skills/interrogate/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/interrogate/references/reviewer-prompt.md",
-      "destination": ".agents/skills/interrogate/references/reviewer-prompt.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/maintain-verification-skill/LICENSE",
-      "destination": ".agents/skills/maintain-verification-skill/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/maintain-verification-skill/SKILL.md",
-      "destination": ".agents/skills/maintain-verification-skill/SKILL.md",
-      "mode": "copy"
-    },
-    {
       "source": "skills/memory/SKILL.md",
       "destination": ".agents/skills/memory/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/no-comments/LICENSE",
-      "destination": ".agents/skills/no-comments/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/no-comments/SKILL.md",
-      "destination": ".agents/skills/no-comments/SKILL.md",
       "mode": "copy"
     },
     {
@@ -561,46 +476,6 @@
       "mode": "copy"
     },
     {
-      "source": "skills/show-me-your-work/LICENSE",
-      "destination": ".agents/skills/show-me-your-work/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/show-me-your-work/SKILL.md",
-      "destination": ".agents/skills/show-me-your-work/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/show-me-your-work/assets/decision-log-template.tsv",
-      "destination": ".agents/skills/show-me-your-work/assets/decision-log-template.tsv",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/show-me-your-work/references/log-format.md",
-      "destination": ".agents/skills/show-me-your-work/references/log-format.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/system-blueprint/LICENSE",
-      "destination": ".agents/skills/system-blueprint/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/system-blueprint/SKILL.md",
-      "destination": ".agents/skills/system-blueprint/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/system-blueprint/assets/blueprint-template.md",
-      "destination": ".agents/skills/system-blueprint/assets/blueprint-template.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/system-blueprint/references/document-model.md",
-      "destination": ".agents/skills/system-blueprint/references/document-model.md",
-      "mode": "copy"
-    },
-    {
       "source": "skills/tasks/LICENSE",
       "destination": ".agents/skills/tasks/LICENSE",
       "mode": "copy"
@@ -611,26 +486,6 @@
       "mode": "copy"
     },
     {
-      "source": "skills/tdd/LICENSE",
-      "destination": ".agents/skills/tdd/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/tdd/SKILL.md",
-      "destination": ".agents/skills/tdd/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/teach/LICENSE",
-      "destination": ".agents/skills/teach/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/teach/SKILL.md",
-      "destination": ".agents/skills/teach/SKILL.md",
-      "mode": "copy"
-    },
-    {
       "source": "skills/use-principles/LICENSE",
       "destination": ".agents/skills/use-principles/LICENSE",
       "mode": "copy"
@@ -638,51 +493,6 @@
     {
       "source": "skills/use-principles/SKILL.md",
       "destination": ".agents/skills/use-principles/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/why/LICENSE",
-      "destination": ".agents/skills/why/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/why/SKILL.md",
-      "destination": ".agents/skills/why/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/why/references/epistemics.md",
-      "destination": ".agents/skills/why/references/epistemics.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/why/references/investigator-prompt.md",
-      "destination": ".agents/skills/why/references/investigator-prompt.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/why/references/source-playbook.md",
-      "destination": ".agents/skills/why/references/source-playbook.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/why/references/sources/code-archaeology.md",
-      "destination": ".agents/skills/why/references/sources/code-archaeology.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/why/references/sources/incident-postmortem.md",
-      "destination": ".agents/skills/why/references/sources/incident-postmortem.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/why/references/sources/okf.md",
-      "destination": ".agents/skills/why/references/sources/okf.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/why/references/synthesizer-prompt.md",
-      "destination": ".agents/skills/why/references/synthesizer-prompt.md",
       "mode": "copy"
     }
   ]

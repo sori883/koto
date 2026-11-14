@@ -9,7 +9,7 @@ Cursorのpstack、コミット `6ed0f7a9504f577d7529064103cecce9be7dfc5e` のhow
 - [原文の説明担当プロンプト](https://github.com/cursor/plugins/blob/6ed0f7a9504f577d7529064103cecce9be7dfc5e/pstack/skills/how/references/explainer-prompt.md)
 - [原文のMITライセンス](https://github.com/cursor/plugins/blob/6ed0f7a9504f577d7529064103cecce9be7dfc5e/pstack/LICENSE)
 
-配布物は [SKILL.md](../../../skills/how/SKILL.md)、`references/` の2ファイル、原文を保持した [LICENSE](../../../skills/how/LICENSE)。この保守資料は配布スキルの実行時依存にしない。
+配布物は [SKILL.md](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/how/SKILL.md)、`references/` の2ファイル、原文を保持した [LICENSE](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/how/LICENSE)。この保守資料は配布スキルの実行時依存にしない。
 
 ## 翻訳の範囲
 

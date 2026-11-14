@@ -165,11 +165,6 @@
       "mode": "merge-index"
     },
     {
-      "source": "templates/agents/comment-curator.toml",
-      "destination": ".codex/agents/comment-curator.toml",
-      "mode": "copy"
-    },
-    {
       "source": "templates/agents/devlaw-worker.toml",
       "destination": ".codex/agents/devlaw-worker.toml",
       "mode": "copy"

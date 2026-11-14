@@ -30,13 +30,13 @@
 
 acquire-codebase-knowledgeはそのまま翻訳する対象ではない。今回の目的に合わせ、7文書の固定出力、全依存の一覧、コーディング規約・テスト環境・技術的負債の網羅的な文書化、専用スキャンスクリプトは引き継がない。システム構成の理解に必要な根拠として関連する箇所を調べる。
 
-同スキルの参照元はGitHub, Inc.のMITライセンスであり、原文の[LICENSE](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/LICENSE)を、配布物の [LICENSE](../../../skills/system-blueprint/LICENSE) に保持する。pstackを日本語化したスキルと原文のライセンスはhow・whyの配布物に含める。
+同スキルの参照元はGitHub, Inc.のMITライセンスであり、原文の[LICENSE](https://github.com/github/awesome-copilot/blob/4f4796f0bf30e105700f97ed8408c12b6aa95e06/LICENSE)を、配布物の [LICENSE](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/system-blueprint/LICENSE) に保持する。pstackを日本語化したスキルと原文のライセンスはhow・whyの配布物に含める。
 
 ## 配布構成
 
-- [SKILL.md](../../../skills/system-blueprint/SKILL.md)：作成・更新の入口と完了条件。
-- [文書モデル](../../../skills/system-blueprint/references/document-model.md)：conceptの責務、分割、根拠、不明点、更新。
-- [本文ひな形](../../../skills/system-blueprint/assets/blueprint-template.md)：全体像の文書に使う本文。frontmatterはOKF CLIへのメタデータとして別に渡す。
+- [SKILL.md](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/system-blueprint/SKILL.md)：作成・更新の入口と完了条件。
+- [文書モデル](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/system-blueprint/references/document-model.md)：conceptの責務、分割、根拠、不明点、更新。
+- [本文ひな形](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/system-blueprint/assets/blueprint-template.md)：全体像の文書に使う本文。frontmatterはOKF CLIへのメタデータとして別に渡す。
 - 同じ親ディレクトリにhow・why・okf-agent-memoryを配置する。開発用 `.agents/skills/` やこの保守資料を利用先の実行依存にしない。
 
 ## build.tsの配布方針

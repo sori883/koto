@@ -8,7 +8,7 @@ Cursorのpstack、コミット `6ed0f7a9504f577d7529064103cecce9be7dfc5e` のwhy
 - [原文の参照資料](https://github.com/cursor/plugins/tree/6ed0f7a9504f577d7529064103cecce9be7dfc5e/pstack/skills/why/references)
 - [原文のMITライセンス](https://github.com/cursor/plugins/blob/6ed0f7a9504f577d7529064103cecce9be7dfc5e/pstack/LICENSE)
 
-配布物は [SKILL.md](../../../skills/why/SKILL.md)、参照資料7件（翻訳・調整6件とOKF連携1件）、原文を保持した [LICENSE](../../../skills/why/LICENSE)。この保守資料は実行時依存にしない。
+配布物は [SKILL.md](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/why/SKILL.md)、参照資料7件（翻訳・調整6件とOKF連携1件）、原文を保持した [LICENSE](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/why/LICENSE)。この保守資料は実行時依存にしない。
 
 ## 翻訳対象
 
@@ -60,7 +60,7 @@ Cursorのpstack、コミット `6ed0f7a9504f577d7529064103cecce9be7dfc5e` のwhy
 
 ## OKFによる既存知識の参照
 
-ユーザーの明示的な依頼により、OKFスキルで関連する決定・制約・経緯を検索・参照し、採用理由の根拠として評価する指示を追加した。独自の参照資料 [okf.md](../../../skills/why/references/sources/okf.md) にwhy固有の調査観点を置き、CLIの手順はOKFスキルへ委ねる。
+ユーザーの明示的な依頼により、OKFスキルで関連する決定・制約・経緯を検索・参照し、採用理由の根拠として評価する指示を追加した。独自の参照資料 [okf.md](https://github.com/sori883/koto/blob/af3d041b20c4294011dbf1fd1eed26958b084086/skills/why/references/sources/okf.md) にwhy固有の調査観点を置き、CLIの手順はOKFスキルへ委ねる。
 
 調査担当の `{EXISTING_KNOWLEDGE}` に対象bundle、concept IDと根拠箇所、検索範囲、不足を渡し、統合担当にも出典と調査結果を引き継ぐ。小さな対象で直接回答する場合にも、起動前の既存知識の確認を適用する。読み取り専用の責務と確度の区別を維持し、外部サービスの調査は再導入しない。
 

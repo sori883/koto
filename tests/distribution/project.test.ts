@@ -40,7 +40,7 @@ test("both products install real project files, survive relocation, and update t
       expect((await lstat(target)).isFile()).toBe(true);
       expect((await readFile(target)).equals(body)).toBe(true);
     }
-    for (const name of ["devlaw-worker", "comment-curator"]) {
+    for (const name of ["devlaw-worker"]) {
       const from = product === "codex" ? `templates/agents/${name}.toml` : `agents/${name}.md`;
       const to = product === "codex" ? `.codex/agents/${name}.toml` : `.claude/agents/${name}.md`;
       expect(await readFile(join(project, to))).toEqual(await readFile(join(source, from)));
@@ -60,8 +60,8 @@ test("both products install real project files, survive relocation, and update t
     const status = await run(localSetup, ["status", ...localArgs], project);
     expect(status.data.scope).toBe("project");
     expect(status.data.actions.every((action: { action: string }) => action.action === "unchanged")).toBe(true);
-    const skill = "teach/SKILL.md";
-    await writeFile(join(source, "skills", skill), "---\nname: teach\ndescription: Updated skill\n---\nUpdated content.\n");
+    const skill = "savepoint/SKILL.md";
+    await writeFile(join(source, "skills", skill), "---\nname: savepoint\ndescription: Updated skill\n---\nUpdated content.\n");
     await run(localSetup, ["apply", ...localArgs], project);
     expect(await readFile(join(project, skillRoot, skill), "utf8")).toContain("Updated content.");
     expect(await readFile(join(project, instruction), "utf8")).toBe(instructions);
