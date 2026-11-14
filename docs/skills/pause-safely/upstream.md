@@ -2,9 +2,13 @@
 
 確認日：2026-09-20
 
+2026-11-14に役割を分離した。タスクの中断・引き継ぎは[tasks](../../../skills/tasks/SKILL.md#中断と引き継ぎ)へ統合し、タスクのない調査・読み取りの再開情報は[savepoint](../../../skills/savepoint/SKILL.md)へ変更した。savepointはユーザーが残すよう依頼した場合だけ使い、会話または指定ファイルに記録する。従来のcheckpoint-safelyとその案内用スキルは配布しない。継承した手順のライセンスはtasksとsavepointへ同梱する。
+
+以下は導入当時の記録であり、現在の保存先・操作手順は[設計正本](../../architecture.md)と各スキルを参照する。
+
 Cursorのpstackにある [Pause safely](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/playbooks/pause-safely.md) を、日本語の独立した `checkpoint-safely` スキルとして導入する。参照コミットは `032be146865d973682535de75f2287da438550bf`。
 
-元の [MITライセンス](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/LICENSE) は、配布対象の [LICENSE](../../../skills/checkpoint-safely/LICENSE) に同梱する。スキル本体は [SKILL.md](../../../skills/checkpoint-safely/SKILL.md)。この文書は開発者向けの保守資料として配布対象から分離する。
+元の [MITライセンス](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/LICENSE) は、配布対象の [LICENSE](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/checkpoint-safely/LICENSE) に同梱する。スキル本体は [SKILL.md](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/checkpoint-safely/SKILL.md)。この文書は開発者向けの保守資料として配布対象から分離する。
 
 ## 継承した動作
 

@@ -183,7 +183,7 @@ devlowは、開発を依頼されたAIが、必要な作業を選び、結果を
 
 小規模な会話中の依頼にはtask.mdを新規作成しないが、状態と判定の区別は同じように回答へ適用する。読み取り専用なら規模を問わずファイルを作成しない。タスク管理CLIを使う場合は進行状態の正本を台帳にし、task.mdから参照する。本設計ではCLIの保存形式、状態の内部コード、TSVは定義しない。
 
-中断からの再開に必要な要約は、従来どおり[checkpoint-safely](../../../skills/checkpoint-safely/SKILL.md)に任せる。工程終了のたびにcheckpointを作る運用は追加しない。
+中断からの再開に必要な要約は、従来どおり[checkpoint-safely](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/checkpoint-safely/SKILL.md)に任せる。工程終了のたびにcheckpointを作る運用は追加しない。
 
 ## 8. 実装の順序と完了の確認
 

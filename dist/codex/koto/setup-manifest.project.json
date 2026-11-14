@@ -321,16 +321,6 @@
       "mode": "copy"
     },
     {
-      "source": "skills/checkpoint-safely/LICENSE",
-      "destination": ".agents/skills/checkpoint-safely/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/checkpoint-safely/SKILL.md",
-      "destination": ".agents/skills/checkpoint-safely/SKILL.md",
-      "mode": "copy"
-    },
-    {
       "source": "skills/create-verification-skill/LICENSE",
       "destination": ".agents/skills/create-verification-skill/LICENSE",
       "mode": "copy"
@@ -506,6 +496,16 @@
       "mode": "copy"
     },
     {
+      "source": "skills/savepoint/LICENSE",
+      "destination": ".agents/skills/savepoint/LICENSE",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/savepoint/SKILL.md",
+      "destination": ".agents/skills/savepoint/SKILL.md",
+      "mode": "copy"
+    },
+    {
       "source": "skills/setup/SKILL.md",
       "destination": ".agents/skills/setup/SKILL.md",
       "mode": "copy"
@@ -598,6 +598,11 @@
     {
       "source": "skills/system-blueprint/references/document-model.md",
       "destination": ".agents/skills/system-blueprint/references/document-model.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/tasks/LICENSE",
+      "destination": ".agents/skills/tasks/LICENSE",
       "mode": "copy"
     },
     {

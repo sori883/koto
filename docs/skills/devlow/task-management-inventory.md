@@ -128,7 +128,7 @@ task.mdの冒頭は進行状態と成果判定、工程表は実行状態と確�
 | --- | --- | --- |
 | `.space/checkpoint/<task>-resume.md` | 目的・条件・制約、日時と作業場所、保存済み状態、検証結果、未完了、次の操作、関連資料 | 規模によらず、必要な中断・引き継ぎ・明示的保存・縮約への備えでcheckpoint-safelyを使う。既存記録を更新し、指定先があれば従う |
 
-checkpointは保存時点の要約であり、最新の進捗を常時管理する台帳ではない。CLIは本文を直接生成せず、必要な情報と参照をcheckpoint-safelyへ渡す。保存・コミット・中断の具体的な条件は[同スキル](../../../skills/checkpoint-safely/SKILL.md)が所有する。
+checkpointは保存時点の要約であり、最新の進捗を常時管理する台帳ではない。CLIは本文を直接生成せず、必要な情報と参照をcheckpoint-safelyへ渡す。保存・コミット・中断の具体的な条件は[同スキル](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/checkpoint-safely/SKILL.md)が所有する。
 
 ### OKFの知識と付随する管理ファイル
 

@@ -187,7 +187,7 @@ task.mdは標準（中規模）・大規模で作成する。新規の既定は 
 
 ### checkpoint-safelyへの受け渡し
 
-中断・担当交代・別セッションでの継続、明示的な保存の依頼など、再開用の要約が必要なときに [checkpoint-safely](../skills/checkpoint-safely/SKILL.md) を使う。通常の判断や工程結果はタスク成果物へ記録し、工程が終わるたびにcheckpointを作る運用にはしない。
+中断・担当交代・別セッションでの継続、明示的な保存の依頼など、再開用の要約が必要なときに [checkpoint-safely](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/checkpoint-safely/SKILL.md) を使う。通常の判断や工程結果はタスク成果物へ記録し、工程が終わるたびにcheckpointを作る運用にはしない。
 
 渡す情報は、タスクID、既存checkpointへの参照、今回の依頼と制約、タスク成果物・判断・証拠への参照、現在の状態、次に必要な操作。継続中の保存か、中断の依頼かも伝える。checkpoint-safelyは再開に必要な内容を要約し、成果物本文を参照する。保存先・節構成・テンプレート・保存手順・Gitへの保存条件をフロー側で複製しない。
 
@@ -327,7 +327,7 @@ CLIを使わないタスクでは各タスクの記録または会話内の記�
 - [use-principles](../skills/use-principles/SKILL.md)。現在の作業分類・原則参照・検証・報告の責務を確認した。
 - [how](../skills/how/SKILL.md)、[why](../skills/why/SKILL.md)。既存調査スキルの入力・出力と、起動方法の移行事項を確認した。
 - [system-blueprintの文書モデル](../skills/system-blueprint/references/document-model.md)。現状の構成資料と判断記録の配置を継承した。
-- [checkpoint-safely](../skills/checkpoint-safely/SKILL.md)。保存と中断の区別、既存記録の扱いを確認した。
+- [checkpoint-safely](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/checkpoint-safely/SKILL.md)。保存と中断の区別、既存記録の扱いを確認した。
 - [OKFスキル](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/okf-agent-memory/SKILL.md)、[frontmatterの定義](../skills/okf-agent-memory/references/frontmatter.md)。既存のtypeと知識の保存責務を確認した。最終結果を残すという利用方針は今回の設計による。
 - [pstackの入口](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/SKILL.md)。依頼の分類と専門手順への接続を参考にした。
 - [pstackのFeature](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/skills/poteto-mode/playbooks/feature.md)。作業単位と検証の区切りを参考にした。

@@ -155,9 +155,9 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   const usage = await run(okf, ["usage", "stats", "--root", project, "--json"], project);
   expect(JSON.parse(usage.out).data.searches).toBe(1);
   expect((await readdir(join(plugin, "skills"))).sort()).toEqual([
-    "blast-radius", "checkpoint-safely", "create-verification-skill", "devlow",
+    "blast-radius", "create-verification-skill", "devlow",
     "how", "interrogate", "maintain-verification-skill", "memory", "no-comments",
-    "recall", "setup", "show-me-your-work", "system-blueprint", "tasks", "tdd",
+    "recall", "savepoint", "setup", "show-me-your-work", "system-blueprint", "tasks", "tdd",
     "teach", "use-principles", "why",
   ]);
   expect(await readFile(join(project, "package.json"), "utf8")).toBe('{"name":"consumer","private":true}\n');
