@@ -2,7 +2,7 @@
 
 2026-09-23時点の定義を整理した一覧。対象は、kotoが利用先へ提供する開発フローである。2026-09-22の「OKFへシステムの設計と歴史を残す」という方針を反映した。現在の配布用ソース、設計済みで未実装の事項、直近の記録軽量化の提案を区別する。新しい粒度・保存形式を決定する文書ではない。
 
-根拠は[設計正本](../../architecture.md)、[全体の設計資料](../../devlow-design.md)、配布用の[全体フロー](../../../skills/devlow/references/workflow.md)と[依頼整理](../../../skills/devlow/references/intake.md)。直近の提案は[タスク記録の調査](task-records-research.md)にあり、まだ配布用ソースへ反映していない。
+根拠は[設計正本](../../architecture.md)、[全体の設計資料](../../devlow-design.md)、配布用の[全体フロー](../../../skills/devlaw/references/workflow.md)と[依頼整理](../../../skills/devlaw/references/intake.md)。直近の提案は[タスク記録の調査](task-records-research.md)にあり、まだ配布用ソースへ反映していない。
 
 以下の「ファイルを作る」は、利用先でエージェントが手順に従って作成・更新することを指す。工程を開始すれば全ファイルが自動生成される仕組みではない。既存のIssue・資料・PR等で内容を追える場合は参照・更新を優先し、同じ内容を新規作成しない。
 
@@ -120,7 +120,7 @@ task.mdの冒頭は進行状態と成果判定、工程表は実行状態と確�
 
 標準以上の子の指示は子自身のtask.md、小規模な子は台帳または親の計画と報告で扱う。`brief.md`を一律に作る定義はない。完了報告は会話と、存在するtask.mdへ残し、`report.md`を一律に作る定義もない。
 
-設計候補を探索する条件と進め方は[設計工程](../../../skills/devlow/references/design.md)が所有する。小規模で候補を分ける場合は関連設計資料の隣を基準とし、task.mdを増やさない。読み取り専用の場合は候補・比較とも回答にまとめる。途中の候補はタスク側に保ち、採用した構造と統合理由はdecisionの保存候補としてdeliverへ渡す。
+設計候補を探索する条件と進め方は[設計工程](../../../skills/devlaw/references/design.md)が所有する。小規模で候補を分ける場合は関連設計資料の隣を基準とし、task.mdを増やさない。読み取り専用の場合は候補・比較とも回答にまとめる。途中の候補はタスク側に保ち、採用した構造と統合理由はdecisionの保存候補としてdeliverへ渡す。
 
 ### 再開用の記録
 
@@ -150,7 +150,7 @@ checkpointは保存時点の要約であり、最新の進捗を常時管理す�
 | 下位ディレクトリの `index.md` | 階層に文書を保存する場合の目次。保存処理が必要な参照を管理 |
 | `log.md` | OKF文書を作成・更新等した操作履歴。タスクの進捗や作業結果の本文を入れる場所ではない |
 
-構成文書の名前は[system-blueprintの文書モデル](../../../skills/system-blueprint/references/document-model.md)、システム履歴の配置は[全体フロー](../../../skills/devlow/references/workflow.md)、知識の選別は[OKFの保存判断](../../../skills/okf-agent-memory/references/remember.md)、目次・操作履歴の生成は[OKF CLI](../../../skills/okf-agent-memory/references/cli.md)に基づく。以前の `knowledge/work-results/` は新規の標準配置にせず、既存文書は同じIDで保持・参照する。上記以外の題材でも既存のconceptを使え、全知識の個別ファイル名を事前に固定する仕様ではない。
+構成文書の名前は[system-blueprintの文書モデル](../../../skills/system-blueprint/references/document-model.md)、システム履歴の配置は[全体フロー](../../../skills/devlaw/references/workflow.md)、知識の選別は[OKFの保存判断](../../../skills/okf-agent-memory/references/remember.md)、目次・操作履歴の生成は[OKF CLI](../../../skills/okf-agent-memory/references/cli.md)に基づく。以前の `knowledge/work-results/` は新規の標準配置にせず、既存文書は同じIDで保持・参照する。上記以外の題材でも既存のconceptを使え、全知識の個別ファイル名を事前に固定する仕様ではない。
 
 設計だけの依頼でも、引き渡し時に採用した内容と理由をdecisionへ整理できる。未実装・一部実装・実装確認済みの別を本文で示し、未実装の構成を現状のblueprintや実施済みの移行履歴にしない。途中の案・TODO・会話全文・checkpointはそのままOKFへ登録しない。テストを実行した等の操作だけならタスクの結果記録で足りる。
 

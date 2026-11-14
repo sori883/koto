@@ -93,10 +93,10 @@ bun /path/to/plugin/cli/memory/memory.ts validate --root /path/to/workspace --st
 `search`・`show`に`--record-usage`を付けると、検索・本文取得に成功した呼び出しの利用ログを保存します。指定を省いた呼び出し、読み取りAPI、Markdownの直接参照は記録されません。`usage list`・`usage stats`自体は読み取り専用です。
 
 ```sh
-bun /path/to/plugin/cli/memory/memory.ts search "認証" --root /path/to/workspace --record-usage --usage-source devlow --actor agent:codex --task-id task-001 --json
+bun /path/to/plugin/cli/memory/memory.ts search "認証" --root /path/to/workspace --record-usage --usage-source devlaw --actor agent:codex --task-id task-001 --json
 bun /path/to/plugin/cli/memory/memory.ts show knowledge/auth --root /path/to/workspace --record-usage --usage-source memory --json
 bun /path/to/plugin/cli/memory/memory.ts usage stats --root /path/to/workspace --json
-bun /path/to/plugin/cli/memory/memory.ts usage list --root /path/to/workspace --usage-source devlow --since 2026-11-01T00:00:00+09:00 --until 2026-12-01T00:00:00+09:00 --all --json
+bun /path/to/plugin/cli/memory/memory.ts usage list --root /path/to/workspace --usage-source devlaw --since 2026-11-01T00:00:00+09:00 --until 2026-12-01T00:00:00+09:00 --all --json
 ```
 
 保存先は`.space/<project>/memory/usage/events/<UUID>.json`。日時、project、操作、対象の知識ID、`show`時の内容ハッシュ、実行者、呼び出し元、任意のタスクIDを残します。検索文・知識本文は複製せず、知識と変更履歴の`log.md`も変更しません。知識を削除しても過去の利用ログは残ります。

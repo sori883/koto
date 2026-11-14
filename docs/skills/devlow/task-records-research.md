@@ -32,9 +32,9 @@ pstackは利用例であり、本プロジェクトの最適解を証明する�
 
 ## 現行の設計を評価する
 
-[設計正本](../../architecture.md)は、作業中の記録、checkpoint、OKFを既に区別している。[全体フロー](../../../skills/devlow/references/workflow.md)も、短い内容はまとめ、空の文書を増やさず、後の仕事に必要な結果を整理する方針である。分離方針をゼロから追加する必要はない。
+[設計正本](../../architecture.md)は、作業中の記録、checkpoint、OKFを既に区別している。[全体フロー](../../../skills/devlaw/references/workflow.md)も、短い内容はまとめ、空の文書を増やさず、後の仕事に必要な結果を整理する方針である。分離方針をゼロから追加する必要はない。
 
-一方、[task-template.md](../../../skills/devlow/assets/task-template.md)には、依頼整理、範囲、受け入れ条件の表、工程選択の表、進捗、未決事項があり、末尾では後続の判断・結果・証拠の追記も案内している。[intake.md](../../../skills/devlow/references/intake.md)は省略を認めるものの、条件IDなどの細かさを短い依頼にも持ち込みやすい。これは本文の構成から予想される負担であり、実際に全項目を埋めてしまう頻度は未検証。
+一方、[task-template.md](../../../skills/devlaw/assets/task-template.md)には、依頼整理、範囲、受け入れ条件の表、工程選択の表、進捗、未決事項があり、末尾では後続の判断・結果・証拠の追記も案内している。[intake.md](../../../skills/devlaw/references/intake.md)は省略を認めるものの、条件IDなどの細かさを短い依頼にも持ち込みやすい。これは本文の構成から予想される負担であり、実際に全項目を埋めてしまう頻度は未検証。
 
 [OKFの保存判断](../../../skills/okf-agent-memory/references/remember.md)には、作業を終えたことだけを理由に文書を作らない、と既にある。全体フローの作業結果の保存先を、タスクごとに新しいconceptを作る義務と読ませないことが重要になる。意味のある判断や設計は残したい、という既存の希望は維持できる。
 

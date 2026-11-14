@@ -34,7 +34,7 @@
 
 Codexの正本は `packaging/codex/templates/agents/*.toml`、Claude形式は `packaging/claude-code/agents/*.md`。2役の指示は両形式で一致させ、モデル・権限設定を追加していない。原版のMIT LICENSEは各配布物の `assets/pstack-agents-LICENSE`へ同梱する。
 
-Codexのcopy配置へスキルの絶対パスを焼き込むとインストール場所に依存するため、親が実際の配置から解決したパスを渡す方式にした。パスがない場合はスキル一覧またはsetupの管理指示から特定し、読めない場合を明示する。全体フローの [担当の受け渡し](../../skills/devlow/references/delegation.md)に契約を置く。
+Codexのcopy配置へスキルの絶対パスを焼き込むとインストール場所に依存するため、親が実際の配置から解決したパスを渡す方式にした。パスがない場合はスキル一覧またはsetupの管理指示から特定し、読めない場合を明示する。全体フローの [担当の受け渡し](../../skills/devlaw/references/delegation.md)に契約を置く。
 
 形式は[Codexのカスタムエージェント](https://developers.openai.com/codex/subagents)、[Claude Codeのサブエージェント](https://code.claude.com/docs/en/sub-agents)、[VS Codeのプラグイン仕様](https://code.visualstudio.com/docs/agent-customization/agent-plugins)を確認した。Codexは必須のname・description・developer_instructions、Claude形式はname・descriptionと本文を使う。CopilotにはClaude形式を同梱し、製品UIでの読込・起動は別の未検証事項として残す。
 

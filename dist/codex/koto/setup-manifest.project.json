@@ -171,8 +171,8 @@
       "mode": "copy"
     },
     {
-      "source": "templates/agents/devlow-worker.toml",
-      "destination": ".codex/agents/devlow-worker.toml",
+      "source": "templates/agents/devlaw-worker.toml",
+      "destination": ".codex/agents/devlaw-worker.toml",
       "mode": "copy"
     },
     {
@@ -336,93 +336,93 @@
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/LICENSE",
-      "destination": ".agents/skills/devlow/LICENSE",
+      "source": "skills/devlaw/LICENSE",
+      "destination": ".agents/skills/devlaw/LICENSE",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/SKILL.md",
-      "destination": ".agents/skills/devlow/SKILL.md",
+      "source": "skills/devlaw/SKILL.md",
+      "destination": ".agents/skills/devlaw/SKILL.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/assets/design-template.md",
-      "destination": ".agents/skills/devlow/assets/design-template.md",
+      "source": "skills/devlaw/assets/design-template.md",
+      "destination": ".agents/skills/devlaw/assets/design-template.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/assets/plan-template.md",
-      "destination": ".agents/skills/devlow/assets/plan-template.md",
+      "source": "skills/devlaw/assets/plan-template.md",
+      "destination": ".agents/skills/devlaw/assets/plan-template.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/assets/task-template.md",
-      "destination": ".agents/skills/devlow/assets/task-template.md",
+      "source": "skills/devlaw/assets/task-template.md",
+      "destination": ".agents/skills/devlaw/assets/task-template.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/assets/verification-template.md",
-      "destination": ".agents/skills/devlow/assets/verification-template.md",
+      "source": "skills/devlaw/assets/verification-template.md",
+      "destination": ".agents/skills/devlaw/assets/verification-template.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/references/delegation.md",
-      "destination": ".agents/skills/devlow/references/delegation.md",
+      "source": "skills/devlaw/references/delegation.md",
+      "destination": ".agents/skills/devlaw/references/delegation.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/references/deliver.md",
-      "destination": ".agents/skills/devlow/references/deliver.md",
+      "source": "skills/devlaw/references/deliver.md",
+      "destination": ".agents/skills/devlaw/references/deliver.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/references/design.md",
-      "destination": ".agents/skills/devlow/references/design.md",
+      "source": "skills/devlaw/references/design.md",
+      "destination": ".agents/skills/devlaw/references/design.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/references/implement.md",
-      "destination": ".agents/skills/devlow/references/implement.md",
+      "source": "skills/devlaw/references/implement.md",
+      "destination": ".agents/skills/devlaw/references/implement.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/references/intake.md",
-      "destination": ".agents/skills/devlow/references/intake.md",
+      "source": "skills/devlaw/references/intake.md",
+      "destination": ".agents/skills/devlaw/references/intake.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/references/investigate.md",
-      "destination": ".agents/skills/devlow/references/investigate.md",
+      "source": "skills/devlaw/references/investigate.md",
+      "destination": ".agents/skills/devlaw/references/investigate.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/references/orchestrate.md",
-      "destination": ".agents/skills/devlow/references/orchestrate.md",
+      "source": "skills/devlaw/references/orchestrate.md",
+      "destination": ".agents/skills/devlaw/references/orchestrate.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/references/plan.md",
-      "destination": ".agents/skills/devlow/references/plan.md",
+      "source": "skills/devlaw/references/plan.md",
+      "destination": ".agents/skills/devlaw/references/plan.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/references/review.md",
-      "destination": ".agents/skills/devlow/references/review.md",
+      "source": "skills/devlaw/references/review.md",
+      "destination": ".agents/skills/devlaw/references/review.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/references/tools.md",
-      "destination": ".agents/skills/devlow/references/tools.md",
+      "source": "skills/devlaw/references/tools.md",
+      "destination": ".agents/skills/devlaw/references/tools.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/references/verify.md",
-      "destination": ".agents/skills/devlow/references/verify.md",
+      "source": "skills/devlaw/references/verify.md",
+      "destination": ".agents/skills/devlaw/references/verify.md",
       "mode": "copy"
     },
     {
-      "source": "skills/devlow/references/workflow.md",
-      "destination": ".agents/skills/devlow/references/workflow.md",
+      "source": "skills/devlaw/references/workflow.md",
+      "destination": ".agents/skills/devlaw/references/workflow.md",
       "mode": "copy"
     },
     {

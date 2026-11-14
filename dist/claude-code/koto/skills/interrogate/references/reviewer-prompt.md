@@ -6,7 +6,7 @@
 
 Memoryの検索用途も引き継ぎ、開発はdev、運用はopsで共有を含む知識を参照する。関連する未分類の確認はMemoryスキルに従う。用途が不明ならその不足を報告し、知識の分類を書き換えない。
 
-テストや検証結果を評価するときは、Memoryの `principles/test-behavior-not-implementation` と `principles/prove-it-works` を参照する。確認済みの本文は再利用し、未取得ならその不足を残す。期待値の根拠と実行証拠は[検証手順](../../devlow/references/verify.md#期待値の根拠と実行証拠)に照らして確認し、合意した仕様・公式資料・実測・未確認の仮説を区別する。仮説しかない期待値を、確定した合否の基準として扱わない。
+テストや検証結果を評価するときは、Memoryの `principles/test-behavior-not-implementation` と `principles/prove-it-works` を参照する。確認済みの本文は再利用し、未取得ならその不足を残す。期待値の根拠と実行証拠は[検証手順](../../devlaw/references/verify.md#期待値の根拠と実行証拠)に照らして確認し、合意した仕様・公式資料・実測・未確認の仮説を区別する。仮説しかない期待値を、確定した合否の基準として扱わない。
 
 ## 成果物の種類に合う観点
 

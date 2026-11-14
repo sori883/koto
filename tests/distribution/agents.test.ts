@@ -4,7 +4,7 @@ import { distribution } from "../../scripts/build.ts";
 
 test("both agent formats keep the same instructions and leave runtime policy to the host", async () => {
   const files = await distribution(resolve(import.meta.dir, "../.."));
-  for (const name of ["devlow-worker", "comment-curator"]) {
+  for (const name of ["devlaw-worker", "comment-curator"]) {
     const codex = Bun.TOML.parse(files.get(`dist/codex/koto/templates/agents/${name}.toml`)!.toString()) as Record<string, unknown>;
     const claude = files.get(`dist/claude-code/koto/agents/${name}.md`)!.toString();
     const match = /^---\n([\s\S]+?)\n---\n([\s\S]+)$/.exec(claude)!;

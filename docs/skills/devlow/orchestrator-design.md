@@ -2,7 +2,7 @@
 
 2026-09-23作成。レビュー修正を採用して実装へ進む設計。現在の実装・検証範囲は[実装記録](../orch/implementation.md)を参照する。この文書は会話を読んでいない人向けに、利用方法、管理する情報、ファイル、実装する範囲を説明する。コマンドの詳細は[CLIの設計案](orchestrator-cli-design.md)を参照する。
 
-既存の方針は[配布設計](../../architecture.md)と[全体フロー](../../../skills/devlow/references/workflow.md)。ここで比較した保存方式・コマンド構成の推奨案を採用し、orchの配布用ソースに実装した。利用時の具体的な入力は[CLI仕様](../../../skills/orch/references/cli.md)を参照する。
+既存の方針は[配布設計](../../architecture.md)と[全体フロー](../../../skills/devlaw/references/workflow.md)。ここで比較した保存方式・コマンド構成の推奨案を採用し、orchの配布用ソースに実装した。利用時の具体的な入力は[CLI仕様](../../../skills/orch/references/cli.md)を参照する。
 
 ## 1. 何を解決するか
 

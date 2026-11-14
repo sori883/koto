@@ -10,7 +10,7 @@ Cursorのpstack、参照コミット `032be146865d973682535de75f2287da438550bf` 
 - 各原則は `type: principle`、`governance: context` とし、原文への固定リンクを `sources` に残す。descriptionに参照する場面と判断の指針を記し、本文には詳細な適用条件と例外を保持する。
 - `.space/babel/rules/` に追加するルールは `type: rule`、`governance: constraint` を明示する。具体的に守る行動・禁止事項・承認条件を記し、原則の本文を複製しない。
 - 各原則はtype検索とdescriptionから選んで参照する。適用手順を重複して記すルール文書や、場面と参照先の対応表は同梱しない。
-- [原則参照スキル](../../../skills/use-principles/SKILL.md)に、候補の検索、本文の確認、適用結果の受け渡しを置く。作業の進行・委譲・検証・記録・報告は[全体フロー](../../../skills/devlow/references/workflow.md)へ分離した。
+- [原則参照スキル](../../../skills/use-principles/SKILL.md)に、候補の検索、本文の確認、適用結果の受け渡しを置く。作業の進行・委譲・検証・記録・報告は[全体フロー](../../../skills/devlaw/references/workflow.md)へ分離した。
 - [配布用AGENTS.md](../../../templates/AGENTS.md)を利用先の入口とする。kotoのルートにある開発用 `AGENTS.md` へ配布ルールを追加しない。`okf-agent-memory` 自体は分野に依存しない記憶管理のままにする。
 - 原著の[MITライセンス](https://github.com/cursor/plugins/blob/032be146865d973682535de75f2287da438550bf/pstack/LICENSE)を、OKF bundleと原則参照スキルそれぞれの `LICENSE` に同梱する。進行手順を移したdevlowにも同じLICENSEを保持する。
 

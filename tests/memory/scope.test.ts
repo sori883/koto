@@ -120,7 +120,7 @@ test("relationships require a classified source but deletion preserves legacy re
 test("CLI scope inputs override metadata and record only the selected response once", async () => {
   expect((await cli(["create", "knowledge/dev"], { metadata: metadata({ scope: "ops" }), scope: "dev" })).code).toBe(0);
   await create("knowledge/shared"); await create("knowledge/ops", { scope: "ops" });
-  const result = await cli(["search"], { scope: "dev", recordUsage: true, usageSource: "devlow" });
+  const result = await cli(["search"], { scope: "dev", recordUsage: true, usageSource: "devlaw" });
   expect(result.code).toBe(0); expect(ids(result.data)).toEqual(["knowledge/dev", "knowledge/shared"]);
   expect(result.data.every((item: { scope: string }) => ["shared", "dev"].includes(item.scope))).toBe(true);
   const usage = (await cli(["usage", "list"])).data;

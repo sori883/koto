@@ -32,7 +32,7 @@ test("both products install real project files, survive relocation, and update t
     const setup = join(source, "skills/setup/scripts/setup.ts");
     const args = ["--project", project, "--scope", "project", "--product", product, "--json"];
     await run(setup, ["plan", ...args], project);
-    expect(await Bun.file(join(project, skillRoot, "devlow/SKILL.md")).exists()).toBe(false);
+    expect(await Bun.file(join(project, skillRoot, "devlaw/SKILL.md")).exists()).toBe(false);
     await run(setup, ["apply", ...args], project);
     for (const [path, body] of all) {
       if (!path.startsWith(`${prefix}skills/`)) continue;
@@ -40,7 +40,7 @@ test("both products install real project files, survive relocation, and update t
       expect((await lstat(target)).isFile()).toBe(true);
       expect((await readFile(target)).equals(body)).toBe(true);
     }
-    for (const name of ["devlow-worker", "comment-curator"]) {
+    for (const name of ["devlaw-worker", "comment-curator"]) {
       const from = product === "codex" ? `templates/agents/${name}.toml` : `agents/${name}.md`;
       const to = product === "codex" ? `.codex/agents/${name}.toml` : `.claude/agents/${name}.md`;
       expect(await readFile(join(project, to))).toEqual(await readFile(join(source, from)));

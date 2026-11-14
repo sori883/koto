@@ -16,7 +16,7 @@ Codex・Claude Codeには、全スキルをプロジェクトへ実ファイル�
 
 | 構成物 | 役割・入口 |
 | --- | --- |
-| devlow | [全体フロー](../skills/devlow/references/workflow.md)。依頼整理・調査・設計・計画・実装・検証・レビュー・引き渡しを規模と依頼種別から選ぶ |
+| devlow | [全体フロー](../skills/devlaw/references/workflow.md)。依頼整理・調査・設計・計画・実装・検証・レビュー・引き渡しを規模と依頼種別から選ぶ |
 | orch | [スキル](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/orch/SKILL.md)と専用CLI。unitの進行、確認結果、親の受け入れを分離して管理する |
 | okf-agent-memory | [スキル](https://github.com/sori883/koto/blob/16670c6aa50e6e5b08ce2ac21d9024755dbf7dee/skills/okf-agent-memory/SKILL.md)と専用CLI。Markdownの知識を検索・保存・更新・関連付け・検証する |
 | setup | [スキル](../skills/setup/SKILL.md)と専用CLI。同梱文書と指示を既存のプロジェクトへ導入・更新する |

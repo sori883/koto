@@ -1,6 +1,6 @@
 # koto
 
-- 開発依頼では `{{SKILL_ROOT}}/devlow/SKILL.md` を読み、目的と終了条件に合う工程を選ぶ。
+- 開発依頼では `{{SKILL_ROOT}}/devlaw/SKILL.md` を読み、目的と終了条件に合う工程を選ぶ。
 - 開発対象のコード・設定・文書・スキルの変更は規模に関係なく編集前に `{{SKILL_ROOT}}/tasks/SKILL.md` で登録する。同じ仕事のタスクは再利用し、調査・読み取りだけの依頼や再開用要約の保存は自動で登録しない。変更へ移る場合も最初の編集前に登録する。
 - このリポジトリをCLIのroot、通常はdefaultをprojectとして使う。リポジトリ直下のコードはdefaultに所属する。別projectへ暗黙に切り替えず、別Worktreeに記録を自動複製しない。
 - 共通のルール・原則とプロジェクト固有の知識は `{{MEMORY_ROOT}}` に保存し、`{{SKILL_ROOT}}/memory/SKILL.md` で検索・参照・更新する。開発はshared＋dev、運用はshared＋opsと関連する未分類を確認する。

@@ -1,10 +1,10 @@
 ---
-name: devlow
-description: 開発依頼の目的と終了条件を整理し、tasks・memoryを組み合わせて開始、各工程の進行、中断、再開、完了を扱う。複数工程の開発や作業の継続に使う。状況を思い出すだけならrecall、単一CLIの操作は各CLIのスキルを使う。
+name: devlaw
+description: 開発の原則と進め方を定め、依頼の目的と終了条件を整理する。tasks・memoryを組み合わせて開始、各工程の進行、中断、再開、完了を扱う。複数工程の開発や作業の継続に使う。状況を思い出すだけならrecall、単一CLIの操作は各CLIのスキルを使う。
 license: MIT
 ---
 
-# 開発作業を進める
+# 開発の原則と進め方
 
 [全体フロー](references/workflow.md)で今回の終了地点と必要な工程を選び、[ツール間の受け渡し](references/tools.md)で管理ルート・プロジェクト・タスクを揃える。必要な工程の資料だけを読み、各CLIの引数や保存処理はtasks・memoryのスキルへ委ねる。
 

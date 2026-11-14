@@ -170,8 +170,8 @@
       "mode": "copy"
     },
     {
-      "source": "templates/agents/devlow-worker.toml",
-      "destination": ".codex/agents/devlow-worker.toml",
+      "source": "templates/agents/devlaw-worker.toml",
+      "destination": ".codex/agents/devlaw-worker.toml",
       "mode": "copy"
     },
     {

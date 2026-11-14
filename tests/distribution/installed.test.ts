@@ -61,7 +61,7 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   expect(instructions).toContain("Keep these user instructions."); expect(instructions).toContain(join(plugin, "skills")); expect(instructions).not.toContain("{{");
   expect(instructions).toContain(bundle); expect(instructions).not.toContain("vendor");
   const installedAgents = new Map<string, string>();
-  for (const name of ["devlow-worker", "comment-curator"]) {
+  for (const name of ["devlaw-worker", "comment-curator"]) {
     const path = product === "codex" ? join(project, ".codex/agents", `${name}.toml`) : join(plugin, "agents", `${name}.md`);
     const content = await readFile(path, "utf8"); installedAgents.set(path, content);
     if (product === "codex") {
@@ -150,12 +150,12 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   expect(await readFile(join(activeDocs, "task.md"), "utf8")).toBe("Keep task evidence.\n");
   expect(await readFile(join(activeDocs, "tasks.md"), "utf8")).toContain("Resume");
   expect(await Bun.file(join(archivedDocs, "task.md")).exists()).toBe(false);
-  const recorded = await run(okf, ["search", "--root", project, "--for-path", "src/retry.ts", "--record-usage", "--usage-source", "devlow", "--json"], project);
+  const recorded = await run(okf, ["search", "--root", project, "--for-path", "src/retry.ts", "--record-usage", "--usage-source", "devlaw", "--json"], project);
   expect(recorded.code).toBe(0);
   const usage = await run(okf, ["usage", "stats", "--root", project, "--json"], project);
   expect(JSON.parse(usage.out).data.searches).toBe(1);
   expect((await readdir(join(plugin, "skills"))).sort()).toEqual([
-    "blast-radius", "create-verification-skill", "devlow",
+    "blast-radius", "create-verification-skill", "devlaw",
     "how", "interrogate", "maintain-verification-skill", "memory", "no-comments",
     "recall", "savepoint", "setup", "show-me-your-work", "system-blueprint", "tasks", "tdd",
     "teach", "use-principles", "why",
@@ -163,7 +163,7 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   expect(await readFile(join(project, "package.json"), "utf8")).toBe('{"name":"consumer","private":true}\n');
   expect(await Bun.file(join(project, "bun.lock")).exists()).toBe(false);
   if (product === "codex") {
-    const agent = join(project, ".codex/agents/devlow-worker.toml");
+    const agent = join(project, ".codex/agents/devlaw-worker.toml");
     const original = installedAgents.get(agent)!;
     await writeFile(agent, original + '\nmodel = "local-choice"\n');
     expect((await run(setup, ["apply", ...setupArgs], project)).code).not.toBe(0);

@@ -23,11 +23,11 @@ afterEach(async () => { await rm(root, { recursive: true, force: true }); });
 test("recorded reads preserve response data and aggregate search exposure separately from body retrieval", async () => {
   const before = await readFile(join(memory(), "log.md"), "utf8");
   const original = (await call(["show", "knowledge/auth"])).body.data;
-  const search = await call(["search", "Authentication"], { recordUsage: true, actor: "agent:codex", usageSource: "devlow", taskId: "task-001" });
+  const search = await call(["search", "Authentication"], { recordUsage: true, actor: "agent:codex", usageSource: "devlaw", taskId: "task-001" });
   expect(search.code).toBe(0);
   expect(search.body.data.map((item: { concept_id: string }) => item.concept_id)).toEqual(["knowledge/auth"]);
   expect(search.body.usage.event_id).toBeString();
-  const show = await call(["show", "knowledge/auth"], { recordUsage: true, usageSource: "devlow" });
+  const show = await call(["show", "knowledge/auth"], { recordUsage: true, usageSource: "devlaw" });
   expect(show.code).toBe(0); expect(show.body.data).toEqual(original);
   expect((await call(["search", "zzzzqvnomatchtoken"], { recordUsage: true })).code).toBe(0);
   const stats = (await call(["usage", "stats"])).body.data;
@@ -37,7 +37,7 @@ test("recorded reads preserve response data and aggregate search exposure separa
   const shown = list.events.find((event: { operation: string }) => event.operation === "show");
   expect(shown.content_hash).toBe(original.content_hash);
   const searched = list.events.find((event: { task_id?: string }) => event.task_id === "task-001");
-  expect(searched).toMatchObject({ project: "default", actor: "agent:codex", source: "devlow", concept_ids: ["knowledge/auth"] });
+  expect(searched).toMatchObject({ project: "default", actor: "agent:codex", source: "devlaw", concept_ids: ["knowledge/auth"] });
   const raw = (await Promise.all((await readdir(events())).map(name => readFile(join(events(), name), "utf8")))).join("");
   expect(raw).not.toContain("zzzzqvnomatchtoken"); expect(raw).not.toContain(original.body.trim());
   expect(await readFile(join(memory(), "log.md"), "utf8")).toBe(before);
@@ -57,7 +57,7 @@ test("unrecorded reads, log inspection and failed reads do not create usage data
 
 test("usage filters, limits and project boundaries select only matching events", async () => {
   await seed("other");
-  await call(["search", "Authentication"], { recordUsage: true, usageSource: "devlow", actor: "agent:codex", taskId: "task-1" });
+  await call(["search", "Authentication"], { recordUsage: true, usageSource: "devlaw", actor: "agent:codex", taskId: "task-1" });
   await call(["show", "knowledge/auth"], { recordUsage: true, usageSource: "recall", actor: "agent:claude" });
   await call(["show", "knowledge/auth"], { recordUsage: true, project: "other" });
   expect((await call(["usage", "stats"], { project: "other" })).body.data.events).toBe(1);
@@ -128,7 +128,7 @@ test("an interrupted usage write recovers once without changing knowledge or its
 
 test("invalid logging options and filters fail before producing events", async () => {
   for (const [command, options] of [
-    [["show", "knowledge/auth"], { usageSource: "devlow" }],
+    [["show", "knowledge/auth"], { usageSource: "devlaw" }],
     [["show", "knowledge/auth"], { recordUsage: true, taskId: "../other" }],
     [["show", "knowledge/auth"], { recordUsage: true, usageSource: "../other" }],
     [["show", "knowledge/auth"], { recordUsage: true, actor: "invalid" }],

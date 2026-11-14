@@ -43,7 +43,7 @@ Codex・Claude Codeには、プラグイン方式に加えて、全スキルを�
 
 標準配布は18スキルとする。Tasks・Memoryの操作、作業の進行・検証、記録の保存・再利用を一緒に実行できる範囲を持つ。原版の出自にかかわらず、kotoのフローや保存した知識との連携を採用理由とする。
 
-- 進行と導入はdevlow・tasks・memory・setup。
+- 進行と導入はdevlaw・tasks・memory・setup。
 - タスクのない調査の保存と再開はsavepoint・recall。タスクの中断・引き継ぎはtasksが持つ。
 - 理解と知識の継承はhow・why・teach・system-blueprint・use-principles・no-comments・show-me-your-work。
 - 実装と検証はtdd・blast-radius・interrogate・create-verification-skill・maintain-verification-skill。
@@ -56,7 +56,7 @@ kotoのフローは、利用先に外部スキルがなくても実行できる�
 
 ## 全体フローと工程の定義
 
-開発作業の全体フローは、統括スキルに同梱する `skills/devlow/references/workflow.md` を正本とする。工程の順序・分岐、各工程の成果物と完了条件、依頼種別・作業規模・リスクによる実施判断を定義する。判断や設計は、小規模な作業でもなるべく記録に残す。
+開発の原則と進め方を定める統括スキルの名称はdevlawとする。lawは、工程の順序だけでなくタスク登録・レビュー・完了判定の規範も扱うことを表す。開発作業の全体フローは、統括スキルに同梱する `skills/devlaw/references/workflow.md` を正本とする。工程の順序・分岐、各工程の成果物と完了条件、依頼種別・作業規模・リスクによる実施判断を定義する。判断や設計は、小規模な作業でもなるべく記録に残す。
 
 開発対象のコード・設定・文書・スキルを追加・修正・削除する仕事は規模にかかわらず、編集前にTasksへ登録する。途中で調査から変更へ進む場合も同じ境界で登録し、既存タスクがあれば重複させない。調査・読み取り・相談・レビューや設計案の検討だけの依頼は自動でタスク化しない。調査結果や再開用要約の保存だけをタスク登録の理由にしない。task.md等の詳しい計画資料を作るかどうかと、CLIへのタスク登録は別の判断とする。ソース変更タスクは原則としてPR/MRのマージと必要な検証の確認後、またはユーザーが明示的に完了とした時点で完了する。
 
@@ -80,7 +80,7 @@ kotoのフローは、利用先に外部スキルがなくても実行できる�
 
 タスク化していない調査・読み取り・相談の再開情報は[savepoint](../skills/savepoint/SKILL.md)が扱う。ユーザーから残すよう依頼された場合だけ、目的・対象・確認済みの内容と根拠・未確認事項・次の操作を、会話または指定ファイルへ残す。区切り、長期化、中断、コンテキスト縮約を理由に自動保存せず、保存のためだけにタスクを作らない。既存タスク内の調査はTasksへ記録する。どちらの再開もrecallで記録と現在の実状態を照合する。
 
-devlowはTasksによる作業状態、Memoryによる関連知識、実際のGit作業場所を結び付ける。Git操作は既存のGit・GitHub等の道具を使う。旧orchの親子unitと受け入れ状態はTasksと同一ではなく、実行担当の報告と全体の完了判断はフロー側で扱う。今回の取り込みではmonorepo CLI・opsflow・複数配置の共通設定は追加しない。以前の設計・検証の経緯は[開発フローの設計案](devlow-design.md)、現在の差分は[mainへの取り込み](main-tasks-memory-port.md)を参照する。
+devlawはTasksによる作業状態、Memoryによる関連知識、実際のGit作業場所を結び付ける。Git操作は既存のGit・GitHub等の道具を使う。旧orchの親子unitと受け入れ状態はTasksと同一ではなく、実行担当の報告と全体の完了判断はフロー側で扱う。今回の取り込みではmonorepo CLI・opsflow・複数配置の共通設定は追加しない。以前の設計・検証の経緯は[開発フローの設計案](devlow-design.md)、現在の差分は[mainへの取り込み](main-tasks-memory-port.md)を参照する。
 
 ## 独立CLIと実行時の依存関係
 
@@ -139,7 +139,7 @@ Tasksの親子関係は、1件の依頼とその作業単位の所属を表す�
 
 2026-11-04のユーザー指示により、完了と進行中の資料をフォルダから区別できるよう、Tasksのcompleteで標準資料フォルダを自動アーカイブし、reopenで復元する。親子の資料は最上位タスクと一緒に移す。台帳state.json・履歴・結果を保持し、チェックポイントと標準外の成果物は動かさない。現在の成果物参照を移動先へ更新し、過去のスナップショットと文書本文は変更しない。本文のリンクは実行担当が確認する。保存と移動の間で失敗しても同じ操作を再送でき、衝突時は上書きしない。過去の完了タスクは明示したarchive操作で扱い、読み取り・setupで一括移行しない。当初の設計と検証は[タスク資料のアーカイブ](tasks-archive.md)に記録する。
 
-ADRに相当するdecisionの記述・レビュー基準は、共通手順 `space/default/procedures/record-design-decisions.md` を正本とし、Memory・devlow・system-blueprintから必要な場合に取得する。既存のOKF形式を使い、判断の採用状態は文書のstatusと分けて本文に残す。採用した方針が成立する範囲で変えられる実装の細部は仕様・設計資料へ置く。判断の補足・訂正は同じIDを更新し、方針の変更は新しいdecisionに理由を記録して旧判断と相互参照する。旧本文の当時の理由を消さず、置換範囲と時点を残す。2026-11-03のユーザー依頼による改善であり、出典・採否・検証は[改善記録](skills/memory/decision-records.md)に置く。
+ADRに相当するdecisionの記述・レビュー基準は、共通手順 `space/default/procedures/record-design-decisions.md` を正本とし、Memory・devlaw・system-blueprintから必要な場合に取得する。既存のOKF形式を使い、判断の採用状態は文書のstatusと分けて本文に残す。採用した方針が成立する範囲で変えられる実装の細部は仕様・設計資料へ置く。判断の補足・訂正は同じIDを更新し、方針の変更は新しいdecisionに理由を記録して旧判断と相互参照する。旧本文の当時の理由を消さず、置換範囲と時点を残す。2026-11-03のユーザー依頼による改善であり、出典・採否・検証は[改善記録](skills/memory/decision-records.md)に置く。
 
 system-blueprintが新規に作成する構成・動作の説明は、利用先の `.space/default/memory/knowledge/systems/<system>/` に保存し、全体像の入口を `blueprint.md` とする。根拠のある設計判断は `.space/default/memory/decisions/systems/<system>/` に保存する。対象システムごとに安定して参照・更新できるよう、単一システムでも `<system>` を省略しない。詳細の配置は配布用の[文書モデル](../skills/system-blueprint/references/document-model.md)で定義する。
 
@@ -195,7 +195,7 @@ setupは、プラグイン自身の位置から同梱ファイルを読み、利
 
 CopilotとClaude Codeはスキル・CLI・共通知識の配布物を共用し、setupの配置先だけを製品ごとに選択する。既定は従来の`setup-manifest.json`とし、Copilotは`--product copilot`で同梱の`setup-manifest.copilot.json`を明示的に選ぶ。未同梱の製品を他製品へ読み替えない。管理記録は製品ごと、Memory内の共通知識とsetupのロックは製品間で共有する。setupはMemoryの書き込みロックも取得し、未復旧のMemory書き込みがある場合は更新を止める。
 
-同梱エージェントは `devlow-worker` と `comment-curator`。前者はdevlowの全体フローを読んで担当単位を実行し、後者はno-commentsの保存・照合・削除を担当する。CodexのTOMLとClaude形式のMarkdownで同じ役割を定義し、固定モデルや権限変更を埋め込まない。親から実際のスキルの絶対パスを渡し、既存設計・承認・所有範囲を引き継ぐ。CopilotにはClaude形式を同梱する。形式・配置の確認と各クライアントでの起動・実行互換性は区別して検証する。hooksは追加していない。
+同梱エージェントは `devlaw-worker` と `comment-curator`。前者はdevlawの全体フローを読んで担当単位を実行し、後者はno-commentsの保存・照合・削除を担当する。CodexのTOMLとClaude形式のMarkdownで同じ役割を定義し、固定モデルや権限変更を埋め込まない。親から実際のスキルの絶対パスを渡し、既存設計・承認・所有範囲を引き継ぐ。CopilotにはClaude形式を同梱する。形式・配置の確認と各クライアントでの起動・実行互換性は区別して検証する。hooksは追加していない。
 
 ## TypeScriptのまま生成し、mainから配布する
 

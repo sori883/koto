@@ -14,11 +14,11 @@
 
 | ファイル | 役割 |
 | --- | --- |
-| [SKILL.md](../../../skills/devlow/SKILL.md) | 起動条件と全体フローへの入口 |
-| [workflow.md](../../../skills/devlow/references/workflow.md) | 工程選択と実行時の共通契約。依頼整理の詳細はintake.mdへ接続 |
-| [intake.md](../../../skills/devlow/references/intake.md) | 目的・範囲・受け入れ条件・未決事項を整理し、次に着手できる工程へ渡す |
-| [task-template.md](../../../skills/devlow/assets/task-template.md) | ファイル化する依頼整理記録の出発点。必要な節だけを使う |
-| [LICENSE](../../../skills/devlow/LICENSE) | use-principlesから移した進行手順のライセンスを保持 |
+| [SKILL.md](../../../skills/devlaw/SKILL.md) | 起動条件と全体フローへの入口 |
+| [workflow.md](../../../skills/devlaw/references/workflow.md) | 工程選択と実行時の共通契約。依頼整理の詳細はintake.mdへ接続 |
+| [intake.md](../../../skills/devlaw/references/intake.md) | 目的・範囲・受け入れ条件・未決事項を整理し、次に着手できる工程へ渡す |
+| [task-template.md](../../../skills/devlaw/assets/task-template.md) | ファイル化する依頼整理記録の出発点。必要な節だけを使う |
+| [LICENSE](../../../skills/devlaw/LICENSE) | use-principlesから移した進行手順のライセンスを保持 |
 | [use-principles](../../../skills/use-principles/SKILL.md) | 検索・本文確認・適用条件の受け渡し。工程や保存を起動しない |
 | [導入用AGENTS.md](../../../templates/AGENTS.md) | devlowを入口にして原則参照を接続 |
 

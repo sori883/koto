@@ -2,6 +2,8 @@
 
 実施日: 2026-11-14。対象は `codex/trim-standard-skills` の作業ツリー。
 
+この評価はdevlawへの改名前に実施した。以下のdevlow表記と検証データのSHA-256は評価当時のもの。改名後の配布確認とは区別する。
+
 ユーザーの依頼により、[empirical-prompt-tuning](https://github.com/mizchi/skills/blob/a41865b34b78f2675a6c73178377a5bcc1b492c6/empirical-prompt-tuning/SKILL.md)の手法を使って、savepointとその依存先を小規模に評価する。配布物の保守資料であり、スキルには同梱しない。
 
 ## 試験条件
