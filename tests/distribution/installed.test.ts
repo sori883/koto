@@ -155,7 +155,7 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   const usage = await run(okf, ["usage", "stats", "--root", project, "--json"], project);
   expect(JSON.parse(usage.out).data.searches).toBe(1);
   expect((await readdir(join(plugin, "skills"))).sort()).toEqual([
-    "devlaw", "memory", "recall", "savepoint", "setup", "tasks", "use-principles",
+    "devlaw", "koto-usage", "memory", "recall", "savepoint", "setup", "tasks", "use-principles",
   ]);
   expect(await readFile(join(project, "package.json"), "utf8")).toBe('{"name":"consumer","private":true}\n');
   expect(await Bun.file(join(project, "bun.lock")).exists()).toBe(false);

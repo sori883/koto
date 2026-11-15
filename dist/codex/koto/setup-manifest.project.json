@@ -431,6 +431,11 @@
       "mode": "copy"
     },
     {
+      "source": "skills/koto-usage/SKILL.md",
+      "destination": ".agents/skills/koto-usage/SKILL.md",
+      "mode": "copy"
+    },
+    {
       "source": "skills/memory/SKILL.md",
       "destination": ".agents/skills/memory/SKILL.md",
       "mode": "copy"

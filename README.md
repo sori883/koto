@@ -21,7 +21,12 @@
 | 作業の現在地を取り戻したい | **recall**：記録と現在の状態を照合し、残件と次の操作を整理する |
 | プロジェクトにkotoを導入・更新したい | **setup**：スキル・共通知識・指示を配置し、既存の内容を保って更新する |
 
-補助スキルとして **[use-principles](skills/use-principles/SKILL.md)** も同梱しています。作業開始時や対象が変わったとき、Memoryから今回に適用するルール・原則を選んで読むために使えます。利用は任意で、コアの実行に必須ではありません。標準配布はコア6個と補助1個の計7スキルです。
+補助スキルは次の2個です。利用は任意で、コアの実行に必須ではありません。標準配布はコア6個と補助2個の計8スキルです。
+
+| スキル | 用途 |
+| --- | --- |
+| [use-principles](skills/use-principles/SKILL.md) | 作業開始時や対象が変わったとき、Memoryから適用するルール・原則を選んで読む |
+| [koto-usage](skills/koto-usage/SKILL.md) | Tasks・Memory・recall・savepointの利用状況を集計し、数字の意味を説明する |
 
 たとえばdevlawでは、次の工程から依頼に必要なものを選びます。
 
@@ -160,6 +165,8 @@ bun run memory -- search --for-path src/api.ts --root /path/to/repository --json
 旧Babelがある利用先は、[setupの移行手順](skills/setup/references/setup.md#既存の知識を移行する)を確認してください。旧orch台帳は新Tasksと形式が異なるため自動変換しません。[今回の取り込み範囲](docs/main-tasks-memory-port.md)、[Tasksの手順](cli/tasks/README.md)、[Memoryの手順](cli/memory/README.md)を参照してください。
 
 ## コアの利用状況を見る
+
+「kotoをどれくらい使っている？」と尋ねるか、[koto-usage](skills/koto-usage/SKILL.md)を指定すると、対象プロジェクト・期間の利用状況を確認できます。
 
 プロジェクトで一度有効にすると、Tasks・MemoryのCLI利用を自動記録します。setupスキルの利用は対象外です。
 
