@@ -2,6 +2,7 @@ import { parseArgs } from "node:util";
 import { identifier, number, object, requireThat, STATES, TasksError, text, type Request } from "./model.ts";
 import { execute, READ } from "./service.ts";
 import { Store } from "./store.ts";
+import { recordActivitySafely, type ActivityTarget } from "./activity.ts";
 
 export const help = "koto-tasks — project task records\n\n" +
   "Usage: koto-tasks <command> [--root PATH] [--project ID] [--json]\n" +
@@ -23,9 +24,10 @@ export const help = "koto-tasks — project task records\n\n" +
   "Retry an uncertain operation with exactly the same ID and input.\n" +
   "--actor TEXT records a self-reported identity; it is not authentication.\n" +
   "--root defaults to the current directory; --project defaults to default.\n" +
+  "--no-activity skips automatic activity recording when project measurement is enabled.\n" +
   "Read README.md for dependency changes, checkpoints and recovery.\n";
 
-const names: Record<string, string> = { operationId: "operation-id", ifVersion: "if-version" };
+const names: Record<string, string> = { operationId: "operation-id", ifVersion: "if-version", noActivity: "no-activity" };
 function expand(args: string[]): string[] {
   if (!args.some(a => a === "--input-json" || a.startsWith("--input-json="))) return args;
   let input: unknown;
@@ -34,14 +36,14 @@ function expand(args: string[]): string[] {
     input = JSON.parse(values["input-json"]!);
   } catch { throw new TasksError("INVALID_INPUT", "Pass one JSON request with --input-json; do not mix it with other inputs."); }
   object(input, "INVALID_INPUT");
-  requireThat(Object.keys(input).every(k => ["command", "root", "project", "operationId", "ifVersion", "actor", "title", "description", "parent", "state", "reason", "next", "result", "on", "repo", "ref", "summary", "ready"].includes(k)), "INVALID_INPUT", "Unknown JSON input field.");
+  requireThat(Object.keys(input).every(k => ["command", "root", "project", "operationId", "ifVersion", "actor", "title", "description", "parent", "state", "reason", "next", "result", "on", "repo", "ref", "summary", "ready", "noActivity"].includes(k)), "INVALID_INPUT", "Unknown JSON input field.");
   requireThat(Array.isArray(input.command) && input.command.length > 0 && input.command.every(v => typeof v === "string"), "INVALID_INPUT", "command must be a nonempty string array.");
   const parts = input.command as string[];
   const grouped = ["task", "dependency", "workspace", "artifact", "checkpoint"].includes(parts[0] ?? "");
   const command = parts.slice(0, grouped ? 2 : 1).join(" ");
   requireThat(Object.hasOwn(specs, command), "INVALID_INPUT", "Unknown command.");
   const writes = command !== "setup" && !READ.has(command);
-  const allowed = ["command", "root", "project", ...specs[command]!.flags, ...(writes ? ["operationId", "actor", ...(command === "task add" ? [] : ["ifVersion"])] : [])];
+  const allowed = ["command", "root", "project", "noActivity", ...specs[command]!.flags, ...(writes ? ["operationId", "actor", ...(command === "task add" ? [] : ["ifVersion"])] : [])];
   requireThat(Object.keys(input).every(k => allowed.includes(k)), "INVALID_INPUT", "A JSON field does not apply to this command.");
   const expanded: string[] = [];
   for (const [key, value] of Object.entries(input)) {
@@ -49,9 +51,9 @@ function expand(args: string[]): string[] {
     if (key === "repo") {
       requireThat(Array.isArray(value) && value.length > 0 && value.every(v => typeof v === "string"), "INVALID_INPUT", "repo must be a nonempty string array.");
       value.forEach(v => expanded.push("--repo=" + v));
-    } else if (key === "ready") {
-      requireThat(typeof value === "boolean", "INVALID_INPUT", "ready must be boolean.");
-      if (value) expanded.push("--ready");
+    } else if (key === "ready" || key === "noActivity") {
+      requireThat(typeof value === "boolean", "INVALID_INPUT", key + " must be boolean.");
+      if (value) expanded.push("--" + (names[key] ?? key));
     } else if (key === "ifVersion") {
       number(value, "INVALID_INPUT"); expanded.push("--if-version=" + value);
     } else {
@@ -75,12 +77,13 @@ const specs: Record<string, Spec> = {
 };
 export async function main(argv: string[]): Promise<number> {
   const json = argv.some(a => a === "--json" || a === "--input-json" || a.startsWith("--input-json="));
+  let activity: ActivityTarget | undefined;
   try {
     const args = expand(argv);
     let parsed;
     try {
       parsed = parseArgs({ args, strict: true, allowPositionals: true, options: {
-        root: { type: "string" }, project: { type: "string" }, json: { type: "boolean" }, help: { type: "boolean" },
+        root: { type: "string" }, project: { type: "string" }, json: { type: "boolean" }, help: { type: "boolean" }, "no-activity": { type: "boolean" },
         "operation-id": { type: "string" }, "if-version": { type: "string" }, actor: { type: "string" },
         title: { type: "string" }, description: { type: "string" }, parent: { type: "string" }, state: { type: "string" }, reason: { type: "string" },
         next: { type: "string" }, result: { type: "string" }, on: { type: "string" }, repo: { type: "string", multiple: true },
@@ -98,7 +101,7 @@ export async function main(argv: string[]): Promise<number> {
     const spec = specs[command]!, writes = command !== "setup" && !READ.has(command);
     requireThat(positionals.length === spec.count, "INVALID_INPUT", "Missing or extra positional arguments.");
     const mutationFlags = writes ? ["operation-id", "actor", ...(command === "task add" ? [] : ["if-version"])] : [];
-    requireThat(Object.keys(values).every(k => ["root", "project", "json", "help", ...spec.flags, ...mutationFlags].includes(k)), "INVALID_INPUT", "An option does not apply to this command.");
+    requireThat(Object.keys(values).every(k => ["root", "project", "json", "help", "no-activity", ...spec.flags, ...mutationFlags].includes(k)), "INVALID_INPUT", "An option does not apply to this command.");
     const request: Request = { command, id: positionals[length], childId: positionals[length + 1] };
     for (const key of ["title", "description", "state", "reason", "next", "result", "on", "ref", "summary", "actor"] as const) {
       if (values[key] !== undefined) { text(values[key], key, true); request[key] = values[key]; }
@@ -118,9 +121,11 @@ export async function main(argv: string[]): Promise<number> {
     }
     const root = values.root ?? process.cwd(), project = values.project ?? "default";
     text(root, "root"); identifier(project);
+    if (!values["no-activity"]) activity = { root, project, activity: { component: "tasks", operation: command, outcome: "failure", ...(request.id === undefined ? {} : { task_id: request.id }) } };
     const store = await Store.open(root, project, command === "setup");
     const result = await execute(store, request);
     const healthy = command !== "doctor" || (result.data as { healthy: boolean }).healthy;
+    if (activity) { activity.activity.outcome = healthy ? "success" : "failure"; if (result.replayed) activity.activity.replayed = true; }
     process.stdout.write(JSON.stringify({ ok: healthy, ...result }, null, json ? undefined : 2) + "\n");
     return healthy ? 0 : 1;
   } catch (error) {
@@ -129,5 +134,5 @@ export async function main(argv: string[]): Promise<number> {
     if (json) process.stdout.write(JSON.stringify({ ok: false, error: value }) + "\n");
     else process.stderr.write(value.code + ": " + value.message + (value.details ? "\n" + JSON.stringify(value.details) : "") + "\n");
     return known ? error.exitCode : 1;
-  }
+  } finally { await recordActivitySafely(activity); }
 }

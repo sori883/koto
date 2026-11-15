@@ -26,7 +26,7 @@ Codex・Claude Codeには、プラグイン方式に加えて、全スキルを�
 
 | 場所 | 役割・管理方針 |
 | --- | --- |
-| `cli/tasks/`・`cli/memory/` | 独立CLIの正本。各CLIのテストは`tests/tasks/`・`tests/memory/`に置く |
+| `cli/tasks/`・`cli/memory/`・`cli/usage/` | 独立CLIの正本。各CLIのテストは`tests/<tool>/`に置く |
 | `skills/` | 配布するスキルとsetup専用CLIの正本。スキル専用の説明・実行手順は `references/`、実行コードと依存定義は `scripts/`、開発用テストは `tests/` に置く |
 | `space/default/` | 配布する共通知識・ルールの正本。複数のスキルやエージェントから参照する文書を置く |
 | `packaging/codex/`・`packaging/claude-code/` | 製品別のマニフェスト、エージェント定義、必要なhooksや指示テンプレートの正本 |
@@ -81,7 +81,7 @@ kotoのフローは、補助スキルや外部スキルを使わずに実行で�
 
 タスクの中断・引き継ぎは[tasks](../skills/tasks/SKILL.md#中断と引き継ぎ)が所有する。実作業の停止確認、状態更新、checkpointへの保存と保存結果の確認を扱い、保存と停止を区別する。全体フローは同スキルへ渡し、返された記録への参照を保持する。checkpointは再開に必要な要約と成果物への参照であり、設計文書・作業ログ・判断ログの正本にはしない。
 
-タスク化していない調査・読み取り・相談の再開情報は[savepoint](../skills/savepoint/SKILL.md)が扱う。ユーザーから残すよう依頼された場合だけ、目的・対象・確認済みの内容と根拠・未確認事項・次の操作を、会話または指定ファイルへ残す。区切り、長期化、中断、コンテキスト縮約を理由に自動保存せず、保存のためだけにタスクを作らない。既存タスク内の調査はTasksへ記録する。どちらの再開もrecallで記録と現在の実状態を照合する。
+タスク化していない調査・読み取り・相談の再開情報は[savepoint](../skills/savepoint/SKILL.md)が扱う。ユーザーから残すよう依頼された場合だけ、目的・対象・確認済みの内容と根拠・未確認事項・次の操作を、指定ファイル、指定がなければ`.space/<project>/savepoint/`へ残す。区切り、長期化、中断、コンテキスト縮約を理由に自動保存せず、保存のためだけにタスクを作らない。既存タスク内の調査はTasksへ記録する。どちらの再開もrecallで記録と現在の実状態を照合する。
 
 devlawはTasksによる作業状態、Memoryによる関連知識、実際のGit作業場所を結び付ける。Git操作は既存のGit・GitHub等の道具を使う。旧orchの親子unitと受け入れ状態はTasksと同一ではなく、実行担当の報告と全体の完了判断はフロー側で扱う。今回の取り込みではmonorepo CLI・opsflow・複数配置の共通設定は追加しない。以前の設計・検証の経緯は[開発フローの設計案](devlow-design.md)、現在の差分は[mainへの取り込み](main-tasks-memory-port.md)を参照する。
 
@@ -95,6 +95,7 @@ koto独自のCLIはTypeScriptをBunで実行する。Tasks・Memoryには実行�
 | --- | --- | --- |
 | Memory | `cli/memory/memory.ts` | OKFの検索・参照・保存・更新・検証、scopeの選択、任意の利用ログと集計 |
 | Tasks | `cli/tasks/tasks.ts` | タスク・依存・成果物・checkpoint・履歴を管理する。保存先は`.space/<project>/tasks/`と`.space/<project>/checkpoint/` |
+| 利用集計 | `cli/usage/usage.ts` | Tasks・MemoryのCLI利用、recallの自己申告履歴、savepointの現在のファイル数 |
 | 初期配置・更新 | `skills/setup/scripts/setup.ts` | 同梱する共通文書・エージェント定義・指示テンプレートを利用先へ配置・更新する |
 
 Tasks・Memoryの入口、lib、package.json、利用資料はそれぞれ`cli/<tool>/`で完結する。他CLIの実装や状態をimportしない。共通Coreは設けず、AIが明示的なroot・project・task IDで連携する。両CLIの実行時に依存導入や配布ルートへの書き込みは不要。以下のbootstrapの手順はsetup等、スキル内で実行依存を持つ道具にだけ適用する。
@@ -120,7 +121,7 @@ Tasks・Memoryの入口、lib、package.json、利用資料はそれぞれ`cli/<
 | タスク状態のMarkdown | `.space/<project>/tasks/<task-id>/tasks.md`。最上位タスクごとに親子の進捗をまとめ、Tasks CLIが作成・更新する。正本は `state.json` |
 | 完了したタスクの標準資料フォルダ | `.space/<project>/tasks/.archive/<task-id>/`。最上位タスクの完了時に子の資料を含めて移し、再開時に戻す。従来の`archive/`にある資料も再開時に戻せる |
 | タスクの中断・引き継ぎの再開情報 | そのプロジェクトの `.space/<project>/checkpoint/`。Tasks CLIで保存し、必要な内容と中断の手順はtasksスキルが所有する |
-| タスクのない調査の再開情報 | ユーザーの保存依頼に応じてsavepointが会話または指定ファイルへ残す |
+| タスクのない調査の再開情報 | ユーザーの保存依頼に応じてsavepointが指定ファイルまたは`.space/<project>/savepoint/`へ残す |
 
 Memoryの文書はfrontmatter付きMarkdownとし、配布元・利用先とも同じ分類を使う。
 
@@ -225,3 +226,15 @@ GitHub Actionsではテスト・型や定義の検証に加え、配布物を再
 2026-09-21の確認時点では `skills/okf-agent-memory/` にOKF CLIがあり、実行時の依存定義はスキル直下の `package.json`、ロックはルートの `bun.lock` にある。`scripts/` 単位の依存管理・bootstrap、タスク用CLI、setup、配布生成・カタログ・CIは、この目標構成に向けた実装・移行事項として扱う。既存CLIまで未実装として扱わない。2026-09-23にorchの専用CLI・bootstrapを追加した。orchの外部依存は空であり、初回は定義の確認だけを行う。同日、OKFのscripts内への依存移行、setup、配布生成・カタログ・CI定義を実装した。ローカルの検証と実際の公開状態は[配布の実装記録](distribution-implementation.md)で区別する。[orchの実装記録](skills/orch/implementation.md)に確認範囲を残す。
 
 作業では、まず変更対象が「配布用ソース」「生成物」「プロジェクト固有の情報」のどれかを確認する。現行コードや配置がこの文書と異なる場合は差分として扱い、現状に合わせて目標を暗黙に変更しない。実装・移行は依頼された範囲で進める。ユーザーから配布先・実行方式・依存配置・正本の責務を変更する指示があった場合は、変更理由と影響を明示し、本文も更新する。
+
+## コアの利用計測
+
+2026-11-15の依頼に基づき、Tasks・Memoryの利用集計、recallの最低限の履歴、savepointのファイル件数を扱う。setupスキルとdevlawの起動計測は対象外。新たなスキルは作らず、独立したUsage CLIを同梱する。
+
+プロジェクトで明示的に計測を有効化した場合だけ、Tasks・MemoryのCLI入口で操作の成否を記録する。通常のAPIは書き込まず、未有効時の読み取り専用契約を維持する。明示的な読み取り専用・書き込み禁止では`--no-activity`を指定する。記録失敗は警告にとどめ、本来の応答・終了コードを変えない。
+
+設定と共通形式のイベントは`.space/<project>/usage/`に置く。Usage CLIはこのイベントを読み、TasksやMemoryの内部状態・実装をimportしない。各CLIに小さな記録器を同梱し、別CLIの存在を実行条件にしない。スキル同士の新たな依存や共通トップレベルCLIは追加しない。Memoryの明示的な利用ログは別系統で維持し、重複して合算しない。
+
+recallは復元結果を返す際に自己申告のイベントを1回残す。実際のスキル起動の全数把握とは区別する。savepointはユーザーから保存依頼があった場合だけ既定フォルダへ保存し、recallがそのprojectの必要な記録を読む。現在の保存件数を過去の実行回数に置き換えない。取得・利用の回数から判断への採用や効果を推定しない。
+
+実装上の境界と検証は[利用計測の開発記録](usage-measurement.md)に置く。

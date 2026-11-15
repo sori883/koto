@@ -61,7 +61,7 @@ export async function distribution(root: string): Promise<Files> {
     }
   }
   for (const [path, body] of await filesAt(join(root, "space/default"))) common.set(`space/default/${path}`, body);
-  for (const name of ["memory", "tasks"]) {
+  for (const name of ["memory", "tasks", "usage"]) {
     for (const [path, body] of await filesAt(join(root, "cli", name), true)) {
       if (path === "package.json") {
         const pkg = JSON.parse(body.toString()); pkg.version = version;

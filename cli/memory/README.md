@@ -90,7 +90,9 @@ bun /path/to/plugin/cli/memory/memory.ts validate --root /path/to/workspace --st
 
 ## 利用状況の記録
 
-`search`・`show`に`--record-usage`を付けると、検索・本文取得に成功した呼び出しの利用ログを保存します。指定を省いた呼び出し、読み取りAPI、Markdownの直接参照は記録されません。`usage list`・`usage stats`自体は読み取り専用です。
+プロジェクトで[利用計測](../usage/README.md)を有効にすると、CLIの各操作と検索・本文取得を自動記録します。これは以下の明示的な詳細ログとは別の集計です。明示的な読み取り専用・記録不要の依頼では `--no-activity`（JSON入力は `noActivity: true`）を付け、`--record-usage`も省きます。
+
+`search`・`show`に`--record-usage`を付けると、検索・本文取得に成功した呼び出しの利用ログを保存します。この詳細ログには、指定を省いた呼び出し、読み取りAPI、Markdownの直接参照は記録されません。`usage list`・`usage stats`自体は読み取り専用です。
 
 ```sh
 bun /path/to/plugin/cli/memory/memory.ts search "認証" --root /path/to/workspace --record-usage --usage-source devlaw --actor agent:codex --task-id task-001 --json

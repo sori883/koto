@@ -53,6 +53,14 @@ test("both products install real project files, survive relocation, and update t
     const cliRoot = join(project, skillRoot, "../cli");
     const search = await run(join(cliRoot, "memory/memory.ts"), ["search", "--root", project, "--type", "principle", "--all", "--json"], project);
     expect(search.data.length).toBeGreaterThan(0);
+    const usage = join(cliRoot, "usage/usage.ts");
+    const usageArgs = ["--root", project, "--json"];
+    const beforeUsage = await run(usage, ["stats", ...usageArgs], project);
+    await run(usage, ["enable", ...usageArgs], project);
+    await run(join(cliRoot, "memory/memory.ts"), ["search", "--type", "principle", ...usageArgs], project);
+    const afterUsage = await run(usage, ["stats", ...usageArgs], project);
+    expect(afterUsage.data.memory.searches).toBe(beforeUsage.data.memory.searches + 1);
+    await run(usage, ["disable", ...usageArgs], project);
     await run(join(cliRoot, "tasks/tasks.ts"), ["setup", "--root", project, "--json"], project);
     expect(await Bun.file(join(cliRoot, "memory/node_modules/package.json")).exists()).toBe(false);
     const localSetup = join(project, skillRoot, "setup/scripts/setup.ts");

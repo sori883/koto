@@ -1,0 +1,12 @@
+{
+  "name": "@koto/usage",
+  "version": "0.1.12",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "koto-usage": "./usage.ts"
+  },
+  "engines": {
+    "bun": ">=1.4.2"
+  }
+}

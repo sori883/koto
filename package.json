@@ -10,10 +10,11 @@
   "scripts": {
     "build": "bun scripts/build.ts",
     "build:check": "bun scripts/build.ts --check",
-    "test": "bun test tests/memory tests/tasks skills/setup/tests tests/distribution",
+    "test": "bun test tests/memory tests/tasks tests/usage skills/setup/tests tests/distribution",
     "typecheck": "tsc --noEmit",
     "tasks": "bun cli/tasks/tasks.ts",
-    "memory": "bun cli/memory/memory.ts"
+    "memory": "bun cli/memory/memory.ts",
+    "usage": "bun cli/usage/usage.ts"
   },
   "devDependencies": {
     "@types/bun": "1.4.2",

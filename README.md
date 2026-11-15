@@ -128,11 +128,13 @@ TasksとMemoryの記録は、作業しているプロジェクトの `.space/` �
 | `.space/default/tasks/state.json` | タスクの目的・状態・依存関係・成果物参照と操作履歴 |
 | `.space/default/tasks/<task-id>/` | 必要に応じたtask.md、設計案・計画・検証結果 |
 | `.space/default/memory/` | 共通の開発原則と、OKFで管理するシステムの構成・採用した設計と理由・重要な変更の歴史 |
+| `.space/default/savepoint/` | タスクのない調査の再開記録 |
+| `.space/default/usage/` | 有効化したプロジェクトの利用履歴 |
 | `.space/default/checkpoint/` | タスクの中断・引き継ぎ時に、どこから再開するかを伝える記録 |
 
 開発対象のコード・設定・文書・スキルを変更する仕事は、規模に関係なく編集前にTasksへ登録します。task.mdなどの詳しい文書は必要な場合だけ作成し、調査・読み取りだけの仕事は自動でタスク化しません。コード変更は原則として必要な検証とPR／MRのマージ確認後に完了とし、ユーザーが明示的に完了した場合も実際の状態を残します。
 
-savepointは、タスクのない調査について「ここまで残して」「あとで続けるために保存して」と頼んだときだけ使います。調べていたこと、分かったことと根拠、未確認事項、次の操作を、会話または指定したファイルに残します。調査の区切りや中断だけでは自動保存しません。
+savepointは、タスクのない調査について「ここまで残して」「あとで続けるために保存して」と頼んだときだけ使います。調べていたこと、分かったことと根拠、未確認事項、次の操作を、指定したファイル、指定がなければ `.space/<project>/savepoint/` に残します。調査の区切りや中断だけでは自動保存しません。
 
 作業中の試行や途中の結果はtasks側に置き、後からシステムを理解するために必要な結論をOKFへ残します。たとえば「テストを何回実行したか」は作業記録、「なぜこのデータ構造を採用したか」は設計の知識として整理します。
 
@@ -156,3 +158,17 @@ bun run memory -- search --for-path src/api.ts --root /path/to/repository --json
 両CLIはBunだけで動き、実行時の外部依存を持ちません。既存リポジトリのソースを移動せず、defaultプロジェクトからルート相対で参照できます。知識の用途はshared・dev・ops、利用ログはMemoryのusage list/statsで確認できます。
 
 旧Babelがある利用先は、[setupの移行手順](skills/setup/references/setup.md#既存の知識を移行する)を確認してください。旧orch台帳は新Tasksと形式が異なるため自動変換しません。[今回の取り込み範囲](docs/main-tasks-memory-port.md)、[Tasksの手順](cli/tasks/README.md)、[Memoryの手順](cli/memory/README.md)を参照してください。
+
+## コアの利用状況を見る
+
+プロジェクトで一度有効にすると、Tasks・MemoryのCLI利用を自動記録します。setupスキルの利用は対象外です。
+
+```sh
+bun run usage -- enable --root /path/to/repository --json
+bun run usage -- stats --root /path/to/repository --json
+bun run usage -- list --component recall --root /path/to/repository --json
+```
+
+Tasksは操作別の回数・成否・再試行、Memoryは検索・本文取得・知識ID別の取得数、recallはAIが記録した利用履歴を確認できます。savepointは既定フォルダに現在あるMarkdownファイル数です。利用回数は成果への効果を表すものではありません。未計測の呼び出しや直接のファイル参照は含みません。
+
+プラグインでは `cli/usage/usage.ts`、プロジェクト配置では `.agents/cli/usage/usage.ts` または `.claude/cli/usage/usage.ts` が入口です。期間での絞り込み、無効化、読み取り専用時の指定は[利用計測の手順](cli/usage/README.md)を参照してください。

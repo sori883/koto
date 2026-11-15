@@ -14,6 +14,7 @@ const fields: Record<string, [string, "string" | "boolean" | "array" | "number" 
   stale: ["stale", "boolean"], staleWithin: ["stale-within", "string"],
   recordUsage: ["record-usage", "boolean"], usageSource: ["usage-source", "string"], taskId: ["task-id", "string"],
   since: ["since", "string"], until: ["until", "string"],
+  noActivity: ["no-activity", "boolean"],
 };
 
 export async function inputArguments(argv: string[]): Promise<string[]> {

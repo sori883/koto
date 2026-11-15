@@ -20,6 +20,7 @@ jobs:
         run: |
           bun cli/memory/memory.ts --help
           bun cli/tasks/tasks.ts --help
+          bun cli/usage/usage.ts --help
           bun skills/setup/scripts/setup.ts --help
       - run: bun run typecheck
       - run: bun run test

@@ -15,7 +15,7 @@ export function allowedEntry(value: unknown, manifest: Pick<Manifest, "plugin" |
   const document = /^\.space\/default\/memory\/(rules|principles|knowledge|procedures|decisions)\/.+\.md$/.test(knowledgePath) && !/\/(index|log)\.md$/.test(knowledgePath);
   const skills = projectSkillRoot(manifest.product);
   const cliRoot = skills?.replace(/\/skills$/, "/cli");
-  const projectCli = cliRoot !== undefined && ["memory", "tasks"].some(name => destination.startsWith(`${cliRoot}/${name}/`));
+  const projectCli = cliRoot !== undefined && ["memory", "tasks", "usage"].some(name => destination.startsWith(`${cliRoot}/${name}/`));
   const projectFile = manifest.scope === "project" && (projectCli || skills !== undefined && destination.startsWith(`${skills}/`) && destination.slice(skills.length + 1).split("/").length >= 2 || manifest.product === "claude-code" && destination.startsWith(".claude/agents/"));
   const allowed = entry.mode === "managed-block" ? destination === instructionFiles[manifest.product]
     : entry.mode === "merge-index" ? index

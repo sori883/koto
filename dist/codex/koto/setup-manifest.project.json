@@ -181,6 +181,11 @@
       "mode": "copy"
     },
     {
+      "source": "cli/memory/lib/activity.ts",
+      "destination": ".agents/cli/memory/lib/activity.ts",
+      "mode": "copy"
+    },
+    {
       "source": "cli/memory/lib/cli.ts",
       "destination": ".agents/cli/memory/lib/cli.ts",
       "mode": "copy"
@@ -271,6 +276,11 @@
       "mode": "copy"
     },
     {
+      "source": "cli/tasks/lib/activity.ts",
+      "destination": ".agents/cli/tasks/lib/activity.ts",
+      "mode": "copy"
+    },
+    {
       "source": "cli/tasks/lib/cli.ts",
       "destination": ".agents/cli/tasks/lib/cli.ts",
       "mode": "copy"
@@ -303,6 +313,31 @@
     {
       "source": "cli/tasks/tasks.ts",
       "destination": ".agents/cli/tasks/tasks.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "cli/usage/README.md",
+      "destination": ".agents/cli/usage/README.md",
+      "mode": "copy"
+    },
+    {
+      "source": "cli/usage/lib/activity.ts",
+      "destination": ".agents/cli/usage/lib/activity.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "cli/usage/lib/cli.ts",
+      "destination": ".agents/cli/usage/lib/cli.ts",
+      "mode": "copy"
+    },
+    {
+      "source": "cli/usage/package.json",
+      "destination": ".agents/cli/usage/package.json",
+      "mode": "copy"
+    },
+    {
+      "source": "cli/usage/usage.ts",
+      "destination": ".agents/cli/usage/usage.ts",
       "mode": "copy"
     },
     {

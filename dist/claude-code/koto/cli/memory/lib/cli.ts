@@ -13,6 +13,7 @@ import { validateMemory } from "./validate.ts";
 import { parseFilters } from "./filter.ts";
 import { parseScope } from "./scope.ts";
 import { listUsage, recordUsage, usageStats, validateUsageContext, type UsageContext } from "./usage.ts";
+import { recordActivitySafely, type ActivityTarget } from "./activity.ts";
 
 const version = manifest.version;
 const json = (data: unknown, ok = true, usage?: unknown) => JSON.stringify({ ok, data, ...(usage === undefined ? {} : { usage }) }, null, 2);
@@ -44,7 +45,9 @@ Usage:
 --relations  show only: collect inbound/outbound references; requires readable concepts.
 --scope <shared|dev|ops>  create/update: stored purpose; search: shared plus the selected purpose.
 New concepts and updates require scope. Legacy unclassified concepts remain readable.
---record-usage  show/search: save a usage event after a successful read. Omit for read-only calls.
+--record-usage  show/search: explicitly save detailed read usage after success.
+--no-activity   Skip automatic activity recording when project measurement is enabled.
+Read-only calls: use --no-activity and omit --record-usage.
 --usage-source <id> / --task-id <id> / --actor <id>  Recorded read attribution, or usage list/stats filters.
 --since / --until  usage only: timezone-qualified ISO timestamps, inclusive start and exclusive end.
 usage list defaults to 20 events, capped at 100; --all returns every matching event.
@@ -103,6 +106,7 @@ async function inputFile(path: string): Promise<string> {
 }
 
 export async function run(argv: string[]): Promise<number> {
+  let activity: ActivityTarget | undefined;
   const terminator = argv.indexOf("--");
   const jsonRequested = argv.slice(0, terminator < 0 ? undefined : terminator).some(arg => arg === "--json" || arg === "--input-json" || arg.startsWith("--input-json="));
   try {
@@ -122,6 +126,7 @@ export async function run(argv: string[]): Promise<number> {
       filter: { type: "string", multiple: true },
       "record-usage": { type: "boolean" }, "usage-source": { type: "string" }, "task-id": { type: "string" },
       since: { type: "string" }, until: { type: "string" },
+      "no-activity": { type: "boolean" },
     } });
     const seen = new Set<string>();
     for (const token of tokens) {
@@ -144,7 +149,7 @@ export async function run(argv: string[]): Promise<number> {
     if (values.root === undefined || !values.root.trim()) throw new Error("--root is required; specify the repository directory.");
     const project = values.project ?? "default";
     validateProject(project);
-    const common = ["root", "project", "json"];
+    const common = ["root", "project", "json", "no-activity"];
     const writes = ["metadata-json", "metadata-file", "type", "title", "desc", "tags", "status", "body", "body-file", "actor", "no-index", "no-log", "scope"];
     const usageAttribution = ["usage-source", "task-id", "actor"];
     const allowed = new Set([...common, ...(command === "init" ? ["actor"] : command === "create" ? writes
@@ -161,6 +166,7 @@ export async function run(argv: string[]): Promise<number> {
       if (!values["record-usage"] && usageAttribution.some(name => seen.has(name))) throw new Error("Read attribution requires --record-usage.");
       if (values["record-usage"]) validateUsageContext(usageContext);
     }
+    if (command !== "usage" && !values["no-activity"]) activity = { root: values.root, project, activity: { component: "memory", operation: command!, outcome: "failure" } };
     if (command === "usage") {
       if (args.length !== 1 || !["list", "stats"].includes(args[0]!)) throw new Error("usage requires list or stats.");
       if (values.limit !== undefined && !/^[1-9]\d*$/.test(values.limit)) throw new Error("--limit must be a positive integer.");
@@ -185,6 +191,7 @@ export async function run(argv: string[]): Promise<number> {
       if (duration !== undefined && !/^[1-9]\d*d$/.test(duration)) throw new Error("--stale-within requires a period such as 7d.");
       const result = await validateMemory(values.root, project, { ...(values.strict ? { strict: true } : {}), ...(values.drift ? { drift: true } : {}), ...(values.stale ? { stale: true } : {}), ...(duration === undefined ? {} : { staleWithinDays: Number(duration.slice(0, -1)) }) });
       process.stdout.write(values.json ? `${json(result, result.gate_passed)}\n` : `${result.gate_passed ? "Passed" : "Failed"}: ${result.concept_count} concepts, ${result.errors.length} errors, ${result.warnings.length} warnings, ${result.broken_links.length} broken links, ${result.orphans.length} orphans.\n${[...result.errors, ...result.warnings, ...result.gate_findings, ...result.broken_links.map(link => `${link.source_concept}: ${link.target_href}: ${link.reason}`), ...result.orphans.map(id => `Orphan: ${id}`)].join("\n")}\n`);
+      if (activity) activity.activity.outcome = result.gate_passed ? "success" : "failure";
       return result.gate_passed ? 0 : 1;
     } else if (command === "init" || command === "create" || command === "update") {
       if (command === "init" && args.length) throw new Error("init does not accept a concept ID.");
@@ -219,6 +226,7 @@ export async function run(argv: string[]): Promise<number> {
       if (values.raw && values.relations) throw new Error("--raw and --relations cannot be combined.");
       const concept = await (await openProjectMemory(values.root, project)).show(id, values.relations ? { relations: true } : {});
       const hash = contentHash(concept.raw_content);
+      if (activity) activity.activity.concept_ids = [id];
       const usage = values["record-usage"] ? await recordUsage(values.root, project, "show", [id], usageContext, hash) : undefined;
       process.stdout.write(values.json ? `${json({ ...concept, content_hash: hash }, true, usage)}\n` : values.raw ? concept.raw_content
         : `${concept.metadata.title}\nID: ${concept.id}\n${concept.metadata.description}\n${values.relations ? `Inbound: ${concept.inbound?.join(", ") || "none"}\nOutbound: ${concept.outbound?.join(", ") || "none"}\n` : ""}\n${concept.body}`);
@@ -244,10 +252,12 @@ export async function run(argv: string[]): Promise<number> {
         ...(filters.length ? { filters } : {}),
       };
       const results = await (await openProjectMemory(values.root, project)).search(query, options);
+      if (activity) activity.activity.concept_ids = results.map(result => result.concept_id);
       const usage = values["record-usage"] ? await recordUsage(values.root, project, "search", results.map(result => result.concept_id), usageContext) : undefined;
       process.stdout.write(values.json ? `${json(results, true, usage)}\n` : results.length
         ? results.map(result => `${result.concept_id}\t${result.title}\n${result.description}\n`).join("\n") : "No matches.\n");
     }
+    if (activity) activity.activity.outcome = "success";
     return 0;
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -257,5 +267,5 @@ export async function run(argv: string[]): Promise<number> {
     if (jsonRequested) process.stdout.write(`${JSON.stringify({ ok: false, error: { code, message, ...(error instanceof WriteError ? { details: { written_paths: error.writtenPaths } } : {}) } })}\n`);
     else process.stderr.write(`Error: ${message}\n${error instanceof WriteError && error.writtenPaths.length ? `Already saved: ${error.writtenPaths.join(", ")}\n` : ""}`);
     return error instanceof MemoryReadError ? 2 : 1;
-  }
+  } finally { await recordActivitySafely(activity); }
 }
