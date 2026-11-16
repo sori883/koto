@@ -301,11 +301,6 @@
       "mode": "copy"
     },
     {
-      "source": "cli/tasks/lib/summary.ts",
-      "destination": ".claude/cli/tasks/lib/summary.ts",
-      "mode": "copy"
-    },
-    {
       "source": "cli/tasks/package.json",
       "destination": ".claude/cli/tasks/package.json",
       "mode": "copy"
@@ -358,11 +353,6 @@
     {
       "source": "skills/devlaw/assets/plan-template.md",
       "destination": ".claude/skills/devlaw/assets/plan-template.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/devlaw/assets/task-template.md",
-      "destination": ".claude/skills/devlaw/assets/task-template.md",
       "mode": "copy"
     },
     {

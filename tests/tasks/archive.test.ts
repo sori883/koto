@@ -42,7 +42,7 @@ test("complete archives task documents and current references; reopen restores t
   await run(["artifact", "add", "reader", "input"], { ifVersion: 1, ref: ".space/default/tasks/job/evidence/result.txt", description: "Input", operationId: "reader-input" });
   const done = await run(["task", "complete", "job"], { ...complete, ifVersion: 4 });
   expect(done.data.task).toMatchObject({ state: "completed", archived: true, version: 5 });
-  expect(await readFile(join(archived, "tasks.md"), "utf8")).toContain("完了（completed）");
+  expect(await Bun.file(join(archived, "tasks.md")).exists()).toBe(false);
   expect(await Bun.file(join(archived, "evidence/result.txt")).text()).toBe("Evidence\n");
   expect(await readdir(join(root, ".space/default/tasks"))).not.toContain("job");
   expect((await run(["artifact", "list", "job"])).data.map((a: { ref: string }) => a.ref)).toEqual([".space/default/tasks/.archive/job/task.md", "docs/report.md"]);
@@ -53,7 +53,7 @@ test("complete archives task documents and current references; reopen restores t
   expect((await run(["history", "job"])).data.find((op: { id: string }) => op.id === "report").data.task.artifacts[0].ref).toBe(".space/default/tasks/job/task.md");
   await run(["task", "reopen", "job"], { ifVersion: 5, reason: "Follow-up", operationId: "reopen" });
   expect(await readFile(join(active, "task.md"), "utf8")).toBe("# Task\n[Evidence](evidence/result.txt)\n");
-  expect(await readFile(join(active, "tasks.md"), "utf8")).toContain("Follow-up");
+  expect(await Bun.file(join(active, "tasks.md")).exists()).toBe(false);
   expect(await readdir(join(root, ".space/default/tasks/.archive"))).not.toContain("job");
   expect((await run(["artifact", "list", "reader"])).data[0].ref).toBe(".space/default/tasks/job/evidence/result.txt");
   expect((await run(["task", "complete", "job"], { ...complete, ifVersion: 4 })).replayed).toBe(true);
@@ -65,15 +65,20 @@ test("complete archives task documents and current references; reopen restores t
   expect((await run(["doctor"])).data.healthy).toBe(true);
 });
 
-test("completion archives even a task with no hand-written documents, and cancellation keeps it active", async () => {
+test("completion and reopen need only JSON; cancellation keeps optional documents active", async () => {
   await running();
+  const tasks = join(root, ".space/default/tasks");
+  expect(await readdir(tasks)).toEqual(["state.json"]);
   await run(["task", "complete", "job"], complete);
-  const archived = join(root, ".space/default/tasks/.archive/job/tasks.md");
-  expect(await readFile(archived, "utf8")).toContain("Done");
+  expect((await run(["task", "show", "job"])).data.task).toMatchObject({ state: "completed", result: "Done" });
+  expect(await readdir(tasks)).toEqual(["state.json"]);
   await run(["task", "reopen", "job"], { ifVersion: 3, reason: "Retry", operationId: "reopen" });
+  expect(await readdir(tasks)).toEqual(["state.json"]);
+  const active = await document();
   await run(["task", "set", "job"], { ifVersion: 4, state: "cancelled", reason: "Cancelled", operationId: "cancel" });
-  expect(await Bun.file(archived).exists()).toBe(false);
-  expect(await readFile(join(root, ".space/default/tasks/job/tasks.md"), "utf8")).toContain("中止（cancelled）");
+  expect((await run(["task", "show", "job"])).data.task.state).toBe("cancelled");
+  expect(await Bun.file(join(active, "task.md")).exists()).toBe(true);
+  expect(await readdir(tasks)).not.toContain(".archive");
 });
 
 test("folder collisions and symlinks fail before completion and preserve both locations", async () => {
@@ -126,7 +131,7 @@ test("retry after a successful rename and interrupted final save does not move a
 });
 
 test("archive is explicit for legacy completed tasks and does not invalidate dependent work", async () => {
-  await running();
+  await running(); await document();
   await run(["task", "complete", "job"], complete);
   const statePath = join(root, ".space/default/tasks/state.json"), state = JSON.parse(await readFile(statePath, "utf8"));
   await rename(join(root, ".space/default/tasks/.archive/job"), join(root, ".space/default/tasks/job"));
@@ -230,13 +235,13 @@ test("recovers a pending legacy archive, reopens it, and subsequently completes 
   delete state.operations[complete.operationId].data.task.archiveRoot;
   delete state.pendingDirectoryMove.archiveRoot;
   await writeFile(path, JSON.stringify(state));
-  await rm(join(tasks, "job/tasks.md"));
   expect((await run(["task", "complete", "job"], { ...complete, ifVersion: 3 })).replayed).toBe(true);
-  expect(await readFile(join(tasks, "archive/job/tasks.md"), "utf8")).toContain("Done");
+  expect(await Bun.file(join(tasks, "archive/job/task.md")).exists()).toBe(true);
+  expect(await Bun.file(join(tasks, "archive/job/tasks.md")).exists()).toBe(false);
   expect(await Bun.file(join(tasks, ".archive/job/tasks.md")).exists()).toBe(false);
   await run(["task", "reopen", "job"], { ifVersion: 4, reason: "Follow-up", operationId: "reopen" });
   expect(await Bun.file(join(tasks, "job/task.md")).exists()).toBe(true);
-  expect(await readFile(join(tasks, "job/tasks.md"), "utf8")).toContain("Follow-up");
+  expect(await Bun.file(join(tasks, "job/tasks.md")).exists()).toBe(false);
   expect((await run(["artifact", "list", "job"])).data[0].ref).toBe(".space/default/tasks/job/task.md");
   await run(["task", "start", "job"], { ifVersion: 5, operationId: "restart" });
   await run(["task", "complete", "job"], { ...complete, ifVersion: 6, operationId: "complete-again" });

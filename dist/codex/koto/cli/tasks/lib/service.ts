@@ -83,9 +83,8 @@ export async function execute(store: Store, request: Request): Promise<Result> {
       number(request.ifVersion, "INVALID_INPUT");
       requireThat(task.version === request.ifVersion, "VERSION_CONFLICT", "The task changed. Read it again before choosing a new update.", 3);
     }
-    const summaryTask = state.tasks[task.parentId ?? task.id]!;
     if (task.parentId && request.command !== "checkpoint save") {
-      requireThat(!terminal(summaryTask), "PARENT_CLOSED", "Reopen the parent task before adding or changing child tasks.");
+      requireThat(!terminal(state.tasks[task.parentId]!), "PARENT_CLOSED", "Reopen the parent task before adding or changing child tasks.");
     }
     let checkpoint: Data["checkpoint"];
     let archive: boolean | undefined;
@@ -169,7 +168,6 @@ export async function execute(store: Store, request: Request): Promise<Result> {
       }
       default: throw new TasksError("INVALID_INPUT", "Unknown command.");
     }
-    await store.checkTaskSummary(summaryTask);
     if (archive !== undefined) {
       const move = await store.planTaskDirectoryMove(state, task.id, archive, operationId, archive ? ARCHIVE_ROOT : task.archiveRoot);
       if (move) state.pendingDirectoryMove = move;
@@ -183,7 +181,7 @@ export async function execute(store: Store, request: Request): Promise<Result> {
     state.revision++;
     state.operations[operationId] = { id: operationId, hash, actor, command: request.command, taskId: task.id, revision: state.revision, at: now, data };
     return { state, result: { revision: state.revision, data } };
-  }, { operationId: request.operationId });
+  });
   if (result.data.checkpoint) {
     try { await store.publishCheckpoint(result.data.checkpoint); }
     catch (error) {

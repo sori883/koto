@@ -57,7 +57,7 @@ recallによる状況説明、CLIの操作成功、タスクのcompleted、成�
 
 | 規模 | 目安 | 記録の形 |
 | --- | --- | --- |
-| 小規模 | 一つの結果に収まり、方法がほぼ既知 | Tasksのdescription・resultと成果物参照で足りる。task.mdを必須にしない |
+| 小規模 | 一つの結果に収まり、方法がほぼ既知 | Tasksのdescription・resultと成果物参照にまとめる |
 | 標準 | 調査・設計の結果を後の工程へ渡す必要がある | Tasksを入口に、必要な設計・計画・検証資料を添える |
 | 大規模 | 独立した成果物・担当・納品単位が複数ある | Tasksに作業単位と依存を置き、全体計画で担当・受け入れをまとめる |
 
@@ -129,11 +129,11 @@ recallによる状況説明、CLIの操作成功、タスクのcompleted、成�
 
 ### タスクの状態と成果物
 
-最新の状態・version・attempt・依存・成果物参照はTasksの記録を正本とする。最上位タスクのtasks.mdで親子の進捗を確認できる。説明や計画が長い場合だけtask.md等の資料へ分け、Tasksのartifactから参照する。
+目的・完了条件、最新の状態・version・attempt・親子関係・依存・成果物参照はTasksのJSONだけで管理する。目的・完了条件はdescription、待ち・中断の理由と次の操作はreason・next、完了結果はresultへ記録する。親子の進捗はtask showとtask list --parentで確認し、Markdownに別のタスク台帳を作らない。
 
-新しい資料の保存先は、指定がなければ最上位タスクの `.space/<project>/tasks/<task-id>/`。子専用の資料はその下の `children/<child-id>/` に置く。task.md、design.md、plan.md、verification.md等は、担当が必要な分だけ作成・確認して参照を登録する。[タスク記録](../assets/task-template.md)・[設計](../assets/design-template.md)・[計画](../assets/plan-template.md)・[検証](../assets/verification-template.md)のひな形は必要な節だけ使う。
+独立した共有・レビューが必要な設計書・計画書・検証記録は成果物として作成し、Tasksのartifactから参照する。指定がなければ最上位タスクの `.space/<project>/tasks/<task-id>/`、子専用の資料はその下の `children/<child-id>/` に置く。資料が必要なときだけフォルダを作り、[設計](../assets/design-template.md)・[計画](../assets/plan-template.md)・[検証](../assets/verification-template.md)のひな形は必要な節だけ使う。
 
-最上位タスクの完了時はTasks CLIが子の資料を含むフォルダ一式を `.space/<project>/tasks/.archive/<task-id>/` へ移し、reopenで元に戻す。移動後はTasksの現在の成果物参照を使い、本文のリンクも確認する。別の保存先の成果物とcheckpointは移動しない。詳しい対象・衝突・途中失敗の扱いは[tasks](../../tasks/SKILL.md)を参照する。
+最上位タスクの完了時は、資料フォルダがあればTasks CLIが子の資料を含む一式を `.space/<project>/tasks/.archive/<task-id>/` へ移し、reopenで元に戻す。移動後はTasksの現在の成果物参照を使い、本文のリンクも確認する。別の保存先の成果物とcheckpointは移動しない。詳しい対象・衝突・途中失敗の扱いは[tasks](../../tasks/SKILL.md)を参照する。
 
 ### 中断と再開
 

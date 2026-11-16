@@ -67,50 +67,42 @@ test("guards transitions, records reasons and keeps previous attempts and result
   expect((await run(["task", "show", "job"])).data.task.state).toBe("cancelled");
 });
 
-test("writes a task summary on creation, and refreshes its state and next action", async () => {
+test("keeps task descriptions, state and next actions in JSON without creating documents", async () => {
   await run(["setup"]);
-  await run(["task", "add", "job"], { title: "APIを作る", description: "入力を検証する\n結果を確認する", operationId: "add" });
-  const path = join(root, ".space/default/tasks/job/tasks.md");
-  expect(await readFile(path, "utf8")).toContain("# APIを作る");
-  expect(await readFile(path, "utf8")).toContain("未着手（pending）");
-  expect(await readFile(path, "utf8")).toContain("結果を確認する");
+  const add = { title: "APIを作る", description: "入力を検証する\n結果を確認する", operationId: "add" };
+  await run(["task", "add", "job"], add);
+  const tasks = join(root, ".space/default/tasks");
+  expect(await readdir(tasks)).toEqual(["state.json"]);
+  expect((await run(["task", "show", "job"])).data.task).toMatchObject({
+    title: add.title, description: add.description, state: "pending",
+  });
   await run(["task", "update", "job"], { title: "入力APIを作る", ifVersion: 1, operationId: "update" });
   await run(["task", "set", "job"], { state: "waiting", reason: "仕様待ち", next: "担当者に確認する", ifVersion: 2, operationId: "wait" });
-  const waiting = await readFile(path, "utf8");
-  expect(waiting).toContain("# 入力APIを作る");
-  expect(waiting).toContain("待ち（waiting）");
-  expect(waiting).toContain("仕様待ち");
-  expect(waiting).toContain("担当者に確認する");
-  await run(["task", "add", "job"], { title: "APIを作る", description: "入力を検証する\n結果を確認する", operationId: "add" });
-  expect(await readFile(path, "utf8")).toBe(waiting);
+  expect((await run(["task", "show", "job"])).data.task).toMatchObject({
+    title: "入力APIを作る", state: "waiting", reason: "仕様待ち", next: "担当者に確認する",
+  });
+  const saved = await readFile(join(tasks, "state.json"), "utf8");
+  expect((await run(["task", "add", "job"], add)).replayed).toBe(true);
+  expect(await readFile(join(tasks, "state.json"), "utf8")).toBe(saved);
+  expect(await readdir(tasks)).toEqual(["state.json"]);
 });
 
-test("summary conflicts preserve existing documents and prevent changes to the ledger", async () => {
+test.each(["Hand-written notes", "<!-- koto Tasks による自動出力 -->\n# Old summary\n"])("preserves existing Markdown without letting it block task updates: %s", async body => {
   await run(["setup"]);
-  const tasks = join(root, ".space/default/tasks"), path = join(tasks, "job/tasks.md");
-  await mkdir(join(tasks, "job"));
-  await writeFile(path, "Hand-written notes");
-  const before = await readFile(join(tasks, "state.json"), "utf8");
-  expect((await run(["task", "add", "job"], { title: "Job", operationId: "add" }, 2)).error.code).toBe("TASK_SUMMARY_FILE_CONFLICT");
-  expect(await readFile(path, "utf8")).toBe("Hand-written notes");
-  expect(await readFile(join(tasks, "state.json"), "utf8")).toBe(before);
-});
-
-test("retries summary output after the ledger was saved", async () => {
-  await run(["setup"]);
-  const store = await Store.open(root, "default");
-  store.publishTaskSummary = async () => { throw new Error("Interrupted"); };
-  const request: Request = { command: "task add", id: "job", title: "Job", operationId: "add" };
-  try { await execute(store, request); throw new Error("Expected failure"); }
-  catch (error) {
-    expect(error).toBeInstanceOf(TasksError);
-    expect((error as TasksError).code).toBe("TASK_SUMMARY_OUTPUT_FAILED");
-    expect((error as TasksError).details).toMatchObject({ saved: true, operationId: "add" });
-  }
-  const saved = await readFile(store.path, "utf8");
-  expect((await run(["task", "add", "job"], { title: "Job", operationId: "add" })).replayed).toBe(true);
-  expect(await readFile(join(store.directory, "job/tasks.md"), "utf8")).toContain("# Job");
-  expect(await readFile(store.path, "utf8")).toBe(saved);
+  const tasks = join(root, ".space/default/tasks"), folder = join(tasks, "job");
+  await mkdir(folder);
+  await writeFile(join(folder, "tasks.md"), body);
+  await writeFile(join(folder, "task.md"), "Existing task notes");
+  await run(["task", "add", "job"], { title: "Job", operationId: "add" });
+  await run(["task", "start", "job"], { ifVersion: 1, operationId: "start" });
+  await run(["task", "complete", "job"], { ifVersion: 2, result: "Done", operationId: "complete" });
+  const archived = join(tasks, ".archive/job");
+  expect(await readFile(join(archived, "tasks.md"), "utf8")).toBe(body);
+  expect(await readFile(join(archived, "task.md"), "utf8")).toBe("Existing task notes");
+  await run(["task", "reopen", "job"], { ifVersion: 3, reason: "Follow-up", operationId: "reopen" });
+  expect(await readFile(join(folder, "tasks.md"), "utf8")).toBe(body);
+  expect(await readFile(join(folder, "task.md"), "utf8")).toBe("Existing task notes");
+  expect((await run(["doctor"])).data.healthy).toBe(true);
 });
 
 test("detects cycles and invalidates transitive completions when an upstream task is reopened", async () => {
@@ -211,7 +203,7 @@ test("keeps the old state when replacement fails and refuses corrupt or unknown 
     return { state, result: null };
   }, { beforeReplace: async () => { throw new Error("simulated interruption"); } })).rejects.toThrow("simulated interruption");
   expect(await readFile(store.path, "utf8")).toBe(before);
-  expect((await readdir(store.directory)).sort()).toEqual(["job", "state.json"]);
+  expect((await readdir(store.directory)).sort()).toEqual(["state.json"]);
   for (const body of ["{broken", JSON.stringify({ ...JSON.parse(before), schemaVersion: 999 }), JSON.stringify({ ...JSON.parse(before), revision: 500 })]) {
     await writeFile(store.path, body);
     expect((await run(["status"], {}, 2)).error.code).toBe("INVALID_STATE");
