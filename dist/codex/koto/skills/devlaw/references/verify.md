@@ -24,7 +24,7 @@
 
 計画の期待結果・合否条件を実行前に確認する。観測結果に合わせて合格条件を緩めない。実施方法を変更する場合は理由と影響を残す。
 
-テストや実動作の確認では、[Memoryスキル](../../memory/SKILL.md)を通して `principles/test-behavior-not-implementation` と `principles/prove-it-works` を参照する。呼び出し元から渡された同じ版の本文は再利用し、未取得ならその不足を残す。
+テストや実動作の確認では、同梱の[振る舞いをテストする原則](principles/test-behavior-not-implementation.md)と[実動作を確かめる原則](principles/prove-it-works.md)を直接読む。確認済みで内容と適用条件が変わっていない本文は再利用する。
 
 | 対象 | 確認すること |
 | --- | --- |

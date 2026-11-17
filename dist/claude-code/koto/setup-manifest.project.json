@@ -31,134 +31,14 @@
       "mode": "seed"
     },
     {
-      "source": "space/default/principles/attack-the-premise.md",
-      "destination": ".space/default/memory/principles/attack-the-premise.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/boundary-discipline.md",
-      "destination": ".space/default/memory/principles/boundary-discipline.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/build-the-lever.md",
-      "destination": ".space/default/memory/principles/build-the-lever.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/encode-lessons-in-structure.md",
-      "destination": ".space/default/memory/principles/encode-lessons-in-structure.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/exhaust-the-design-space.md",
-      "destination": ".space/default/memory/principles/exhaust-the-design-space.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/experience-first.md",
-      "destination": ".space/default/memory/principles/experience-first.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/fix-root-causes.md",
-      "destination": ".space/default/memory/principles/fix-root-causes.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/foundational-thinking.md",
-      "destination": ".space/default/memory/principles/foundational-thinking.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/guard-the-context-window.md",
-      "destination": ".space/default/memory/principles/guard-the-context-window.md",
-      "mode": "copy"
-    },
-    {
       "source": "space/default/principles/index.md",
       "destination": ".space/default/memory/principles/index.md",
       "mode": "merge-index"
     },
     {
-      "source": "space/default/principles/laziness-protocol.md",
-      "destination": ".space/default/memory/principles/laziness-protocol.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/make-operations-idempotent.md",
-      "destination": ".space/default/memory/principles/make-operations-idempotent.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/migrate-callers-then-delete-legacy-apis.md",
-      "destination": ".space/default/memory/principles/migrate-callers-then-delete-legacy-apis.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/minimize-reader-load.md",
-      "destination": ".space/default/memory/principles/minimize-reader-load.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/model-the-domain.md",
-      "destination": ".space/default/memory/principles/model-the-domain.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/never-block-on-the-human.md",
-      "destination": ".space/default/memory/principles/never-block-on-the-human.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/outcome-oriented-execution.md",
-      "destination": ".space/default/memory/principles/outcome-oriented-execution.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/prove-it-works.md",
-      "destination": ".space/default/memory/principles/prove-it-works.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/redesign-from-first-principles.md",
-      "destination": ".space/default/memory/principles/redesign-from-first-principles.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/separate-before-serializing-shared-state.md",
-      "destination": ".space/default/memory/principles/separate-before-serializing-shared-state.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/sequence-verifiable-units.md",
-      "destination": ".space/default/memory/principles/sequence-verifiable-units.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/subtract-before-you-add.md",
-      "destination": ".space/default/memory/principles/subtract-before-you-add.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/test-behavior-not-implementation.md",
-      "destination": ".space/default/memory/principles/test-behavior-not-implementation.md",
-      "mode": "copy"
-    },
-    {
-      "source": "space/default/principles/type-system-discipline.md",
-      "destination": ".space/default/memory/principles/type-system-discipline.md",
-      "mode": "copy"
-    },
-    {
       "source": "space/default/procedures/index.md",
       "destination": ".space/default/memory/procedures/index.md",
       "mode": "merge-index"
-    },
-    {
-      "source": "space/default/procedures/record-design-decisions.md",
-      "destination": ".space/default/memory/procedures/record-design-decisions.md",
-      "mode": "copy"
     },
     {
       "source": "space/default/rules/index.md",
@@ -401,6 +281,126 @@
       "mode": "copy"
     },
     {
+      "source": "skills/devlaw/references/principles/attack-the-premise.md",
+      "destination": ".claude/skills/devlaw/references/principles/attack-the-premise.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/boundary-discipline.md",
+      "destination": ".claude/skills/devlaw/references/principles/boundary-discipline.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/build-the-lever.md",
+      "destination": ".claude/skills/devlaw/references/principles/build-the-lever.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/encode-lessons-in-structure.md",
+      "destination": ".claude/skills/devlaw/references/principles/encode-lessons-in-structure.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/exhaust-the-design-space.md",
+      "destination": ".claude/skills/devlaw/references/principles/exhaust-the-design-space.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/experience-first.md",
+      "destination": ".claude/skills/devlaw/references/principles/experience-first.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/fix-root-causes.md",
+      "destination": ".claude/skills/devlaw/references/principles/fix-root-causes.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/foundational-thinking.md",
+      "destination": ".claude/skills/devlaw/references/principles/foundational-thinking.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/guard-the-context-window.md",
+      "destination": ".claude/skills/devlaw/references/principles/guard-the-context-window.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/index.md",
+      "destination": ".claude/skills/devlaw/references/principles/index.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/laziness-protocol.md",
+      "destination": ".claude/skills/devlaw/references/principles/laziness-protocol.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/make-operations-idempotent.md",
+      "destination": ".claude/skills/devlaw/references/principles/make-operations-idempotent.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/migrate-callers-then-delete-legacy-apis.md",
+      "destination": ".claude/skills/devlaw/references/principles/migrate-callers-then-delete-legacy-apis.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/minimize-reader-load.md",
+      "destination": ".claude/skills/devlaw/references/principles/minimize-reader-load.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/model-the-domain.md",
+      "destination": ".claude/skills/devlaw/references/principles/model-the-domain.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/never-block-on-the-human.md",
+      "destination": ".claude/skills/devlaw/references/principles/never-block-on-the-human.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/outcome-oriented-execution.md",
+      "destination": ".claude/skills/devlaw/references/principles/outcome-oriented-execution.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/prove-it-works.md",
+      "destination": ".claude/skills/devlaw/references/principles/prove-it-works.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/redesign-from-first-principles.md",
+      "destination": ".claude/skills/devlaw/references/principles/redesign-from-first-principles.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/separate-before-serializing-shared-state.md",
+      "destination": ".claude/skills/devlaw/references/principles/separate-before-serializing-shared-state.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/sequence-verifiable-units.md",
+      "destination": ".claude/skills/devlaw/references/principles/sequence-verifiable-units.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/subtract-before-you-add.md",
+      "destination": ".claude/skills/devlaw/references/principles/subtract-before-you-add.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/test-behavior-not-implementation.md",
+      "destination": ".claude/skills/devlaw/references/principles/test-behavior-not-implementation.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/devlaw/references/principles/type-system-discipline.md",
+      "destination": ".claude/skills/devlaw/references/principles/type-system-discipline.md",
+      "mode": "copy"
+    },
+    {
       "source": "skills/devlaw/references/review.md",
       "destination": ".claude/skills/devlaw/references/review.md",
       "mode": "copy"
@@ -431,6 +431,11 @@
       "mode": "copy"
     },
     {
+      "source": "skills/memory/references/record-design-decisions.md",
+      "destination": ".claude/skills/memory/references/record-design-decisions.md",
+      "mode": "copy"
+    },
+    {
       "source": "skills/recall/LICENSE",
       "destination": ".claude/skills/recall/LICENSE",
       "mode": "copy"
@@ -453,6 +458,11 @@
     {
       "source": "skills/setup/SKILL.md",
       "destination": ".claude/skills/setup/SKILL.md",
+      "mode": "copy"
+    },
+    {
+      "source": "skills/setup/references/retained-files.md",
+      "destination": ".claude/skills/setup/references/retained-files.md",
       "mode": "copy"
     },
     {
@@ -513,16 +523,6 @@
     {
       "source": "skills/tasks/SKILL.md",
       "destination": ".claude/skills/tasks/SKILL.md",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/use-principles/LICENSE",
-      "destination": ".claude/skills/use-principles/LICENSE",
-      "mode": "copy"
-    },
-    {
-      "source": "skills/use-principles/SKILL.md",
-      "destination": ".claude/skills/use-principles/SKILL.md",
       "mode": "copy"
     }
   ]

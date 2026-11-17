@@ -52,7 +52,7 @@ test("both products install real project files, survive relocation, and update t
     const movedSource = `${source}-moved`; await rename(source, movedSource); source = movedSource;
     const cliRoot = join(project, skillRoot, "../cli");
     const search = await run(join(cliRoot, "memory/memory.ts"), ["search", "--root", project, "--type", "principle", "--all", "--json"], project);
-    expect(search.data.length).toBeGreaterThan(0);
+    expect(search.data).toEqual([]);
     const usage = join(cliRoot, "usage/usage.ts");
     const usageArgs = ["--root", project, "--json"];
     const beforeUsage = await run(usage, ["stats", ...usageArgs], project);

@@ -33,21 +33,18 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   const setupArgs = ["--project", project, "--json", ...(product === "copilot" ? ["--product", "copilot"] : [])];
   const freshProject = join(root, "fresh-consumer"); await mkdir(freshProject);
   const freshArgs = ["--project", freshProject, "--json", ...(product === "copilot" ? ["--product", "copilot"] : [])];
+  const principleFiles = (await readdir(join(plugin, "skills/devlaw/references/principles"))).filter(name => name !== "index.md");
+  expect(principleFiles).toHaveLength(23);
+  expect(await Bun.file(join(plugin, "skills/memory/references/record-design-decisions.md")).exists()).toBe(true);
+  expect(await Bun.file(join(freshProject, ".space/default/memory/procedures/record-design-decisions.md")).exists()).toBe(false);
+  expect(await readdir(freshProject)).toEqual([]);
+  expect((await readFile(join(plugin, "skills/memory/references/record-design-decisions.md"), "utf8")).length).toBeGreaterThan(0);
   expect((await run(setup, ["apply", ...freshArgs], freshProject)).code).toBe(0);
   const freshValidation = await run(okf, ["--root", freshProject, "validate", "--strict", "--drift", "--json"], freshProject);
   expect(freshValidation.code).toBe(0);
   expect(JSON.parse(freshValidation.out).data).toMatchObject({
-    concept_count: 24, errors: [], warnings: [], gate_findings: [], broken_links: [], orphans: [], gate_passed: true,
+    concept_count: 0, errors: [], warnings: [], gate_findings: [], broken_links: [], orphans: [], gate_passed: true,
   });
-  const decisionGuide = "procedures/record-design-decisions";
-  const guide = await run(okf, ["--root", freshProject, "show", decisionGuide, "--json"], freshProject);
-  expect(guide.code).toBe(0);
-  expect(JSON.parse(guide.out).data.metadata).toMatchObject({ type: "procedure", scope: "shared" });
-  for (const scope of ["dev", "ops"]) {
-    const found = await run(okf, ["--root", freshProject, "search", "ADR", "--type", "procedure", "--scope", scope, "--json"], freshProject);
-    expect(found.code).toBe(0);
-    expect(JSON.parse(found.out).data).toContainEqual(expect.objectContaining({ concept_id: decisionGuide }));
-  }
   const plan = await run(setup, ["plan", ...setupArgs], project);
   expect(plan.code).toBe(0); expect(await Bun.file(join(bundle, "principles/minimize-reader-load.md")).exists()).toBe(false);
   const apply = await run(setup, ["apply", ...setupArgs], project); expect(apply.code).toBe(0);
@@ -84,19 +81,20 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   expect(await readFile(join(project, instruction), "utf8")).toBe(instructions);
   for (const [path, content] of installedAgents) expect(await readFile(path, "utf8")).toBe(content);
   const principles = await run(okf, ["--root", project, "search", "--type", "principle", "--all", "--json"], project);
-  expect(principles.code).toBe(0); expect(JSON.parse(principles.out).data).toHaveLength(23);
+  expect(principles.code).toBe(0); expect(JSON.parse(principles.out).data).toEqual([]);
   const validation = await run(okf, ["--root", project, "validate", "--drift", "--json"], project);
   expect(validation.code).toBe(0);
-  expect(JSON.parse(validation.out).data).toMatchObject({ concept_count: 25, errors: [], warnings: [], broken_links: [], is_conformant: true });
+  expect(JSON.parse(validation.out).data).toMatchObject({ concept_count: 1, errors: [], warnings: [], broken_links: [], is_conformant: true });
   const strict = await run(okf, ["--root", project, "validate", "--strict", "--drift", "--json"], project);
-  expect(strict.code).toBe(1); expect(JSON.parse(strict.out).data.orphans).toEqual(["knowledge/existing"]);
+  expect(strict.code).toBe(0); expect(JSON.parse(strict.out).data.orphans).toEqual([]);
   const personal = join(project, ".space/default/memory");
   expect((await run(okf, ["--root", project, "init", "--json"], project)).code).toBe(0);
   expect((await run(okf, ["--root", project, "create", "knowledge/consumer", "--type", "knowledge", "--scope", "dev", "--title", "Consumer", "--desc", "Project-specific knowledge", "--json"], project)).code).toBe(0);
   expect(await Bun.file(join(bundle, "knowledge/consumer.md")).exists()).toBe(true);
   expect(await Bun.file(join(project, ".space/default/memory/vendor/koto/index.md")).exists()).toBe(false);
+  expect((await run(okf, ["--root", project, "create", "principles/local-policy", "--type", "principle", "--scope", "dev", "--title", "Local policy", "--desc", "Project constraint", "--metadata-json", '{"governance":"constraint"}', "--json"], project)).code).toBe(0);
   const ownPrinciples = await run(okf, ["--root", project, "search", "--type", "principle", "--all", "--json"], project);
-  expect(JSON.parse(ownPrinciples.out).data).toHaveLength(23);
+  expect(JSON.parse(ownPrinciples.out).data).toMatchObject([{ concept_id: "principles/local-policy", governance: "constraint" }]);
   const log = await readFile(join(bundle, "log.md"), "utf8");
   expect((await run(setup, ["apply", ...setupArgs], project)).code).toBe(0);
   expect(await readFile(join(bundle, "log.md"), "utf8")).toBe(log);
@@ -157,7 +155,7 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
   const usage = await run(okf, ["usage", "stats", "--root", project, "--json"], project);
   expect(JSON.parse(usage.out).data.searches).toBe(1);
   expect((await readdir(join(plugin, "skills"))).sort()).toEqual([
-    "devlaw", "koto-usage", "memory", "recall", "savepoint", "setup", "tasks", "use-principles",
+    "devlaw", "koto-usage", "memory", "recall", "savepoint", "setup", "tasks",
   ]);
   expect(await readFile(join(project, "package.json"), "utf8")).toBe('{"name":"consumer","private":true}\n');
   expect(await Bun.file(join(project, "bun.lock")).exists()).toBe(false);
@@ -169,8 +167,8 @@ for (const product of ["codex", "claude-code", "copilot"]) test(`${product} inst
     expect(await readFile(agent, "utf8")).toBe(original + '\nmodel = "local-choice"\n');
     await writeFile(agent, original);
   }
-  const edited = join(bundle, "principles/minimize-reader-load.md"); const modified = (await readFile(edited, "utf8")) + "\nLocal addition.\n"; await writeFile(edited, modified);
-  expect((await run(setup, ["apply", ...setupArgs], project)).code).not.toBe(0);
+  const edited = join(bundle, "principles/local-policy.md"); const modified = (await readFile(edited, "utf8")) + "\nLocal addition.\n"; await writeFile(edited, modified);
+  expect((await run(setup, ["apply", ...setupArgs], project)).code).toBe(0);
   expect(await readFile(edited, "utf8")).toBe(modified);
   expect(await readFile(join(project, instruction), "utf8")).toBe(instructions);
 }, 60000);
