@@ -35,7 +35,7 @@ kotoの土台を作るときに参照したpstackの版と、構成要素ごと�
 | `poteto-mode/worker.md` | 書き起こした | PR本文の見出しを日本語にした |
 | `agents/poteto-agent.md` | 書き起こした | `koto-agent`。`model: opus`、`effort: xhigh`、`background: true` |
 | `figure-it-out` | 書き起こした | |
-| `poteto-help` | 書き起こす | kotoの使い方案内として作るかを土台の段階で判断 |
+| `poteto-help` | 後で判断 | kotoの使い方案内は、独自の部分ができてから作る |
 | `setup-pstack` | 後で判断 | 役割ごとの既定は中核スキルとエージェント定義に書いた。利用者ごとの設定が要るかは後で判断する |
 
 ### 原則（`principle-*`、24本）
@@ -48,16 +48,17 @@ kotoの土台を作るときに参照したpstackの版と、構成要素ごと�
 
 | 要素 | 区分 | 備考 |
 | --- | --- | --- |
-| `how`、`why`、`teach` | コピー候補 | Memory段階で知識の検索・参照を加える |
-| `blast-radius`、`interrogate`、`architect`、`arena`、`swarm` | コピー候補 | 複数モデル前提の部分はClaude Codeのモデル指定に合わせる |
-| `tdd`、`benchmark-checklist` | コピー候補 | |
-| `create-verification-skill`、`maintain-verification-skill` | コピー候補 | |
-| `create-formal-verification-skill`、`maintain-formal-verification-skill`、`statechart` | 後で判断 | 必要性を土台の段階では判断しない |
-| `no-comments`、`agents/comment-sicko.md` | コピー候補 | Memory段階でコメントの理由を知識へ移す手順を加える |
-| `unslop`、`bro`、`technical-writing` | コピー候補 | 日本語の文章向けに調整が必要 |
-| `in-your-own-words`、`sharpen`、`reframe`、`ketchup` | コピー候補 | |
-| `typescript-best-practices` | コピー候補 | |
-| `show-me-your-work`、`recall`、`reflect`、`automate-me`、`correct` | 後で判断 | 記録・振り返りを扱うため、Memory・Tasksと合わせて設計する |
+| `how`、`why`、`teach` | 書き起こした | Memory段階で知識の検索・参照を加える |
+| `blast-radius`、`interrogate`、`architect`、`arena`、`swarm` | 書き起こした | 複数モデルの席はClaude Codeの`model`・`effort`にした。`swarm`の担当は既定で`isolation: "remote"`で動かす |
+| `tdd`、`benchmark-checklist` | 書き起こした | |
+| `create-verification-skill`、`maintain-verification-skill` | 書き起こした | |
+| `create-formal-verification-skill`、`maintain-formal-verification-skill`、`statechart` | 書き起こした | `statechart/scripts/`はコピーし、パッケージ名とテストデータ中のパスだけを変えた |
+| `no-comments`、`agents/comment-sicko.md` | 書き起こした | Memory段階でコメントの理由を知識へ移す手順を加える |
+| `unslop`、`bro`、`technical-writing` | 書き起こした | 英語の文章にしか当てはまらない規則は、日本語の文章に当てはまる形に言い換えた |
+| `in-your-own-words`、`sharpen`、`reframe`、`ketchup` | 書き起こした | |
+| `typescript-best-practices` | 書き起こした | |
+| `show-me-your-work` | 書き起こした | 中核スキルが参照する |
+| `recall`、`reflect`、`automate-me`、`correct` | 後で判断 | 記録・振り返りを扱うため、Memory・Tasksと合わせて設計する |
 | `ketchup-video` | 採用しない | 動画生成の環境に依存する |
 | `make-bot-ui` | 採用しない | 特定のボットとWebhook向け |
 | `automations/benny` | 採用しない | Cursor Automations専用 |
