@@ -24,7 +24,8 @@ disable-model-invocation: false
 - 自分で測った数値 → **benchmark-checklist**。
 - PRの状況 → **Babysit**プレイブック。Claude Codeに組み込まれたPR監視の仕組みは使わない。通ったスタックを取り込む → **Shipping**プレイブック。
 - ボットのレビューコメント → 一つずつ中身で判断する。
-- 長い作業・無人の作業 → **show-me-your-work**。
+- セッションをまたぐ作業、中断や引き継ぎがありうる作業 → **ticket**。目的と終了条件をチケットに書いてから始め、区切りと中断のたびにcheckpointを書き換える。
+- 長い作業・無人の作業 → **ticket**のうえで**show-me-your-work**。判断ログはチケットのフォルダに置く。
 
 ## 原則
 

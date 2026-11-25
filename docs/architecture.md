@@ -109,7 +109,12 @@ Tickets（チケットの管理）は、セッションをまたいで残る仕�
 
 状態は`pending`、`running`、`paused`、`done`、`cancelled`の5つとする。子チケットは`parent`で親を指し、フォルダは入れ子にしない。依存先が`done`でなければ`running`にできず、子チケットが終わっていなければ親を`done`にできない。
 
-チケットの形式と操作手順は`ticket`スキルに書く。pause-safely・session-pickup・show-me-your-workは、再開メモ・再開地点・判断ログの置き場所としてチケットを使う形へ移す。
+チケットの形式と操作手順は`ticket`スキルに書く。ほかのスキルは次のようにチケットを使う。
+
+- koto-mode：セッションをまたぐ作業、中断や引き継ぎがありうる作業、長い作業・無人の作業を**ticket**に振り分ける。
+- pause-safely：再開用のメモをチケットのcheckpointに書き、チケットを`paused`にする。
+- session-pickup：最初に`running`と`paused`のチケットのcheckpointと判断ログを読む。
+- show-me-your-work・hillclimb：判断ログをチケットのフォルダの`decisions.tsv`に、show-me-your-workの列で書く。
 
 ## 検証
 
