@@ -28,7 +28,7 @@ kotoの土台を作るときに参照したpstackの版と、構成要素ごと�
 
 | 要素 | 区分 | 備考 |
 | --- | --- | --- |
-| `poteto-mode` | 書き起こす | kotoの中核スキルにする。名前はkotoの設計で決める |
+| `poteto-mode` | 書き起こす | kotoの中核スキル`koto-mode`にする |
 | `poteto-mode/playbooks/`（22本） | 書き起こす | Claude Codeで成り立つものを選ぶ。`pause-safely`・`session-pickup`・`multi-phase-plan`は後で判断 |
 | `poteto-mode/worker.md` | 書き起こす | 委任先へ渡す規則 |
 | `agents/poteto-agent.md` | 書き起こす | kotoの委任用エージェントにする |
