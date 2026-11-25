@@ -26,7 +26,7 @@ disable-model-invocation: false
    - 指定がなく、現在のフォルダがGitリポジトリの中なら、`git rev-parse --show-toplevel`の結果を使う。
    - ただし、`git rev-parse --git-dir`と`git rev-parse --git-common-dir`が異なるとき、現在のフォルダは追加の作業ツリー（worktree）の中にある。作業ツリーを消すと`.space/`も消えるので、作業ツリーと元のリポジトリのどちらに作るかを利用者に確かめる。
    - Gitリポジトリでなければ、どのフォルダに作るかを利用者に確かめる。
-2. このスキルの`scripts/setup.sh <プロジェクトのルートの絶対パス>`を実行する。
+2. このスキルの`scripts/setup.ts`をBunで実行する（`bun <このスキルのフォルダ>/scripts/setup.ts <プロジェクトのルートの絶対パス>`）。
    - 出力は1行ごとに「結果（`created`または`kept`）、タブ、パス」である。
    - 既存のディレクトリやファイルはそのまま残す（`kept`）。
    - `.space/`か`.space/tickets/`が、ディレクトリではなくシンボリックリンクや別の種類のものとして既にあれば、何も変えずに失敗する。消したり置き換えたりして回避せず、利用者に状況を伝える。

@@ -78,13 +78,13 @@ APIが不正な入力を受け付けて500を返している。400と理由を�
 
 ## 操作
 
-このスキルの`scripts/ticket.sh`を使う。最初の引数には、プロジェクトのルートの絶対パスを渡す。
+このスキルの`scripts/ticket.ts`をBunで実行する（`bun <このスキルのフォルダ>/scripts/ticket.ts ...`）。外部パッケージは使わないので、`bun install`は要らない。最初の引数には、プロジェクトのルートの絶対パスを渡す。下の表では`bun`と`scripts/`を省いて書く。
 
 | 操作 | コマンド |
 | --- | --- |
-| 作る | `ticket.sh new <root> <id> <title> [--parent <id>] [--depends-on <id,id>]` |
-| 一覧する | `ticket.sh list <root> [--status <状態>] [--ready]` |
-| 状態を変える | `ticket.sh status <root> <id> <状態>` |
+| 作る | `ticket.ts new <root> <id> <title> [--parent <id>] [--depends-on <id,id>]` |
+| 一覧する | `ticket.ts list <root> [--status <状態>] [--ready]` |
+| 状態を変える | `ticket.ts status <root> <id> <状態>` |
 
 - IDは英小文字・数字・ハイフンで64文字まで、先頭は英小文字か数字とする。内容が分かる短い名前にする（`api-validation`など）。
 - `list`はタブ区切りで、`id`、`status`、`ready`、`parent`、`depends_on`、`title`を出す。`ready`は、`pending`で依存先がすべて`done`なら`yes`になる。`--ready`は、すぐ着手できるチケットだけを出す。
@@ -95,27 +95,27 @@ APIが不正な入力を受け付けて500を返している。400と理由を�
 
 ### 始める
 
-1. 同じ仕事のチケットがないか`ticket.sh list`で確かめる。あればそれを使う。
-2. 無ければ`ticket.sh new`で作り、目的と終了条件を書く。分からないことは推測で埋めず、利用者に確かめる。
-3. `ticket.sh status <root> <id> running`で始める。
+1. 同じ仕事のチケットがないか`ticket.ts list`で確かめる。あればそれを使う。
+2. 無ければ`ticket.ts new`で作り、目的と終了条件を書く。分からないことは推測で埋めず、利用者に確かめる。
+3. `ticket.ts status <root> <id> running`で始める。
 4. 判断ログを残す作業なら、**show-me-your-work**スキルで同じフォルダの`decisions.tsv`に書き始める。
 
 ### 中断する・引き継ぐ
 
 1. checkpointを書き換える。現在地、次の操作、注意点（ブランチ、未コミットの編集の有無など）を書く。
-2. `ticket.sh status <root> <id> paused`にする。
+2. `ticket.ts status <root> <id> paused`にする。
 
 ### 再開する
 
-1. `ticket.sh list`で状態を見て、`ticket.md`のcheckpointを読む。判断ログがあれば、その最後の数行も読む。
+1. `ticket.ts list`で状態を見て、`ticket.md`のcheckpointを読む。判断ログがあれば、その最後の数行も読む。
 2. checkpointに書かれた現在地が、実際のブランチやファイルと合っているかを確かめる。食い違えば、実物を正とし、checkpointを直す。
-3. `ticket.sh status <root> <id> running`で再開する。
+3. `ticket.ts status <root> <id> running`で再開する。
 
 ### 終える
 
 1. 終了条件をすべて満たしたかを、実物で確かめる。
 2. 成果物と結果を書く。
-3. `ticket.sh status <root> <id> done`にする。
+3. `ticket.ts status <root> <id> done`にする。
 
 ### やめる・やり直す
 
