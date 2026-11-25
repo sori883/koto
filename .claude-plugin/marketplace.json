@@ -1,0 +1,14 @@
+{
+  "name": "koto",
+  "description": "kotoのClaude Codeプラグインを配布するマーケットプレイス。",
+  "owner": {
+    "name": "sori883"
+  },
+  "plugins": [
+    {
+      "name": "koto",
+      "source": "./plugin",
+      "description": "Claude Codeで、深く調べてから小さく確かな変更を行うための作業スタイル。"
+    }
+  ]
+}
