@@ -28,19 +28,21 @@ kotoの土台を作るときに参照したpstackの版と、構成要素ごと�
 
 | 要素 | 区分 | 備考 |
 | --- | --- | --- |
-| `poteto-mode` | 書き起こす | kotoの中核スキル`koto-mode`にする |
-| `poteto-mode/playbooks/`（22本） | 書き起こす | Claude Codeで成り立つものを選ぶ。`pause-safely`・`session-pickup`・`multi-phase-plan`は後で判断 |
-| `poteto-mode/worker.md` | 書き起こす | 委任先へ渡す規則 |
-| `agents/poteto-agent.md` | 書き起こす | kotoの委任用エージェントにする |
-| `figure-it-out` | 書き起こす | プレイブックが合わない作業の受け皿 |
+| `poteto-mode` | 書き起こした | kotoの中核スキル`koto-mode`。Cursor専用の部分だけを読み替えた |
+| `poteto-mode/playbooks/`（22本） | 書き起こした | すべて`koto-mode/playbooks/`に置いた |
+| `poteto-mode/references/bugbot-triage.md` | 書き起こした | |
+| `poteto-mode/scripts/` | コピーした | パッケージ名と会話記録の場所だけをClaude Code向けに変えた |
+| `poteto-mode/worker.md` | 書き起こした | PR本文の見出しを日本語にした |
+| `agents/poteto-agent.md` | 書き起こした | `koto-agent`。`model: opus`、`effort: xhigh`、`background: true` |
+| `figure-it-out` | 書き起こした | |
 | `poteto-help` | 書き起こす | kotoの使い方案内として作るかを土台の段階で判断 |
-| `setup-pstack` | 後で判断 | 役割ごとのモデル設定。Claude Codeの`model`・`effort`で足りるかを先に確かめる |
+| `setup-pstack` | 後で判断 | 役割ごとの既定は中核スキルとエージェント定義に書いた。利用者ごとの設定が要るかは後で判断する |
 
 ### 原則（`principle-*`、24本）
 
 | 要素 | 区分 | 備考 |
 | --- | --- | --- |
-| すべての`principle-*` | 書き起こす | 中核スキルの索引と一緒に作る |
+| すべての`principle-*` | 書き起こした | |
 
 ### 単体スキル
 
@@ -60,3 +62,13 @@ kotoの土台を作るときに参照したpstackの版と、構成要素ごと�
 | `make-bot-ui` | 採用しない | 特定のボットとWebhook向け |
 | `automations/benny` | 採用しない | Cursor Automations専用 |
 | `docs/harness/claude-code.md` | 採用しない | kotoは最初からClaude Codeの名前で書くため、読み替え表を持たない |
+
+## cursor-team-kit
+
+pstackの中核スキルが使う次のスキルは、同じリポジトリの`cursor-team-kit/`（MIT License、Copyright (c) 2026 Cursor）から書き起こした。参照した版は上の表と同じコミットである。
+
+| 要素 | 区分 | 備考 |
+| --- | --- | --- |
+| `deslop` | 書き起こした | |
+| `control-ui`、`control-cli` | 書き起こした | |
+| `verify-this` | 書き起こした | `control-ui`が参照する |

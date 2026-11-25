@@ -1,11 +1,43 @@
 # 第三者のソフトウェア
 
-このプラグインのスキルとエージェント定義には、pstack（https://github.com/cursor/plugins/tree/main/pstack）を元にした部分が含まれる。pstackのライセンスは次のとおり。
+このプラグインのスキル、エージェント定義、スクリプトには、次のソフトウェアを元にした部分が含まれる。
+
+## pstack
+
+https://github.com/cursor/plugins/tree/main/pstack を元にした部分のライセンスは次のとおり。
 
 ```text
 MIT License
 
 Copyright (c) 2026 Lauren Tan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+## cursor-team-kit
+
+`deslop`、`control-ui`、`control-cli`、`verify-this`スキルは、https://github.com/cursor/plugins/tree/main/cursor-team-kit を元にしている。ライセンスは次のとおり。
+
+```text
+MIT License
+
+Copyright (c) 2026 Cursor
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
