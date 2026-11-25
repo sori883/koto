@@ -1,7 +1,7 @@
 ---
 name: principle-attack-the-premise
 description: 同じ前提に立つ修正が2つ以上、同じ確認で失敗したときに適用する。前提を書き出し、その前提に立つ次の修正を書く前に、前提を直接確かめる。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Attack the Premise

@@ -1,7 +1,7 @@
 ---
 name: principle-subtract-before-you-add
 description: 追加・リファクタリング・書き直しの順序を決めるときに適用する。不要なコード、重複した検証、中身のない参照を先に消し、単純になった土台に積む。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Subtract Before You Add

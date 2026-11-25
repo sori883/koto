@@ -1,7 +1,7 @@
 ---
 name: principle-foundational-thinking
 description: ロジックを書く前に適用する。中心となる型とデータ構造、土台と機能の順序、並行して動く主体が何を共有するかを決める。データ構造を正しくすれば、その先のコードは自明になる。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Foundational Thinking

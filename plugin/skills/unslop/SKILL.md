@@ -1,7 +1,7 @@
 ---
 name: unslop
 description: あらゆる文章から、AIが書いたと分かる癖を取り除く。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Unslop

@@ -1,7 +1,7 @@
 ---
 name: blast-radius
 description: "出荷する前に、変更が差分の外のどこを壊しうるかを見つけ、安全だと言える根拠の一つの事実を、文章にまとめるのではなく実際のコードを動かして証明する。「Xの影響範囲」「これで何が壊れうるか」と頼まれたとき、または信用できない小さな差分をレビューするときに使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # 影響範囲

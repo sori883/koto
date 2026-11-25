@@ -1,7 +1,7 @@
 ---
 name: principle-migrate-callers-then-delete-legacy-apis
 description: 古い呼び出し元が残っている状態で新しい内部APIを入れるときに適用する。互換用の層を残さず、呼び出し元の移行と古いAPIの削除を一度に行う。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Migrate Callers Then Delete Legacy APIs

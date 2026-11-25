@@ -1,7 +1,7 @@
 ---
 name: principle-explain-the-number
 description: 測る前と、測った数値（高速化、劣化、スループット、レイテンシ、評価結果）を信じる・報告する・使う前に適用する。何が数値を制限しているかを突き止め、意図した作業とは別のものを測っていないかを確かめる。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Explain the Number

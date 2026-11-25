@@ -1,7 +1,7 @@
 ---
 name: architect
 description: "コードの前に型、シグネチャ、モジュール構成を描き、実装が進むあいだも関わり続ける。/koto:architect、「設計して」「この設計を考えて」、またはすぐにコードを書くと誤った形に固まるような簡単ではない作業に使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Architect

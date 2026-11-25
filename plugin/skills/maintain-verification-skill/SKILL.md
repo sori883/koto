@@ -1,7 +1,7 @@
 ---
 name: maintain-verification-skill
 description: "プロジェクトの検証スキルと機能の地図を正しく保つ定期的な点検。機能ごとに並行してソースを読む担当を置き、一つのライブセッションですべての機能を操作し、証明した修正を多くとも1つのPRにまとめる。/koto:maintain-verification-skill、または「検証スキルを点検して」と頼まれたときに使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # 検証スキルを保守する

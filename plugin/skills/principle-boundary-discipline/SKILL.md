@@ -1,7 +1,7 @@
 ---
 name: principle-boundary-discipline
 description: 検証・エラー処理・フレームワークとの接続を組むときに適用する。確認はシステムの境界（CLI、設定、ネットワーク、外部API）に集め、内部では型を信頼し、業務ロジックは純粋な関数に置く。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Boundary Discipline

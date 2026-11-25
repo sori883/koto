@@ -1,7 +1,7 @@
 ---
 name: principle-exhaust-the-design-space
 description: コードベースに前例のない操作や構成の判断に直面したときに適用する。競合する試作を2〜3個作り、並べて比べてから決める。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Exhaust the Design Space

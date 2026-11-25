@@ -2,7 +2,7 @@
 name: typescript-best-practices
 description: TypeScriptのベストプラクティス。.tsまたは.tsxのファイルを読む・編集するときに使う。
 paths: ["**/*.ts", "**/*.tsx"]
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # TypeScriptのベストプラクティス

@@ -1,7 +1,7 @@
 ---
 name: principle-laziness-protocol
 description: リファクタリング、差分の大きさの判断、抽象・層・引数の受け渡しを増やしたくなったときに適用する。削除と、問題を解く最小の変更を優先する。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Laziness Protocol

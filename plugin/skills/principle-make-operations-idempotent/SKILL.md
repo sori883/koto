@@ -1,7 +1,7 @@
 ---
 name: principle-make-operations-idempotent
 description: クラッシュ、再起動、再試行の中で動くコマンド・処理段階・ループを設計するときに適用する。前の実行がどこで止まっていても、同じ最終状態に収束させる。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Make Operations Idempotent

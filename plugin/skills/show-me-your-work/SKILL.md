@@ -1,7 +1,7 @@
 ---
 name: show-me-your-work
 description: "長く続く作業や無人の作業について、レビューできる判断の記録を残す。判断ごとに一行（何を、なぜ、証拠、結果）を書くTSVのログである。既定ではローカルに置き、結果を信頼するためにレビューする人が記録を必要とするときはコミットする。/koto:show-me-your-work、自律的な実行や複数フェーズの実行、人が離れた後でレビューする作業に使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Show me your work

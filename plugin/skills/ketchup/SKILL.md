@@ -1,7 +1,7 @@
 ---
 name: ketchup
 description: "利用者の最後のメッセージ以降にこの会話で変わったことを、平易な言葉と小さな図で伝える。利用者の判断を待っている項目をすべて、返答だけで判断できる情報とともに挙げる。/ketchupで使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Ketchup

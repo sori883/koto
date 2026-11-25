@@ -1,7 +1,7 @@
 ---
 name: create-verification-skill
 description: "利用者と同じやり方でアプリを操作する、プロジェクト専用の検証スキルを作る。言語・フレームワーク・プラットフォームを問わない。/koto:create-verification-skill、「このリポジトリの操作スキルを作って」と頼まれたとき、またはUI・CLI・サービスの振る舞いを確かめるスクリプト化された手段がプロジェクトにないときに使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # 検証スキルを作る

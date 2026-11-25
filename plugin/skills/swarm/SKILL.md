@@ -1,7 +1,7 @@
 ---
 name: swarm
 description: "N個の担当を並行して展開し、すべて終わらせて、一つの報告を返す。/koto:swarm、「swarmして」と頼まれたとき、または並行して網羅する・競わせる・総当たりで試す・探索するときに使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Swarm

@@ -1,7 +1,7 @@
 ---
 name: principle-test-behavior-not-implementation
 description: テストを書く・変える・残すときに適用する。コードの利用者が観察できることを確かめ、その振る舞いが壊れたら失敗し、内部だけが変わったら通り続けるテストにする。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Test Behavior, Not Implementation

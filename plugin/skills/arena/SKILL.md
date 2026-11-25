@@ -1,7 +1,7 @@
 ---
 name: arena
 description: "同じ仕事にN個の候補を並行して取り組ませ、土台を一つ選び、選ばれなかった候補の優れた部分を土台に移植する。/koto:arena、「arenaして」「arenaにかけて」と頼まれたとき、または簡単ではない成果物を一度の試みで作ると誤った形に固まりそうなときに使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Arena

@@ -1,7 +1,7 @@
 ---
 name: teach
 description: "一連の仕事を平易に説明し、相手が本当に理解できるようにする。`how`と`why`のスキルを実行し、その結果を一つの明快な説明に織り込む。「これを教えて」「Xを本当に理解したい」「この変更やサブシステムを説明して」に使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Teach

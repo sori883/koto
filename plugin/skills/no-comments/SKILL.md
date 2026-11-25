@@ -1,7 +1,7 @@
 ---
 name: no-comments
 description: "Comment Sickoを起動し、受け入れた指摘を直し、コメントが主張する制約を仕組みに組み込む案を出す。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # No comments

@@ -1,7 +1,7 @@
 ---
 name: create-formal-verification-skill
 description: "不具合の損害がもっとも大きく、テストがもっとも届きにくいコードを形式検証するプロジェクト専用スキルを作る。言語は問わず、合う検証ツールを使う。/koto:create-formal-verification-skill、「この競合をモデル検査して」「この不変条件を証明して」と頼まれたとき、または並行処理・再試行・状態機械・パーサー・unsafeなコードにテスト以上の確認が必要なときに使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # 形式検証スキルを作る

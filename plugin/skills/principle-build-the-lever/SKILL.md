@@ -1,7 +1,7 @@
 ---
 name: principle-build-the-lever
 description: 手作業で済まない作業すべて（編集、移行、分析、確認）に適用する。大量の作業に限らない。手作業ではなく、作業をする道具、または正しさを示す道具（コード変換、スクリプト、生成器、サブエージェントが従うスキル）を作る。道具は、レビューする人が再実行できる成果物になる。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Build the Lever

@@ -1,7 +1,7 @@
 ---
 name: koto-mode
 description: 簡潔で詳しい返答、考え抜いたサブエージェントの使い方、飾らない文章、単純なコード、確かめた成果を重んじる、kotoの作業スタイル。/koto:koto-modeを使うとき、またはこのスタイルで作業するよう依頼されたときに使う。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # koto-mode

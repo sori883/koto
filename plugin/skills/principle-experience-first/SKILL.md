@@ -1,7 +1,7 @@
 ---
 name: principle-experience-first
 description: 製品・使い勝手・機能範囲のトレードオフが出てきたときに適用する。実装の都合より使う人の体験を選び、粗い機能を多く出すより、磨いた機能を少なく出す。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Experience First

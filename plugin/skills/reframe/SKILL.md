@@ -1,7 +1,7 @@
 ---
 name: reframe
 description: "利用者が作っているものを専門家が呼ぶ語を教え、同じ問題を解いた隣の分野から語を借り、それらの語で利用者の説明を書き直す。/koto:reframeで使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 利用者が作っているものについて、専門家が使う語を教える。要約ではなく、利用者自身のファイル、コード、説明から始める。

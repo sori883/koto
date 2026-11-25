@@ -1,7 +1,7 @@
 ---
 name: principle-guard-the-context-window
 description: 大きな出力、長いファイル、繰り返しの読み込み、多数の並行作業の計画でコンテキストが埋まってきたときに適用する。大量の作業はサブエージェントに任せ、主のスレッドには生の内容ではなく要約を残す。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Guard the Context Window

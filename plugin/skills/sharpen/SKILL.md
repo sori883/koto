@@ -1,7 +1,7 @@
 ---
 name: sharpen
 description: "作業を大きくではなく深くしてから、依頼文を書き直す。/koto:sharpenで使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 この作業を、大きくではなく深くしたい。書き直す前に、次の四つをする。

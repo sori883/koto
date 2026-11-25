@@ -1,7 +1,7 @@
 ---
 name: tdd
 description: "利用者がTDD、失敗するテスト、回帰テストを明示的に求めたとき、またはバグに明らかで低コストなローカルのテスト対象があるときだけ使う。テストの経路が不明確なとき、コストが高いとき、結合が重いとき、求められていないときは使わない。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # TDDによるバグ修正

@@ -1,7 +1,7 @@
 ---
 name: principle-encode-lessons-in-structure
 description: 同じ指示を2回書いていると気づいたとき、または繰り返される修正に気づいたときに適用する。文章を足すのではなく、lint、メタデータのフラグ、実行時の確認、スクリプトとして決まりを組み込む。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Encode Lessons in Structure

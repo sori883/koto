@@ -1,7 +1,7 @@
 ---
 name: principle-outcome-oriented-execution
 description: 区切りが明確な計画的な書き直し・移行のときに適用する。目標の構成へ収束させ、使い捨ての互換用コードで途中の状態を滑らかに保たない。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Outcome-Oriented Execution

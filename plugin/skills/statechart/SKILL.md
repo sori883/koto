@@ -1,7 +1,7 @@
 ---
 name: statechart
 description: "製品のフロー、プロトコル、サービスなど、状態の間を移るシステムのTLA+モデルを検査し、Mermaidのstatechartとして描く。レポートは、ルールを破る各状態への最短の経路を示す。/statechartを使うとき、または不具合を状態の経路として示すときに使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Statechart

@@ -1,7 +1,7 @@
 ---
 name: how
 description: "「Xはどう動くのか」、何かを変える前のコードの読み解き、配置・責務・層の質問（「これはどこに置くべきか」「どのパッケージの責務か」「この層でよいか」）に使う。サブシステムの構成、実行時の流れ、初めて触れる人のための全体像を説明する。動機にはwhyを使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # How

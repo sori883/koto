@@ -1,7 +1,7 @@
 ---
 name: why
 description: "「なぜXはこう動くのか」「なぜYを選んだのか」、設計の理由、リグレッション、障害の振り返り、データに基づく閾値に使う。判断とトレードオフについて、出典付きの見立てを返す。実行時の振る舞いにはhowを使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Why

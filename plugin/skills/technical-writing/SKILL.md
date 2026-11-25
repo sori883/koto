@@ -1,7 +1,7 @@
 ---
 name: technical-writing
 description: "層を重ねた技術文書の基準。Diátaxisの構成、Google developer styleの文、STEの指示の規則、Global Englishの構文。/koto:technical-writingで使うほか、文書、RFC、README、PRの説明、コミットメッセージを書く・レビューするときに使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Technical writing

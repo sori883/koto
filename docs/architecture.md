@@ -69,7 +69,7 @@ pstackの構成を参照し、次の層で組み立てる。
 | 委任用エージェント | 中核スキルが作業を任せるサブエージェント。作業前に中核スキルを読む | `poteto-agent` |
 | 単体スキル | 中核スキルから呼ばれ、利用者が直接使うこともできるスキル（how、why、interrogate、tddなど） | その他のスキル |
 
-中核スキルは利用者が明示して始めるものとし、frontmatterに`name: koto-mode`と`disable-model-invocation: true`を書く。プラグインのスキルの正式な呼び名は`/koto:koto-mode`である。`name`を書くと、同じ名前の他のコマンドがない限り`/koto-mode`でも呼べる。
+すべてのスキルは、モデルがSkillツールで呼び出せる通常のスキルとし、frontmatterに`disable-model-invocation: false`を書く。pstackはほぼすべてのスキルを`true`にしているが、Claude Codeでは`true`のスキルをモデルがSkillツールで呼べず、中核スキルから他のスキルや原則へ進めなくなるため、kotoでは採らない。中核スキルのfrontmatterには`name: koto-mode`を書く。プラグインのスキルの正式な呼び名は`/koto:koto-mode`である。`name`を書くと、同じ名前の他のコマンドがない限り`/koto-mode`でも呼べる。
 
 スキルには、できるだけ自由に進める働き方を書く。MCPツールの利用や外部への操作をスキルの本文で制限しない。止めるべき操作は、権限設定、組織の管理設定、MCPを接続しないことなど、プラグインの外で止める。
 

@@ -1,7 +1,7 @@
 ---
 name: principle-never-block-on-the-human
 description: 元に戻せる作業で「Xしてよいか」と聞きたくなったときに適用する。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Never Block on the Human

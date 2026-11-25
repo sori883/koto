@@ -1,7 +1,7 @@
 ---
 name: principle-fix-root-causes
 description: デバッグのときに適用する。症状を、システムが最初に誤った場所までたどり、そこで直す。ガードが修正になるのは、それが扱う状態が正当な場合だけである。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Fix Root Causes

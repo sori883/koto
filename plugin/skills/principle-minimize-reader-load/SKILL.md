@@ -1,7 +1,7 @@
 ---
 name: principle-minimize-reader-load
 description: 追いにくいコードをレビュー・整理するときに適用する。問いから答えまでの層の数と、読む人が頭に抱える隠れた状態を数え、呼び出し元が一つのラッパーを畳み、変更可能な範囲を狭める。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Minimize Reader Load

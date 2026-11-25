@@ -1,7 +1,7 @@
 ---
 name: principle-type-system-discipline
 description: 型を設計するとき、関数のシグネチャをレビューするとき、静的型付き言語でコードを書くときに適用する。ありえない状態を表現できなくし、意味の違うプリミティブに別の型を付け、外部データは境界で解析し、すべての種類を処理し、正本のスキーマから型を導く。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Type System Discipline

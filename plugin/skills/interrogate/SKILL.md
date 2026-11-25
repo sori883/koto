@@ -1,7 +1,7 @@
 ---
 name: interrogate
 description: "「interrogate」「敵対的レビュー」「複数モデルでレビュー」「これに異議を唱えて」「このコードを負荷試験して」「盲点を探して」「徹底的に叩いて」と頼まれたときに使う。敵対役が変更や設計を壊そうとし、実行で証明された指摘だけが残る。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Interrogate

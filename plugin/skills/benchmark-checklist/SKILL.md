@@ -1,7 +1,7 @@
 ---
 name: benchmark-checklist
 description: "性能の測定値（制約要因、調整、限界、エラー、再現性、関連性、作業が実際に行われたか）を、報告したり判断に使ったりする前に点検する。ベンチマークを実行したとき、または自分で測った高速化や性能低下を報告するときに使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # ベンチマークのチェックリスト

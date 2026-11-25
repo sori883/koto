@@ -1,7 +1,7 @@
 ---
 name: principle-redesign-from-first-principles
 description: 既存の設計に新しい要件を組み込むときに適用する。後付けせず、その要件が最初からの前提だったかのように設計し直す。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Redesign From First Principles

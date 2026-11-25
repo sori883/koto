@@ -1,7 +1,7 @@
 ---
 name: principle-model-the-domain
 description: 状態を持つロジックを書くとき、またはコードの分岐が多いとき、同じ形の前提が複数のファイルで繰り返されるときに適用する。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Model the Domain

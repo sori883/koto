@@ -1,7 +1,7 @@
 ---
 name: maintain-formal-verification-skill
 description: "コードが変わった後、プロジェクトの形式検証をコードに合わせ直す。検証済みのコードに触れたコミットを探し、モデル・ハーネス・性質を今のコードを表すように更新し、再実行し、各失敗が検証のずれかコードの不具合かを言う。/koto:maintain-formal-verification-skill、「モデルはまだコードに忠実か」と問われたとき、または確かめ直さずに検証済みのコードに触れたマージやリファクタリングの後に使う。"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # 形式検証スキルを保守する

@@ -1,7 +1,7 @@
 ---
 name: principle-sequence-verifiable-units
 description: 複数段階の作業（一括修正、移行、同種の編集の繰り返し）と、コミットやPRの積み方に適用する。確認で終わる小さな単位に分け、次へ進む前にそれぞれを確かめ、並び自体がレビューする人に正しさを示す順で届ける。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Sequence Work into Verifiable Units

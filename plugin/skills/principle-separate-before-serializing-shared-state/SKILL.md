@@ -1,7 +1,7 @@
 ---
 name: principle-separate-before-serializing-shared-state
 description: 並行して動く主体が同じファイル・ブランチ・キー・状態オブジェクトに書くかもしれないときに適用する。まず共有をなくし、一つの共有された書き込み先が本当に不変条件であるときだけ、構造的に直列化する。
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Separate Before Serializing Shared State
