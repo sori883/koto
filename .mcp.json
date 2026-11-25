@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp"
+    },
+    "serena": {
+      "command": "serena",
+      "args": ["start-mcp-server", "--project-from-cwd", "--context=claude-code"]
+    }
+  }
+}
