@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createTicket, listTickets, parseTicket, serializeTicket, setStatus, TicketError } from "../plugin/skills/ticket/scripts/ticket.ts";
+import { createTicket, graphTickets, listTickets, parseTicket, serializeTicket, setStatus, TicketError } from "../plugin/skills/ticket/scripts/ticket.ts";
 
 let root: string;
 const tickets = () => join(root, ".space", "tickets");
@@ -145,6 +145,69 @@ describe("status", () => {
       edited.replace("status: pending", "status: running").replace("updated: 2026-05-24T09:00:00Z", "updated: 2026-05-24T10:00:00Z"),
     );
     expect(statSync(file).mode & 0o777).toBe(0o600);
+  });
+});
+
+describe("graph", () => {
+  const build = () => {
+    createTicket(root, "api", "API");
+    createTicket(root, "schema", "Schema", { parent: "api" });
+    createTicket(root, "validation", "Validation", { parent: "api", dependsOn: ["schema"] });
+    createTicket(root, "deep", "Deep", { parent: "validation" });
+    createTicket(root, "docs", 'Say "hi" <b>', { dependsOn: ["validation"] });
+    setStatus(root, "schema", "running");
+    setStatus(root, "schema", "done");
+  };
+
+  test("draws a parent/child tree with status and dependencies", () => {
+    build();
+    expect(graphTickets(root)).toBe(
+      [
+        "api [pending, ready] API",
+        "├─ schema [done] Schema",
+        "└─ validation [pending, ready] Validation  ← depends: schema(done)",
+        "   └─ deep [pending, ready] Deep",
+        'docs [pending, blocked] Say "hi" <b>  ← depends: validation(pending)',
+        "",
+      ].join("\n"),
+    );
+  });
+
+  test("shows tickets caught in a hand-edited parent cycle", () => {
+    createTicket(root, "a", "A");
+    createTicket(root, "b", "B", { parent: "a" });
+    const file = join(tickets(), "a", "ticket.md");
+    writeFileSync(file, read("a").replace("parent:\n", "parent: b\n"));
+    expect(graphTickets(root)).toBe("a [pending, ready] A\n└─ b [pending, ready] B\n");
+  });
+
+  test("says so when there are no tickets", () => {
+    expect(graphTickets(root)).toBe("(no tickets)\n");
+  });
+
+  test("emits Mermaid with escaped labels, parent lines and dependency arrows", () => {
+    build();
+    const mermaid = graphTickets(root, "mermaid");
+    expect(mermaid).toStartWith("flowchart TD\n");
+    expect(mermaid).toContain('  t_schema["schema<br/>done<br/>Schema"]:::done\n');
+    expect(mermaid).toContain('  t_docs["docs<br/>pending, blocked<br/>Say #quot;hi#quot; #lt;b#gt;"]:::pending\n');
+    expect(mermaid).toContain("  t_api -.- t_validation\n");
+    expect(mermaid).toContain("  t_validation -.- t_deep\n");
+    expect(mermaid).toContain("  t_schema --> t_validation\n");
+    expect(mermaid).toContain("  t_validation --> t_docs\n");
+    for (const status of ["pending", "running", "paused", "done", "cancelled", "missing"]) {
+      expect(mermaid).toContain(`  classDef ${status} `);
+    }
+  });
+
+  test("marks a dependency whose ticket folder is gone", () => {
+    createTicket(root, "a", "A");
+    createTicket(root, "b", "B", { dependsOn: ["a"] });
+    createTicket(root, "c", "C", { dependsOn: ["a"] });
+    rmSync(join(tickets(), "a"), { recursive: true });
+    const mermaid = graphTickets(root, "mermaid");
+    expect(mermaid.split('t_a["a<br/>missing"]:::missing').length).toBe(2);
+    expect(graphTickets(root)).toContain("← depends: a(missing)");
   });
 });
 

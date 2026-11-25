@@ -85,10 +85,21 @@ APIが不正な入力を受け付けて500を返している。400と理由を�
 | 作る | `ticket.ts new <root> <id> <title> [--parent <id>] [--depends-on <id,id>]` |
 | 一覧する | `ticket.ts list <root> [--status <状態>] [--ready]` |
 | 状態を変える | `ticket.ts status <root> <id> <状態>` |
+| 関係を図にする | `ticket.ts graph <root> [--mermaid]` |
 
 - IDは英小文字・数字・ハイフンで64文字まで、先頭は英小文字か数字とする。内容が分かる短い名前にする（`api-validation`など）。
 - `list`はタブ区切りで、`id`、`status`、`ready`、`parent`、`depends_on`、`title`を出す。`ready`は、`pending`で依存先がすべて`done`なら`yes`になる。`--ready`は、すぐ着手できるチケットだけを出す。
 - `status`は状態と`updated`だけを書き換える。許されない状態の変更、終わっていない依存先や子チケットがあるときは、何も変えずに失敗する。
+- `graph`は、親子を木で、状態と依存先を各行に添えて出す。`pending`には、すぐ着手できるなら`ready`、依存先が終わっていなければ`blocked`を添える。依存先が多いときや、どれが詰まっているかを確かめるときに使う。
+
+  ```text
+  api [running] APIを作る
+  ├─ api-schema [done] スキーマを決める
+  └─ api-validation [pending, ready] 入力を検証する  ← depends: api-schema(done)
+  docs [pending, blocked] 説明を書く  ← depends: api-validation(pending)
+  ```
+
+- `graph --mermaid`は、同じ関係をMermaidのflowchartで出す。点線は親子、矢印は依存で、矢印の先のチケットは元のチケットが`done`になるまで始められない。状態ごとに色が付く。利用者が図で見たいときに使う。Markdownに載せるときは```` ```mermaid ````のコードブロックで囲む。GitHub、VS Code、ObsidianなどのMermaidに対応した表示で図になる。
 - 本文（目的、終了条件、成果物、checkpoint、結果）は、ファイルを直接編集する。
 
 ## 手順

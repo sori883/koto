@@ -9,6 +9,7 @@ import { parseArgs } from "node:util";
 const USAGE = `Usage:
   ticket.ts new    <project-root> <id> <title> [--parent <id>] [--depends-on <id,id>]
   ticket.ts list   <project-root> [--status <status>] [--ready]
+  ticket.ts graph  <project-root> [--mermaid]
   ticket.ts status <project-root> <id> <status>`;
 
 export const STATUSES = ["pending", "running", "paused", "done", "cancelled"] as const;
@@ -263,6 +264,97 @@ export function setStatus(root: string, id: string, to: Status, now: Date = new 
   return { from, file };
 }
 
+function sortedIds(ids: Iterable<string>): string[] {
+  return [...ids].sort((a, b) => a.localeCompare(b));
+}
+
+function stateLabel(ticket: Ticket, tickets: Map<string, Ticket>): string {
+  if (ticket.status !== "pending") return ticket.status;
+  return `pending, ${isReady(ticket, tickets) ? "ready" : "blocked"}`;
+}
+
+/** Children of each ticket. A ticket whose parent is missing counts as a root. */
+function childrenOf(tickets: Map<string, Ticket>): { roots: string[]; children: Map<string, string[]> } {
+  const children = new Map<string, string[]>();
+  const roots: string[] = [];
+  for (const id of sortedIds(tickets.keys())) {
+    const parent = tickets.get(id)!.parent;
+    if (parent !== null && tickets.has(parent) && parent !== id) {
+      children.set(parent, [...(children.get(parent) ?? []), id]);
+    } else {
+      roots.push(id);
+    }
+  }
+  return { roots, children };
+}
+
+/** Parent/child tree with status and dependencies, for reading in a terminal. */
+export function renderTree(tickets: Map<string, Ticket>): string {
+  const { roots, children } = childrenOf(tickets);
+  const lines: string[] = [];
+  const seen = new Set<string>();
+  const line = (id: string) => {
+    const ticket = tickets.get(id)!;
+    const deps = ticket.dependsOn.map((dep) => `${dep}(${tickets.get(dep)?.status ?? "missing"})`);
+    return `${id} [${stateLabel(ticket, tickets)}] ${ticket.title}${deps.length ? `  ← depends: ${deps.join(", ")}` : ""}`;
+  };
+  const walk = (id: string, prefix: string, branch: string) => {
+    seen.add(id);
+    lines.push(prefix + branch + line(id));
+    const kids = (children.get(id) ?? []).filter((kid) => !seen.has(kid));
+    const childPrefix = prefix + (branch === "├─ " ? "│  " : branch === "└─ " ? "   " : "");
+    kids.forEach((kid, i) => walk(kid, childPrefix, i === kids.length - 1 ? "└─ " : "├─ "));
+  };
+  for (const id of roots) walk(id, "", "");
+  // A hand-edited parent cycle leaves tickets unreached; show them rather than hide them.
+  for (const id of sortedIds(tickets.keys())) if (!seen.has(id)) walk(id, "", "");
+  return lines.length ? lines.join("\n") + "\n" : "(no tickets)\n";
+}
+
+const nodeId = (id: string) => `t_${id.replace(/-/g, "_")}`;
+const mermaidText = (text: string) => text.replace(/"/g, "#quot;").replace(/[<>]/g, (c) => (c === "<" ? "#lt;" : "#gt;"));
+
+/** Mermaid flowchart: dotted lines join parent and child, arrows run from a dependency to the ticket that waits for it. */
+export function renderMermaid(tickets: Map<string, Ticket>): string {
+  const lines = [
+    "flowchart TD",
+    "  %% 点線：親子。矢印：矢印の先のチケットは、元のチケットがdoneになるまで始められない。",
+  ];
+  const ids = sortedIds(tickets.keys());
+  for (const id of ids) {
+    const ticket = tickets.get(id)!;
+    lines.push(`  ${nodeId(id)}["${mermaidText(id)}<br/>${mermaidText(stateLabel(ticket, tickets))}<br/>${mermaidText(ticket.title)}"]:::${ticket.status}`);
+  }
+  for (const id of ids) {
+    const ticket = tickets.get(id)!;
+    if (ticket.parent !== null && tickets.has(ticket.parent)) lines.push(`  ${nodeId(ticket.parent)} -.- ${nodeId(id)}`);
+  }
+  const missing = new Set<string>();
+  for (const id of ids) {
+    for (const dep of tickets.get(id)!.dependsOn) {
+      if (!tickets.has(dep) && !missing.has(dep)) {
+        missing.add(dep);
+        lines.push(`  ${nodeId(dep)}["${mermaidText(dep)}<br/>missing"]:::missing`);
+      }
+      lines.push(`  ${nodeId(dep)} --> ${nodeId(id)}`);
+    }
+  }
+  lines.push(
+    "  classDef pending fill:#f1f3f5,stroke:#868e96,color:#212529",
+    "  classDef running fill:#d0ebff,stroke:#1c7ed6,color:#212529",
+    "  classDef paused fill:#fff3bf,stroke:#f08c00,color:#212529",
+    "  classDef done fill:#d3f9d8,stroke:#2f9e44,color:#212529",
+    "  classDef cancelled fill:#f8f9fa,stroke:#adb5bd,color:#868e96,stroke-dasharray:4 3",
+    "  classDef missing fill:#ffe3e3,stroke:#e03131,color:#212529,stroke-dasharray:4 3",
+  );
+  return lines.join("\n") + "\n";
+}
+
+export function graphTickets(root: string, format: "tree" | "mermaid" = "tree"): string {
+  const tickets = loadTickets(ticketsDir(root));
+  return format === "mermaid" ? renderMermaid(tickets) : renderTree(tickets);
+}
+
 function usage(): never {
   console.error(USAGE);
   process.exit(1);
@@ -280,6 +372,7 @@ export function main(argv: string[]): void {
           "depends-on": { type: "string" },
           status: { type: "string" },
           ready: { type: "boolean" },
+          mermaid: { type: "boolean" },
         },
       });
     } catch {
@@ -307,6 +400,12 @@ export function main(argv: string[]): void {
         const ready = row.ready === null ? "-" : row.ready ? "yes" : "no";
         console.log([row.id, row.status, ready, row.parent ?? "-", row.dependsOn.join(" "), row.title].join("\t"));
       }
+      return;
+    }
+    case "graph": {
+      if (positionals.length !== 1) usage();
+      allowOnly("mermaid");
+      process.stdout.write(graphTickets(positionals[0]!, values.mermaid ? "mermaid" : "tree"));
       return;
     }
     case "status": {
