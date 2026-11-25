@@ -102,9 +102,9 @@ Tickets（チケットの管理）は、セッションをまたいで残る仕�
 | 判断ログ | どう進め、何を選び、何を根拠にしたか | `.space/tickets/<ticket-id>/decisions.tsv` |
 | タスクリスト | このセッションでどの手順まで進んだか | Claude Codeのタスクリスト |
 
-チケットは目的、終了条件、状態、依存関係、成果物への参照、checkpoint（現在地と次の操作）を持ち、判断の履歴は持たない。形式はMarkdownとし、AIも人も直接編集する。最初はCLIを作らない。
+チケットは目的、終了条件、状態、依存関係、成果物への参照、checkpoint（現在地と次の操作）を持ち、判断の履歴は持たない。形式はMarkdownとし、`ticket.md`を正本とする。AIも人も本文を直接編集する。`ticket`スキルの補助スクリプト（`scripts/ticket.sh`）は、チケットの作成、frontmatterを読んだ一覧、状態と`updated`の書き換えだけを行い、ファイルの外に台帳や状態を持たない。
 
-状態は`pending`、`running`、`paused`、`done`、`cancelled`の5つとする。
+状態は`pending`、`running`、`paused`、`done`、`cancelled`の5つとする。子チケットは`parent`で親を指し、フォルダは入れ子にしない。依存先が`done`でなければ`running`にできず、子チケットが終わっていなければ親を`done`にできない。
 
 チケットの形式と操作手順は`ticket`スキルに書く。pause-safely・session-pickup・show-me-your-workは、再開メモ・再開地点・判断ログの置き場所としてチケットを使う形へ移す。
 
