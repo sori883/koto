@@ -43,7 +43,7 @@ ts	phase	decision	why	evidence	result
 
 ## 置き場所
 
-ログは、その作業のチケットのフォルダに`.space/tickets/<ticket-id>/decisions.tsv`として置く。`.space/`はプロジェクトのルートにあり、無ければ**setup**スキルで作る。チケットがまだ無いときは、**ticket**スキルでチケットを作ってからログを始める。
+ログは、その作業のチケットのフォルダに`.space/tickets/<ticket-id>/decisions.tsv`として置く。`.space/`はプロジェクトのルートにあり、無ければ**setup**スキルで作る。
 
 ログはコミットする。チケットと同じく、利用者やチームが後から判断の経緯をレビューするための記録である。`log.ts`には、作業中のフォルダからの相対パスではなく、このパスの絶対パスを渡す。
 

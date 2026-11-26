@@ -109,12 +109,15 @@ Tickets（チケットの管理）は、セッションをまたいで残る仕�
 
 状態は`pending`、`running`、`paused`、`done`、`cancelled`の5つとする。子チケットは`parent`で親を指し、フォルダは入れ子にしない。依存先が`done`でなければ`running`にできず、子チケットが終わっていなければ親を`done`にできない。
 
-チケットの形式と操作手順は`ticket`スキルに書く。ほかのスキルは次のようにチケットを使う。
+チケットの形式と操作手順は`ticket`スキルに書く。チケットを作るかどうかは、koto-modeのプレイブックごとに決める。チケットを作らないプレイブックには、チケットについて何も書かない。
 
-- koto-mode：セッションをまたぐ作業、中断や引き継ぎがありうる作業、長い作業・無人の作業を**ticket**に振り分ける。
-- pause-safely：再開用のメモをチケットのcheckpointに書き、チケットを`paused`にする。
-- session-pickup：最初に`running`と`paused`のチケットのcheckpointと判断ログを読む。
-- show-me-your-work・hillclimb：判断ログをチケットのフォルダの`decisions.tsv`に、show-me-your-workの列で書く。
+| 区分 | プレイブック | チケットの扱い |
+| --- | --- | --- |
+| 作る | Bug fix、Feature、Refactoring、Perf issue、Visual parity、Hillclimb、Autonomous run、Multi-phase plan、Autopilot-full、Autopilot-stack | 手順の中でチケットを作るか、同じ仕事の既存のチケットを使う。目的と終了条件を書く。Visual parity・Multi-phase plan・Autopilotは、全体を親、担当やPRごとを子にする |
+| 使う | Pause safely、Session pickup、Opening a PR、Babysit、Shipping | 作業のチケットがあれば読み書きする。checkpointの更新、`paused`・`running`・`done`への変更、PRのURLの記録 |
+| 関わらない | Investigation、Runtime forensics、Trace forensics、Prototype、Worktree cleanup、Authoring a skill、Eval | 何も書かない |
+
+show-me-your-workとHillclimbは、判断ログをチケットのフォルダの`decisions.tsv`に、show-me-your-workの列で書く。
 
 ## 検証
 
