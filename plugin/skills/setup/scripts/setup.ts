@@ -33,33 +33,42 @@ export function setup(rootArg: string): Outcome[] {
   }
 
   const space = join(root, ".space");
-  const tickets = join(space, "tickets");
-  const keep = join(tickets, ".gitkeep");
+  // Each area is committed. Git does not track empty directories, so each gets a .gitkeep.
+  const areas = [join(space, "tickets"), join(space, "kb")];
+  const keeps = areas.map((area) => join(area, ".gitkeep"));
 
   // Check everything first so a refusal changes nothing.
-  for (const path of [space, tickets]) {
+  for (const path of [space, ...areas]) {
     const found = kind(path);
     if (found !== "missing" && found !== "directory") throw new SetupError(`exists but is not a plain directory: ${path}`);
   }
-  const keepKind = kind(keep);
-  if (keepKind !== "missing" && keepKind !== "file") throw new SetupError(`exists but is not a regular file: ${keep}`);
+  for (const keep of keeps) {
+    const found = kind(keep);
+    if (found !== "missing" && found !== "file") throw new SetupError(`exists but is not a regular file: ${keep}`);
+  }
 
   const outcomes: Outcome[] = [];
-  for (const path of [space, tickets]) {
+  const ensureDirectory = (path: string) => {
     if (kind(path) === "directory") {
       outcomes.push({ result: "kept", path });
     } else {
       mkdirSync(path);
       outcomes.push({ result: "created", path });
     }
-  }
-  // Git does not track empty directories. Keep tickets/ visible in a fresh clone.
-  if (kind(keep) === "file") {
-    outcomes.push({ result: "kept", path: keep });
-  } else {
-    writeFileSync(keep, "", { flag: "wx" });
-    outcomes.push({ result: "created", path: keep });
-  }
+  };
+  const ensureKeep = (path: string) => {
+    if (kind(path) === "file") {
+      outcomes.push({ result: "kept", path });
+    } else {
+      writeFileSync(path, "", { flag: "wx" });
+      outcomes.push({ result: "created", path });
+    }
+  };
+  ensureDirectory(space);
+  areas.forEach((area, i) => {
+    ensureDirectory(area);
+    ensureKeep(keeps[i]!);
+  });
   return outcomes;
 }
 
