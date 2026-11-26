@@ -121,6 +121,15 @@ PRで出す仕事のチケットは、PRを開いた時点で`done`にし、そ�
 
 show-me-your-workとHillclimbは、判断ログをチケットのフォルダの`decisions.tsv`に、show-me-your-workの列で書く。
 
+## 未決事項
+
+実装や試験の中で見つかり、まだ決めていない事項である。決めたらこの節から消し、該当する節に書く。
+
+- **Autopilotの親チケットを閉じる場所。** 子チケットは各担当がPRを開くときに閉じる。親チケットは「子チケットがすべて終わったら閉じる」としか決めておらず、担当がクラウドで並行して動くため、どのPRの中で閉じるかが決まっていない。実際にAutopilotを動かして決める。
+- **recallの扱い。** pstackの`recall`は作業の現在地を思い出すスキルで、チケットとSession pickupに役割が重なる。チケットを前提に作り直すか、作らずにSession pickupに任せるかを、Memoryと合わせて決める。`reflect`・`correct`・`automate-me`も同様にMemoryと合わせて決める。
+- **実際に動かして確かめていないプレイブック。** チケットを作るプレイブックのうち、Bug fixとMulti-phase plan以外（Feature、Refactoring、Perf issue、Visual parity、Hillclimb、Autonomous run、Autopilot）は、手順を揃えただけで動かしていない。PRが差し戻されてチケットを`pending`に戻す流れも試していない。
+- **スクリプトのテストの置き場所。** kotoで書いたスクリプトのテストは`tests/`に置き、配布しない。pstackからコピーした`koto-mode/scripts/watch-pr/`と`statechart/scripts/`のテストは、配布物の中に残っている。どちらに揃えるかを決める。
+
 ## 検証
 
 配布物の完成条件は、利用先のClaude Codeでプラグインとして読み込めて、スキル・エージェントが意図どおりに動くことである。
