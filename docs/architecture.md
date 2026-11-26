@@ -11,12 +11,12 @@ kotoは、Claude Codeで開発するときの作業スタイル（作業の進�
 **[pstack](https://github.com/cursor/plugins/tree/main/pstack)を参照元として土台を作り、その上にkoto独自の概念を載せる。**
 
 1. 土台：pstackの構成（入口となる中核スキル、作業種別ごとのプレイブック、原則、委任用エージェント、単体で使えるスキル）を参照し、Claude Code向けに書き起こす。
-2. koto独自の概念：土台ができてから、Memory（知識の継承）とTasks（タスクの分割・管理）を順に載せる。載せ方は各段階で設計し、この文書へ追記する。
+2. koto独自の概念：土台ができてから、Knowledge（知識の継承）とTickets（タスクの分割・管理）を順に載せる。載せ方は各段階で設計し、この文書へ追記する。
 
 pstackは取り込まず、参照して書き起こす。
 
 - pstackはCursor向けに書かれており、Cursor固有の機能・ツール名・作者個人のやり方を前提にした部分が多い。kotoはClaude Codeのツール名と機能で最初から書く。Cursorの名前を読み替える仕組み（pstackの`docs/harness/claude-code.md`に相当するもの）は作らない。
-- 中核スキルとプレイブックは、Memory・Tasksを組み込む前提で書き直すため、上流との差分追従を目的にしない。
+- 中核スキルとプレイブックは、Knowledge・Ticketsを組み込む前提で書き直すため、上流との差分追従を目的にしない。
 - ほぼそのまま使え、koto独自の概念とほとんど関わらないスキルに限り、個別にコピーして調整してよい。その場合は、pstackのMIT Licenseの著作権表示と許諾表示を配布物に含める。
 
 参照したpstackの版と、スキルごとの採否は[pstack参照記録](pstack/reference.md)に置く。
@@ -46,6 +46,7 @@ pstackは取り込まず、参照して書き起こす。
 | `plugin/.claude-plugin/plugin.json` | プラグインの名前・版・説明 |
 | `plugin/skills/<name>/SKILL.md` | スキル。スキル専用の参照資料は同じフォルダの`references/`、実行コードは`scripts/`に置く |
 | `plugin/agents/<name>.md` | 委任用のサブエージェント定義 |
+| `plugin/hooks/hooks.json` | フックの定義。Knowledgeの目次と、編集するファイルに結びついた1件をAIに読ませる |
 | `docs/` | 設計・参照記録・検証記録など、保守者向けの資料。配布しない |
 | `tests/` | 配布するスクリプトのテスト。保守者向けであり、配布しない |
 
@@ -90,9 +91,16 @@ kotoが利用先のプロジェクトに残すファイルは、プロジェク�
     <ticket-id>/
       ticket.md        チケット本体
       decisions.tsv    このチケットの判断ログ（show-me-your-work）
+  kb/
+    index.md           Knowledgeの目次
+    decisions/         判断
+    constraints/       制約
+    documents/         参照
+    references/        参照の写し
 ```
 
 - `tickets/`は、`ticket.md`も`decisions.tsv`もコミットする。チケットと判断の経緯は、利用者やチームが共有し、後からレビューする情報である。
+- `kb/`もすべてコミットする。
 - `setup`は`.gitignore`を作らない。
 
 ## Tickets
@@ -121,12 +129,116 @@ PRで出す仕事のチケットは、PRを開いた時点で`done`にし、そ�
 
 show-me-your-workとHillclimbは、判断ログをチケットのフォルダの`decisions.tsv`に、show-me-your-workの列で書く。
 
+## Knowledge
+
+Knowledge（知識の継承）は、コードにもGitの履歴にも残らず、次に作業する自分とAIが知らないと困ることを、チケットより長く残す。Claude Codeの自動メモリーや`/memory`コマンドと取り違えないよう、機能の名前はMemoryではなくKnowledgeとする。
+
+### 記録の振り分け
+
+情報の行き先は、「その情報を、あとで誰がいつ必要とするか」で決める。無人の作業でも協働の作業でも同じ基準を使い、変わるのは誰が承認するかだけである。次の順に当てはめ、最初に当てはまった場所に残す。
+
+| 順 | 情報 | 行き先 |
+| --- | --- | --- |
+| 1 | コードやGitの履歴を読めばわかる | 残さない。コードを読むか、`why`で掘り起こす |
+| 2 | 型・lint・テストで防げる | 仕組みにする |
+| 3 | 次も同じ手順を踏む | スキル |
+| 4 | これからやる仕事、いまの現在地 | チケット |
+| 5 | その作業をレビューするためだけに要る経緯 | 判断ログ（`decisions.tsv`） |
+| 6 | 次の作業でも、知らないと困る | Knowledge |
+
+利用者の好みや作業スタイルはKnowledgeに入れず、`CLAUDE.md`と、`automate-me`で作る個人用スキルに置く。Claude Codeの自動メモリーには、kotoからは書かない。利用者が自由に使う。社外秘の資料は扱わない。
+
+### 種類
+
+| `type` | 入れるもの | 読んだAIの態度 | 本文の見出し |
+| --- | --- | --- | --- |
+| `Decision`（判断） | 設計の判断、見送った案 | 正しい状態として扱い、変えるよう提案しない | 結論 / 理由 / 見送った案 |
+| `Constraint`（制約） | 外から来た制約（契約、法律、ほかのチームとの取り決め）と、受け入れた妥協（既存のコード、範囲、時間など内側の事情） | その場では変えず、見直す条件を満たしたときにだけ変える提案をする | 制約 / 出所 / 守り方 / 本当はどうしたいか（任意。妥協のときに書く） |
+| `Reference`（参照） | 文書への参照。資料が扱う関心事ごとに1件とし、資料の長さでは分けない | その関心事に触れたときに読む | 要点 / 読む場面 / 開き方 / 目次 |
+
+妥協は、理想ではないと分かったうえで受け入れているという点で、AIに取ってほしい態度が制約と同じなので、制約にまとめる。
+
+コードへの参照は種類にせず、判断・制約に付ける`code_refs`（効く場所）で表す。1件と1件の関係は、OKFに従って本文のMarkdownリンクで表し、関係の意味はリンクの前後の文章で伝える。妥協を生んだ制約があれば、妥協の「出所」からその制約へリンクする。
+
+### 形式
+
+1件は、[OKF v0.2](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)の形式で、YAMLのfrontmatterとMarkdownの本文を持つ1ファイルとする。frontmatterには次のキーを使う。
+
+- 必須
+  - `type`：`Decision`・`Constraint`・`Reference`のいずれか。
+- OKFの推奨
+  - `title`：短い名前。目次の見出しになる。
+  - `description`：1文の要約。目次に出る1行で、起動時にAIが読むのはここまで。
+  - `tags`：関心事（auth、billingなど）を表す文字列の配列。
+  - `resource`：`Reference`だけで使う。元の資料のURL。
+- OKFの任意
+  - `status`：`draft`（未確認）・`stable`（確定）・`deprecated`（役目を終えた）。無人で書いた1件は`draft`、人が承認したら`stable`にする。
+  - `generated`：`{ by, at }`。誰がいつ書いたか。
+  - `verified`：`[{ by: human:…, at }]`。人が中身を確かめた記録。`stable`にしたときに足す。`Reference`では、元の資料と照らした日にもなる。
+  - `sources`：出どころ。チケットのパス、PRのURLなど。
+  - `stale_after`：見直す期限が日付で言えるときだけ使う。
+- kotoが足すもの
+  - `code_refs`：リポジトリのルートからのパス・globの配列。効く場所を表し、編集の直前に出す1件を選ぶのに使う。
+  - `review_when`：見直す条件を文章で書く。日付で言えない条件（「呼び出し側を移行するとき」など）に使う。
+
+### 置き場所
+
+Knowledgeは`.space/kb/`に置き、フォルダを種類で分ける。関心事は`tags`で表す。ファイル名（slug）は英語にする。
+
+- `index.md`：OKFの目次。補助スクリプトが、1件を書くたびに作り直す。手では編集しない。
+- `decisions/<slug>.md`：判断。
+- `constraints/<slug>.md`：制約。
+- `documents/<slug>.md`：参照。本文は目次・要点・読む場面。
+- `references/<slug>/`：参照の写し。OKFの`references/`の慣習に従う。資料はMarkdownに変換して置き、元のファイルは置かずに`resource`で元の場所を指す。図や表が要点になる資料は、その画像も置く。
+
+OKFの更新履歴（`log.md`）は持たない。Gitの履歴で足りる。
+
+### 書き込み
+
+| 入口 | いつ | 流れ |
+| --- | --- | --- |
+| チケットを閉じるとき | チケットを`done`または`cancelled`にするとき | `ticket.md`と`decisions.tsv`を読み返して候補を選び、利用者に残すかを聞く。協働なら利用者がその場で承認して`stable`、無人なら`draft`で書く。取りやめたチケットも、取りやめた理由が見送った案として残ることがあるので同じに扱う |
+| 利用者が残すよう頼んだとき | いつでも。チケットのない作業でも | `knowledge`スキルで1件を書く。作業の途中で、AIの側から残すよう提案はしない |
+| no-commentsがコメントを消すとき | コメントを整理するとき | コメントの中身を振り分ける。受け入れた妥協と外から来た制約は、`code_refs`付きの制約として書いてから消す |
+
+チケットを閉じるときに書くので、PRで出す仕事のKnowledgeは、チケットの更新と同じPRに入る。PRがマージされなければ、そのKnowledgeも`main`に入らない。Knowledgeには結論と効く場所を書き、詳しい経緯は`sources`のチケットから辿る。
+
+no-commentsでのコメントの振り分けは次のとおりとする。
+
+| コメントの中身 | 行き先 |
+| --- | --- |
+| コードが何をしているか | 消す。名前や構造で表す |
+| 仕組みで守れる注意 | 型・実行時の確認・テストにしてから消す |
+| この変更をした理由 | コミット・PRに残して消す |
+| 受け入れた妥協、外から来た制約 | Knowledgeの制約（`code_refs`付き）にしてから消す |
+| 自分たちが変えられないものへの注意（ライセンス表示、ツールが読む指示など） | コードに残す |
+
+### 読ませ方
+
+| 場面 | 仕組み | 出すもの |
+| --- | --- | --- |
+| 会話の開始、サブエージェントの開始 | `SessionStart`・`SubagentStart`のフック | `index.md`をそのまま。`draft`の1件には印を付ける。目次が長くなりすぎたら（目安は100件）、種類ごとの件数と、`knowledge`スキルで探すよう案内する文だけにする |
+| 作業を思い出すとき | `recall` | チケットの`tags`や触る範囲に関係する1件を、本文まで読む |
+| ファイルを編集する直前 | `PreToolUse`（`Edit\|Write`）のフック | `code_refs`が一致する判断・制約の本文 |
+| 指摘や変更の提案の前 | koto-modeの決まり | その箇所の1件を確かめてから提案する。ファイルを読むたびには出さない |
+
+`SessionStart`の`additionalContext`はメインの会話にだけ届き、サブエージェントには`SubagentStart`で届く。`PreToolUse`の`additionalContext`はどちらにも届く。委任用エージェントには、エージェント定義の`skills`で`knowledge`スキルを読み込ませる。そのため`knowledge`スキルにも`disable-model-invocation: true`を付けない。
+
+### 見直し
+
+見直しと片付けは、利用者が気が向いたときにコマンドで行う。`review_when`・`stale_after`の点検、役目を終えた1件の`deprecated`への変更、`code_refs`の指す先が消えていないかの確認、未確認（`draft`）の1件の確定を扱う。
+
+### 補助スクリプト
+
+`knowledge`スキルの補助スクリプト（`scripts/knowledge.ts`）は、1件の作成（雛形と名前の検査）、検索（種類・`tags`・`status`・語句）、`code_refs`の照合、目次の生成、検査（形式、リンク切れ、`code_refs`の指す先、期限切れ）だけを行う。1件の更新・削除・関連付けは、チケットと同じくAIがファイルを直接編集する。外部パッケージには依存しない。
+
 ## 未決事項
 
 実装や試験の中で見つかり、まだ決めていない事項である。決めたらこの節から消し、該当する節に書く。
 
 - **Autopilotの親チケットを閉じる場所。** 子チケットは各担当がPRを開くときに閉じる。親チケットは「子チケットがすべて終わったら閉じる」としか決めておらず、担当がクラウドで並行して動くため、どのPRの中で閉じるかが決まっていない。実際にAutopilotを動かして決める。
-- **recallの扱い。** pstackの`recall`は作業の現在地を思い出すスキルで、チケットとSession pickupに役割が重なる。チケットを前提に作り直すか、作らずにSession pickupに任せるかを、Memoryと合わせて決める。`reflect`・`correct`・`automate-me`も同様にMemoryと合わせて決める。
+- **recallの作り方。** Knowledgeは`recall`に乗せて読ませるので、`recall`はチケットとKnowledgeを読むスキルとして作る。Session pickupとの役割の分け方は、まだ決めていない。
+- **reflect・correct・automate-meの扱い。** Knowledgeとの分担を決めていない。`automate-me`は、利用者の好みと作業スタイルの置き場所になる。
 - **実際に動かして確かめていないプレイブック。** チケットを作るプレイブックのうち、Bug fixとMulti-phase plan以外（Feature、Refactoring、Perf issue、Visual parity、Hillclimb、Autonomous run、Autopilot）は、手順を揃えただけで動かしていない。PRが差し戻されてチケットを`pending`に戻す流れも試していない。
 - **スクリプトのテストの置き場所。** kotoで書いたスクリプトのテストは`tests/`に置き、配布しない。pstackからコピーした`koto-mode/scripts/watch-pr/`と`statechart/scripts/`のテストは、配布物の中に残っている。どちらに揃えるかを決める。
 
