@@ -1,14 +1,14 @@
 {
   "name": "koto",
+  "description": "kotoのClaude Codeプラグインを配布するマーケットプレイス。",
   "owner": {
     "name": "sori883"
   },
   "plugins": [
     {
       "name": "koto",
-      "source": "./dist/claude-code/koto",
-      "version": "0.1.12",
-      "description": "開発フロー、作業管理、知識管理をAIエージェントへ提供する。"
+      "source": "./plugin",
+      "description": "Claude Codeで、深く調べてから小さく確かな変更を行うための作業スタイル。"
     }
   ]
 }

@@ -1,0 +1,10 @@
+{
+  "name": "koto",
+  "version": "0.2.1",
+  "description": "Claude Codeで、深く調べてから小さく確かな変更を行うための作業スタイル。",
+  "author": {
+    "name": "sori883"
+  },
+  "homepage": "https://github.com/sori883/koto",
+  "repository": "https://github.com/sori883/koto"
+}
