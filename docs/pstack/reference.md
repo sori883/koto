@@ -31,7 +31,7 @@ kotoの土台を作るときに参照したpstackの版と、構成要素ごと�
 | `poteto-mode` | 書き起こした | kotoの中核スキル`koto-mode`。Cursor専用の部分だけを読み替えた |
 | `poteto-mode/playbooks/`（22本） | 書き起こした | すべて`koto-mode/playbooks/`に置いた |
 | `poteto-mode/references/bugbot-triage.md` | 書き起こした | |
-| `poteto-mode/scripts/` | コピーした | パッケージ名と会話記録の場所だけをClaude Code向けに変えた。`worktree-audit.sh`はBunの`worktree-audit.ts`に書き直し、`jq`・`rg`・`stat`・`date`への依存をなくした |
+| `poteto-mode/scripts/` | コピーした | パッケージ名と会話記録の場所だけをClaude Code向けに変えた。`worktree-audit.sh`はBunの`worktree-audit.ts`に書き直し、`jq`・`rg`・`stat`・`date`への依存をなくした。`watch-pr`の`--status-only`は、チェックが1件も無いPR（CIの無いリポジトリ）でやり直し続けず、CIの欄を「no checks」として返すように変えた |
 | `poteto-mode/worker.md` | 書き起こした | PR本文の見出しを日本語にした |
 | `agents/poteto-agent.md` | 書き起こした | `koto-agent`。`model: opus`、`effort: xhigh`、`background: true` |
 | `figure-it-out` | 書き起こした | |

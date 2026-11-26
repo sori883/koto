@@ -1,4 +1,5 @@
 import {
+  ChecksUnavailable,
   WatcherQueryError,
   resolveChecks,
   resolveReviewThreads,
@@ -61,6 +62,12 @@ export async function readSnapshot(args: {
   readonly context: T.PrContext;
   readonly pendingHistory: "include" | "omit";
   readonly allowDraft: boolean;
+  /**
+   * What to do when the head reports no checks at all. Watching retries,
+   * since checks can appear just after a push. A one-shot status read
+   * reports it, because a repository without CI never gets any.
+   */
+  readonly missingChecks?: "retry" | "report";
 }): Promise<T.PrSnapshot> {
   const facts = await args.reader.pullRequest(args.context);
   if (facts.state === "MERGED" || facts.mergedAt !== null)
@@ -68,7 +75,20 @@ export async function readSnapshot(args: {
   if (facts.state === "CLOSED")
     return { kind: "closed", context: args.context, facts };
   const threads = await resolveReviewThreads(args.reader, args.context);
-  const checks = await resolveChecks(args.reader, args.context);
+  let checks: T.CheckRead;
+  try {
+    checks = await resolveChecks(args.reader, args.context);
+  } catch (error) {
+    if (!(error instanceof ChecksUnavailable) || args.missingChecks !== "report") throw error;
+    return {
+      kind: "open",
+      context: args.context,
+      facts,
+      threads,
+      ci: { kind: "ci-none", hadPreviousPassingCi: false },
+      reviewAutomationRunning: false,
+    };
+  }
   const failed = nonEmpty(
     checks.checks.filter(
       (check): check is T.FailedCheck => check.kind === "failed"
@@ -437,6 +457,7 @@ export async function runSimple(args: {
           context,
           pendingHistory: "include",
           allowDraft: args.options.allowDraft,
+          missingChecks: args.statusOnly ? "report" : "retry",
         })
       );
     const complete = nonEmpty(rows);

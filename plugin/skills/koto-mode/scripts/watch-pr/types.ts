@@ -142,7 +142,12 @@ export type CiClean = CiBase & {
   readonly pending: readonly [];
   readonly github: GitHubMergeAllowed;
 };
-export type CiState = CiFailing | CiGithubRejected | CiPending | CiClean;
+/** No check was reported for the head. Only status-only reads produce this. */
+export type CiNone = {
+  readonly kind: "ci-none";
+  readonly hadPreviousPassingCi: false;
+};
+export type CiState = CiFailing | CiGithubRejected | CiPending | CiClean | CiNone;
 export type PrSnapshot =
   | {
       readonly kind: "merged" | "closed";

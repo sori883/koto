@@ -29,6 +29,7 @@ import type {
   RollupState,
 } from "./types.ts";
 import { parsePrNumber } from "./types.ts";
+import { renderStatusTable } from "./render.ts";
 
 const context = (number: number): PrContext => ({
   owner: "owner",
@@ -479,4 +480,46 @@ describe("polling deadline sleeps", () => {
     expect(sleeps).toEqual([60]);
   });
 
+});
+
+describe("status-only on a repository without CI", () => {
+  const noChecks = () => fakeReader({ fastPath: { kind: "checks", checks: [] } });
+  const clock = (sleeps: number[]) => ({
+    now: () => 0,
+    observedAt: () => "2026-07-26T00:00:00.000Z",
+    async sleep(seconds: number) { sleeps.push(seconds); },
+  });
+
+  it("reports no checks once instead of retrying", async () => {
+    const sleeps: number[] = [];
+    const result = await runSimple({
+      dependencies: { reader: noChecks(), clock: clock(sleeps), emit() {} },
+      contexts: [context(1)], mode: "single", statusOnly: true,
+      options: { ...options, interval: 60, timeout: 0 },
+    });
+    expect(result.kind).toBe("STATUS");
+    expect(sleeps).toEqual([]);
+    if (result.kind !== "STATUS") throw new Error("expected STATUS");
+    const row = result.rows[0];
+    expect(row.kind).toBe("open");
+    if (row.kind !== "open") throw new Error("expected open");
+    expect(row.ci.kind).toBe("ci-none");
+    expect(renderStatusTable(result.rows)).toContain("— no checks");
+  });
+
+  it("still retries when watching rather than reporting", async () => {
+    const sleeps: number[] = [];
+    let now = 0;
+    const result = await runSimple({
+      dependencies: {
+        reader: noChecks(),
+        clock: { ...clock(sleeps), now: () => now, async sleep(s: number) { sleeps.push(s); now += s; } },
+        emit() {},
+      },
+      contexts: [context(1)], mode: "single", statusOnly: false,
+      options: { ...options, interval: 60, timeout: 0 },
+    });
+    expect(result.kind).not.toBe("STATUS");
+    expect(sleeps.length).toBeGreaterThan(0);
+  });
 });
