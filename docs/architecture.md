@@ -114,8 +114,10 @@ Tickets（チケットの管理）は、セッションをまたいで残る仕�
 | 区分 | プレイブック | チケットの扱い |
 | --- | --- | --- |
 | 作る | Bug fix、Feature、Refactoring、Perf issue、Visual parity、Hillclimb、Autonomous run、Multi-phase plan、Autopilot-full、Autopilot-stack | 手順の中でチケットを作るか、同じ仕事の既存のチケットを使う。目的と終了条件を書く。Visual parity・Multi-phase plan・Autopilotは、全体を親、担当やPRごとを子にする |
-| 使う | Pause safely、Session pickup、Opening a PR、Babysit、Shipping | 作業のチケットがあれば読み書きする。checkpointの更新、`paused`・`running`・`done`への変更、PRのURLの記録 |
-| 関わらない | Investigation、Runtime forensics、Trace forensics、Prototype、Worktree cleanup、Authoring a skill、Eval | 何も書かない |
+| 使う | Pause safely、Session pickup、Opening a PR | 作業のチケットがあれば読み書きする。checkpointの更新、`paused`・`running`への変更。Opening a PRは、PRのURLを書いてチケットを`done`にする |
+| 関わらない | Babysit、Shipping、Investigation、Runtime forensics、Trace forensics、Prototype、Worktree cleanup、Authoring a skill、Eval | 何も書かない |
+
+PRで出す仕事のチケットは、PRを開いた時点で`done`にし、その更新をPRに含める。チケットは作業ブランチ上のファイルなので、マージ後に閉じようとすると`main`へ直接コミットすることになるからである。PRを開いた後のレビュー対応やマージではチケットに触れず、差し戻されて作業し直すときは`pending`に戻す。
 
 show-me-your-workとHillclimbは、判断ログをチケットのフォルダの`decisions.tsv`に、show-me-your-workの列で書く。
 
