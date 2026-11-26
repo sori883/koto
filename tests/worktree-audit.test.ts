@@ -4,8 +4,6 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   audit,
-  checkedOutBranches,
-  chooseBranchBucket,
   chooseBucket,
   classifyDirty,
   formatSize,
@@ -38,15 +36,6 @@ describe("pure helpers", () => {
     expect(chooseBucket({ ...base, pr: "#1/closed" })).toBe("safe");
     expect(chooseBucket({ ...base, merged: "YES" })).toBe("safe");
     expect(chooseBucket({ ...base, dirty: "scratch:3" })).toBe("review");
-  });
-
-  test("reads checked-out branches and buckets loose branches", () => {
-    const porcelain = "worktree /r\nHEAD a\nbranch refs/heads/main\n\nworktree /w\nHEAD b\ndetached\n\nworktree /x\nHEAD c\nbranch refs/heads/feat/x\n";
-    expect([...checkedOutBranches(porcelain)]).toEqual(["main", "feat/x"]);
-    expect(chooseBranchBucket({ pr: "#3/open", merged: "YES" })).toBe("hold-open-pr");
-    expect(chooseBranchBucket({ pr: "-", merged: "YES" })).toBe("safe");
-    expect(chooseBranchBucket({ pr: "#3/closed", merged: "no" })).toBe("safe");
-    expect(chooseBranchBucket({ pr: "-", merged: "no" })).toBe("review");
   });
 
   test("formats sizes like du -h", () => {
@@ -126,22 +115,15 @@ describe("audit on a real repository", () => {
     writeFileSync(join(root, "scratch dir", "junk.log"), "x\n");
     // detached, open PR elsewhere
     sh(repo, "worktree", "add", "-q", "--detach", join(root, "detached"));
-    // loose branches: a backup of unmerged work, a merged leftover, one with an open PR
-    sh(repo, "branch", "backup/scratch", "scratch");
-    sh(repo, "branch", "old-merged", "main");
-    sh(repo, "branch", "in-review", "wip");
   });
   afterAll(() => rmSync(root, { recursive: true, force: true }));
 
   test("classifies each worktree and skips the main one", () => {
     const now = Math.floor(Date.now() / 1000);
-    const { base, rows, branches } = audit({
+    const { base, rows } = audit({
       repo,
       base: "main",
-      prs: [
-        { number: 7, state: "closed", head: "scratch" },
-        { number: 9, state: "open", head: "in-review" },
-      ],
+      prs: [{ number: 7, state: "closed", head: "scratch" }],
       transcriptsDir: join(root, "no-transcripts"),
       now,
       warn: () => {},
@@ -155,16 +137,6 @@ describe("audit on a real repository", () => {
     expect(byName.detached).toMatchObject({ remote: "detached", merged: "YES", bucket: "safe" });
     for (let i = 1; i < rows.length; i++) expect(rows[i - 1]!.sizeKb).toBeGreaterThanOrEqual(rows[i]!.sizeKb);
     expect(formatTable(base, rows).split("\n")[1]).toBe("SIZE\tAGE\tMERGED\tDIRTY\tREMOTE\tPR\tLAST_CHAT\tBUCKET\tWORKTREE");
-
-    // Branches checked out in a worktree (main, merged, wip, scratch) are not listed.
-    expect(branches.map((b) => b.branch)).toEqual(["backup/scratch", "in-review", "old-merged"]);
-    const byBranch = Object.fromEntries(branches.map((b) => [b.branch, b]));
-    expect(byBranch["backup/scratch"]).toMatchObject({ merged: "no", unique: 1, remote: "no-remote", pr: "-", bucket: "review", age: "0d" });
-    expect(byBranch["old-merged"]).toMatchObject({ merged: "YES", unique: 0, bucket: "safe" });
-    expect(byBranch["in-review"]).toMatchObject({ pr: "#9/open", bucket: "hold-open-pr" });
-    const table = formatTable(base, rows, branches).split("\n");
-    expect(table).toContain("# branches not checked out in any worktree");
-    expect(table).toContain("0d\tno\t1\tno-remote\t-\treview\tbackup/scratch");
   });
 
   test("fails clearly on a missing base ref", () => {

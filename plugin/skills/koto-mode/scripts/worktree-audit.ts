@@ -1,9 +1,8 @@
 #!/usr/bin/env bun
 // Read-only worktree prune audit. Classifies every git worktree by size, merge
 // state, uncommitted work, remote/PR state, and the most recent chat that
-// operated in it, then lists local branches no worktree has checked out.
-// Emits tables with a suggested bucket. Never deletes anything; deletion
-// stays a human-gated step in the playbook.
+// operated in it. Emits a table sorted by size with a suggested bucket. Never
+// deletes anything; deletion stays a human-gated step in the playbook.
 import { spawnSync } from "node:child_process";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { homedir } from "node:os";
@@ -32,18 +31,6 @@ export type Row = {
   lastChat: string;
   bucket: Bucket;
   worktree: string;
-};
-
-export type BranchBucket = "hold-open-pr" | "safe" | "review";
-export type BranchRow = {
-  age: string;
-  merged: "YES" | "no";
-  /** Commits on the branch that the base does not have. */
-  unique: number;
-  remote: string;
-  pr: string;
-  bucket: BranchBucket;
-  branch: string;
 };
 
 export class AuditError extends Error {
@@ -82,22 +69,6 @@ export function chooseBucket(row: { dirty: string; pr: string; recentChat: boole
   if (row.pr.endsWith("/open") || row.pr.endsWith("/draft")) return "hold-open-pr";
   if (row.recentChat) return "verify-recent-chat";
   // Squash-merged branches are not ancestors of the base, so any PR counts.
-  if (row.merged === "YES" || row.pr !== "-") return "safe";
-  return "review";
-}
-
-/** Local branches checked out in a worktree, from `git worktree list --porcelain`. */
-export function checkedOutBranches(porcelain: string): Set<string> {
-  return new Set(
-    porcelain
-      .split("\n")
-      .filter((line) => line.startsWith("branch refs/heads/"))
-      .map((line) => line.slice("branch refs/heads/".length)),
-  );
-}
-
-export function chooseBranchBucket(row: { pr: string; merged: "YES" | "no" }): BranchBucket {
-  if (row.pr.endsWith("/open") || row.pr.endsWith("/draft")) return "hold-open-pr";
   if (row.merged === "YES" || row.pr !== "-") return "safe";
   return "review";
 }
@@ -220,7 +191,7 @@ export type AuditOptions = {
   warn?: (message: string) => void;
 };
 
-export function audit(options: AuditOptions = {}): { base: string; rows: Row[]; branches: BranchRow[] } {
+export function audit(options: AuditOptions = {}): { base: string; rows: Row[] } {
   const warn = options.warn ?? ((message: string) => console.error(`warn: ${message}`));
   const repo = options.repo ?? git(process.cwd(), "rev-parse", "--show-toplevel").stdout.trim();
   if (!repo) throw new AuditError("not in a git repo; pass a repo path");
@@ -244,8 +215,18 @@ export function audit(options: AuditOptions = {}): { base: string; rows: Row[]; 
     const dirty = classifyDirty(git(wt, "status", "--porcelain").stdout);
 
     const branch = git(wt, "symbolic-ref", "--quiet", "--short", "HEAD").stdout.trim();
-    const remote = branch ? remoteState(wt, branch, head) : "detached";
-    const pr = prFor(prs, branch);
+    let remote: string;
+    if (!branch) {
+      remote = "detached";
+    } else if (git(wt, "show-ref", "--verify", "--quiet", `refs/remotes/origin/${branch}`).ok) {
+      const remoteHead = git(wt, "rev-parse", `origin/${branch}`).stdout.trim();
+      remote = remoteHead === head ? "pushed" : `ahead${git(wt, "rev-list", "--count", `origin/${branch}..HEAD`).stdout.trim()}`;
+    } else {
+      remote = "no-remote";
+    }
+
+    const match = branch ? prs.find((pr) => pr.head === branch) : undefined;
+    const pr = match ? `#${match.number}/${match.state}` : "-";
 
     const lastTs = chats.get(wt) ?? 0;
     const recentChat = lastTs > 0 && Math.floor((now - lastTs) / DAY) <= RECENT_DAYS;
@@ -264,55 +245,13 @@ export function audit(options: AuditOptions = {}): { base: string; rows: Row[]; 
     };
   });
   rows.sort((a, b) => b.sizeKb - a.sizeKb);
-  return { base, rows, branches: auditBranches(repo, base, prs, now) };
+  return { base, rows };
 }
 
-function remoteState(cwd: string, branch: string, head: string): string {
-  if (!git(cwd, "show-ref", "--verify", "--quiet", `refs/remotes/origin/${branch}`).ok) return "no-remote";
-  const remoteHead = git(cwd, "rev-parse", `origin/${branch}`).stdout.trim();
-  return remoteHead === head ? "pushed" : `ahead${git(cwd, "rev-list", "--count", `origin/${branch}..${head}`).stdout.trim()}`;
-}
-
-function prFor(prs: Pr[], branch: string): string {
-  const match = branch ? prs.find((pr) => pr.head === branch) : undefined;
-  return match ? `#${match.number}/${match.state}` : "-";
-}
-
-/**
- * Local branches that no worktree has checked out, such as backups made while
- * rewriting history. The base branch itself is never a candidate.
- */
-function auditBranches(repo: string, base: string, prs: Pr[], now: number): BranchRow[] {
-  const checkedOut = checkedOutBranches(git(repo, "worktree", "list", "--porcelain").stdout);
-  const baseBranch = base.startsWith("origin/") ? base.slice("origin/".length) : base;
-  const refs = git(repo, "for-each-ref", "--format=%(refname:short)%09%(objectname)%09%(committerdate:unix)", "refs/heads").stdout;
-  const rows: BranchRow[] = [];
-  for (const line of refs.split("\n").filter(Boolean)) {
-    const [branch, head, ts] = line.split("\t") as [string, string, string];
-    if (checkedOut.has(branch) || branch === baseBranch) continue;
-    const merged = git(repo, "merge-base", "--is-ancestor", head, base).ok ? "YES" : "no";
-    const pr = prFor(prs, branch);
-    rows.push({
-      age: `${Math.floor((now - Number(ts)) / DAY)}d`,
-      merged,
-      unique: Number(git(repo, "rev-list", "--count", `${base}..${head}`).stdout.trim()) || 0,
-      remote: remoteState(repo, branch, head),
-      pr,
-      bucket: chooseBranchBucket({ pr, merged }),
-      branch,
-    });
-  }
-  return rows.sort((a, b) => a.branch.localeCompare(b.branch));
-}
-
-export function formatTable(base: string, rows: Row[], branches: BranchRow[] = []): string {
+export function formatTable(base: string, rows: Row[]): string {
   const lines = [`# base: ${base}`, "SIZE\tAGE\tMERGED\tDIRTY\tREMOTE\tPR\tLAST_CHAT\tBUCKET\tWORKTREE"];
   for (const row of rows) {
     lines.push([row.size, row.age, row.merged, row.dirty, row.remote, row.pr, row.lastChat, row.bucket, row.worktree].join("\t"));
-  }
-  lines.push("", "# branches not checked out in any worktree", "AGE\tMERGED\tUNIQUE\tREMOTE\tPR\tBUCKET\tBRANCH");
-  for (const row of branches) {
-    lines.push([row.age, row.merged, String(row.unique), row.remote, row.pr, row.bucket, row.branch].join("\t"));
   }
   return lines.join("\n") + "\n";
 }
@@ -344,8 +283,8 @@ if (import.meta.main) {
     if (cli.help) {
       console.log(USAGE);
     } else {
-      const { base, rows, branches } = audit({ repo: cli.repo, base: cli.base });
-      process.stdout.write(formatTable(base, rows, branches));
+      const { base, rows } = audit({ repo: cli.repo, base: cli.base });
+      process.stdout.write(formatTable(base, rows));
     }
   } catch (error) {
     if (!(error instanceof AuditError)) throw error;
