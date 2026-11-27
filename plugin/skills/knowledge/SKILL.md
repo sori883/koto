@@ -117,7 +117,7 @@ review_when: 呼び出し側をまとめて移行するとき
 | 目次を作り直す | `knowledge.ts index <root>` |
 | 点検する | `knowledge.ts check <root>` |
 
-- `new`は1件を雛形つきで作り、目次を作り直す。`--status`を省くと`draft`になる。`--status stable --by human:<名前>`で作ると、`verified`にその人の記録が入る。`--by`はAIなら`claude-code`のように書き、利用者が確かめていないのに`human:`を付けない。
+- `new`は1件を雛形つきで作り、目次を作り直す。`--status`を省くと`draft`になる。`stable`にできるのは`--by human:<名前>`を付けたときだけで、`verified`にその人の記録が入る。`generated`（書いた者）は`claude-code`になる。`--by`はAIなら`claude-code`のように書き、利用者が確かめていないのに`human:`を付けない。
 - `list`はタブ区切りで、パス、`type`、`status`、`title`、`description`を出す。`--query`は本文を含めた全文から探す。
 - `for-path`は、そのパスに`code_refs`が一致する判断・制約を本文ごと出す。`deprecated`は出さない。
 - 本文とfrontmatterの書き換えは、ファイルを直接編集する。書き換えたら`knowledge.ts index`で目次を作り直す。
@@ -170,9 +170,9 @@ kotoのフックが、次の場面でKnowledgeをAIに渡す。
 
 1. 資料が扱う関心事を1つ決める。ひとつの関心事が1件になる。
 2. 資料をMarkdownに変換し、`references/<slug>/`に置く。元のファイルは置かない。図や表が要点になるときだけ、その画像を同じフォルダに置き、Markdownから参照する。
-3. `knowledge.ts new <root> reference <slug> ...`で参照の1件を作る。`--resource`に元の資料のURLを入れる。
+3. `knowledge.ts new <root> reference <slug> ...`で参照の1件を作る。`--resource`に元の資料のURLを入れる。利用者に頼まれて取り込むなら`--status stable --by human:<名前>`、チケットの作業の中などで利用者がいなければ`--status draft`とする。
 4. 本文の「要点」に要点、「読む場面」にどんなときに開くか、「開き方」に元の資料の開き方（要るアカウントなど）、「目次」に写しの見出しと`references/<slug>/`の中のファイルへのリンクを書く。
-5. 元の資料と照らして確かめたら、`verified`に確かめた人と日時を書く。
+5. 後で元の資料と照らして確かめ直したら、`verified`に確かめた人と日時を足す。
 
 ### 見直す
 

@@ -53,7 +53,7 @@ title: 取得APIは見つからないとき null を返す
 description: 既存の呼び出し側に合わせて null を返す。本当は結果型にしたい
 tags: [api, users]
 status: stable
-generated: { by: "human:me", at: 2026-11-26T01:00:00Z }
+generated: { by: claude-code, at: 2026-11-26T01:00:00Z }
 verified: [{ by: "human:me", at: 2026-11-26T01:00:00Z }]
 sources:
   - { resource: .space/tickets/user-fetch/ticket.md }
@@ -79,7 +79,7 @@ review_when: 呼び出し側をまとめて移行するとき
 test("the written frontmatter parses back", () => {
   nullConstraint();
   const entry = parseEntry(read("constraints/get-user-returns-null.md"), "constraints/get-user-returns-null.md");
-  expect(entry.meta.generated).toEqual({ by: "human:me", at: "2026-11-26T01:00:00Z" });
+  expect(entry.meta.generated).toEqual({ by: "claude-code", at: "2026-11-26T01:00:00Z" });
   expect(entry.meta.verified).toEqual([{ by: "human:me", at: "2026-11-26T01:00:00Z" }]);
   expect(entry.meta.sources).toEqual([{ resource: ".space/tickets/user-fetch/ticket.md" }]);
   expect(entry.meta.code_refs).toEqual(["src/users/get-user.ts"]);
@@ -98,6 +98,7 @@ test("new refuses bad input", () => {
   expect(() => createEntry(root, "decision", "a", "t", { now, description: "" })).toThrow("--description is required");
   expect(() => createEntry(root, "decision", "a", "t", { ...base, codeRefs: ["../x"] })).toThrow("relative to the project root");
   expect(() => createEntry(root, "reference", "a", "t", { ...base, codeRefs: ["src"] })).toThrow("decision and constraint");
+  expect(() => createEntry(root, "decision", "a", "t", { ...base, status: "stable", by: "claude-code" })).toThrow("needs --by human:");
   createEntry(root, "decision", "a", "t", base);
   expect(() => createEntry(root, "decision", "a", "t", base)).toThrow("already exists");
 });
@@ -188,6 +189,8 @@ test("check reports broken entries, missing code, stale dates and an old index",
   expect(findings).toContain("info constraints/get-user-returns-null.md draft: waiting for a person to confirm");
   expect(findings).toContain("info constraints/get-user-returns-null.md review when: 呼び出し側をまとめて移行するとき");
   expect(findings).toContain("warn index.md out of date. Run knowledge.ts index");
+  expect(findings).toContain("warn constraints/contract.md stable but no verified record by a person");
+  expect(findings.filter((f) => f.includes("get-user-returns-null.md stable but"))).toEqual([]);
 });
 
 test("findRoot walks up to the folder that has .space/kb/", () => {
