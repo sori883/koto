@@ -241,11 +241,8 @@ export function createEntry(root: string, kindName: string, slug: string, title:
   const description = oneLine(options.description ?? "");
   if (!cleanTitle) throw new KnowledgeError("title is empty");
   if (!description) throw new KnowledgeError("--description is required");
-  const status = options.status ?? "draft";
+  const status = options.status ?? "stable";
   if (status !== "draft" && status !== "stable") throw new KnowledgeError("a new entry is draft or stable");
-  if (status === "stable" && !(options.by ?? "").startsWith("human:")) {
-    throw new KnowledgeError("--status stable needs --by human:<name>, the person who confirmed it. Otherwise leave it draft.");
-  }
   if (options.resource && kindName !== "reference") throw new KnowledgeError("--resource is only for reference");
   if (options.codeRefs?.length && kindName === "reference") throw new KnowledgeError("--code-refs is for decision and constraint");
 
@@ -262,7 +259,7 @@ export function createEntry(root: string, kindName: string, slug: string, title:
   // The script is run by the AI. A person named in --by confirmed the entry; they did not write it.
   const writer = by.startsWith("human:") ? "claude-code" : by;
   lines.push(`generated: { by: ${scalar(writer)}, at: ${now} }`);
-  if (status === "stable" && by.startsWith("human:")) lines.push(`verified: [{ by: ${scalar(by)}, at: ${now} }]`);
+  if (by.startsWith("human:")) lines.push(`verified: [{ by: ${scalar(by)}, at: ${now} }]`);
   if (options.resource) lines.push(`resource: ${scalar(options.resource)}`);
   if (options.sources?.length) {
     lines.push("sources:");
@@ -381,10 +378,7 @@ export function checkBundle(root: string, now = new Date()): Finding[] {
       if (!str(entry.meta.description)) add("warn", "missing description");
       const status = statusOf(entry);
       if (!(STATUSES as readonly string[]).includes(status)) add("error", `unknown status '${status}'`);
-      if (status === "draft") add("info", "draft: waiting for a person to confirm");
-      if (status === "stable" && !JSON.stringify(entry.meta.verified ?? "").includes("human:")) {
-        add("warn", "stable but no verified record by a person");
-      }
+      if (status === "draft") add("info", "draft: not settled yet");
       if (status === "deprecated") continue;
       for (const ref of codeRefsOf(entry)) {
         try {

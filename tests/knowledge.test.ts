@@ -91,6 +91,13 @@ test("a draft has no verified record and is marked in the index", () => {
   expect(read("index.md")).toContain("- （未確認）既存の呼び出し側");
 });
 
+test("an entry written by the AI is stable and has no verified record", () => {
+  createEntry(root, "decision", "a", "t", { description: "d", now });
+  const text = read("decisions/a.md");
+  expect(text).toContain("status: stable\ngenerated: { by: claude-code, at: 2026-11-26T01:00:00Z }\n");
+  expect(text).not.toContain("verified:");
+});
+
 test("new refuses bad input", () => {
   const base = { description: "d", now };
   expect(() => createEntry(root, "compromise", "a", "t", base)).toThrow("unknown type");
@@ -98,7 +105,6 @@ test("new refuses bad input", () => {
   expect(() => createEntry(root, "decision", "a", "t", { now, description: "" })).toThrow("--description is required");
   expect(() => createEntry(root, "decision", "a", "t", { ...base, codeRefs: ["../x"] })).toThrow("relative to the project root");
   expect(() => createEntry(root, "reference", "a", "t", { ...base, codeRefs: ["src"] })).toThrow("decision and constraint");
-  expect(() => createEntry(root, "decision", "a", "t", { ...base, status: "stable", by: "claude-code" })).toThrow("needs --by human:");
   createEntry(root, "decision", "a", "t", base);
   expect(() => createEntry(root, "decision", "a", "t", base)).toThrow("already exists");
 });
@@ -142,7 +148,7 @@ test("entriesForPath leaves out deprecated entries", () => {
   nullConstraint();
   createEntry(root, "decision", "old", "古い判断", { description: "d", codeRefs: ["src/users"], now });
   const old = kb("decisions/old.md");
-  writeFileSync(old, readFileSync(old, "utf8").replace("status: draft", "status: deprecated"));
+  writeFileSync(old, readFileSync(old, "utf8").replace("status: stable", "status: deprecated"));
   expect(entriesForPath(root, "src/users/get-user.ts").map((e) => e.path)).toEqual(["constraints/get-user-returns-null.md"]);
   expect(entriesForPath(root, "src/other.ts")).toEqual([]);
   expect(() => entriesForPath(root, "/elsewhere/x.ts")).toThrow("outside the project root");
@@ -153,7 +159,8 @@ test("list filters by type, tag, status and text", () => {
   createEntry(root, "reference", "billing-guide", "決済の手引き", { description: "決済の仕様", resource: "https://example.com/billing", now });
   expect(listEntries(root, { type: "reference" }).map((e) => e.path)).toEqual(["documents/billing-guide.md"]);
   expect(listEntries(root, { tag: "users" }).map((e) => e.path)).toEqual(["constraints/get-user-returns-null.md"]);
-  expect(listEntries(root, { status: "draft" })).toHaveLength(2);
+  expect(listEntries(root, { status: "draft" })).toHaveLength(1);
+  expect(listEntries(root, { status: "stable" }).map((e) => e.path)).toEqual(["documents/billing-guide.md"]);
   expect(listEntries(root, { query: "結果型" }).map((e) => e.path)).toEqual(["constraints/get-user-returns-null.md"]);
 });
 
@@ -186,11 +193,9 @@ test("check reports broken entries, missing code, stale dates and an old index",
   expect(findings).toContain("warn decisions/wrong-type.md broken link: /documents/missing.md");
   expect(findings).toContain("warn decisions/gone.md code_refs points to nothing: src/removed.ts");
   expect(findings).toContain("warn constraints/contract.md stale since 2026-01-01T00:00:00Z");
-  expect(findings).toContain("info constraints/get-user-returns-null.md draft: waiting for a person to confirm");
+  expect(findings).toContain("info constraints/get-user-returns-null.md draft: not settled yet");
   expect(findings).toContain("info constraints/get-user-returns-null.md review when: 呼び出し側をまとめて移行するとき");
   expect(findings).toContain("warn index.md out of date. Run knowledge.ts index");
-  expect(findings).toContain("warn constraints/contract.md stable but no verified record by a person");
-  expect(findings.filter((f) => f.includes("get-user-returns-null.md stable but"))).toEqual([]);
 });
 
 test("findRoot walks up to the folder that has .space/kb/", () => {

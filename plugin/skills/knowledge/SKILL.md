@@ -86,9 +86,9 @@ review_when: 呼び出し側をまとめて移行するとき
 | `title` | 短い名前。目次の見出しになる |
 | `description` | 1文の要約。目次に出る1行で、会話の始まりに読まれるのはここまで。本文を読まずに要るかどうか判断できるように書く |
 | `tags` | 関心事（`auth`、`billing`など） |
-| `status` | `draft`（未確認）・`stable`（確定）・`deprecated`（役目を終えた）。無いときは`stable`として扱う |
+| `status` | `stable`（確定）・`draft`（未確認）・`deprecated`（役目を終えた）。AIが書いた1件も`stable`にする。`draft`は、中身に自信がなく後で確かめたいときだけ使う。無いときは`stable`として扱う |
 | `generated` | 誰がいつ書いたか |
-| `verified` | 人が中身を確かめた記録。`by`は`human:<名前>`にする。人が確かめていないものを書かない |
+| `verified` | 人が中身を確かめた記録。`by`は`human:<名前>`にする。人が確かめていないものを書かない。無くてもよい |
 | `sources` | 出どころ。チケットのパス、PRのURLなど |
 | `resource` | 参照だけ。元の資料のURL |
 | `code_refs` | 判断と制約だけ。プロジェクトのルートからのパス・ディレクトリ・globの配列 |
@@ -117,7 +117,7 @@ review_when: 呼び出し側をまとめて移行するとき
 | 目次を作り直す | `knowledge.ts index <root>` |
 | 点検する | `knowledge.ts check <root>` |
 
-- `new`は1件を雛形つきで作り、目次を作り直す。`--status`を省くと`draft`になる。`stable`にできるのは`--by human:<名前>`を付けたときだけで、`verified`にその人の記録が入る。`generated`（書いた者）は`claude-code`になる。`--by`はAIなら`claude-code`のように書き、利用者が確かめていないのに`human:`を付けない。
+- `new`は1件を雛形つきで作り、目次を作り直す。`--status`を省くと`stable`になる。利用者が残すよう頼んだときや、候補を承認したときは`--by human:<名前>`を付ける。`verified`にその人の記録が入り、`generated`（書いた者）は`claude-code`になる。利用者が確かめていないのに`human:`を付けない。
 - `list`はタブ区切りで、パス、`type`、`status`、`title`、`description`を出す。`--query`は本文を含めた全文から探す。
 - `for-path`は、そのパスに`code_refs`が一致する判断・制約を本文ごと出す。`deprecated`は出さない。
 - 本文とfrontmatterの書き換えは、ファイルを直接編集する。書き換えたら`knowledge.ts index`で目次を作り直す。
@@ -141,7 +141,7 @@ kotoのフックが、次の場面でKnowledgeをAIに渡す。
 
 1. 何を残すかを、「何を残すか」の順で確かめる。Knowledgeに当たらなければ、行き先を伝えて終える。
 2. `knowledge.ts list --query`で同じ内容の1件を探す。あれば、その1件を直す。
-3. 種類、slug、title、description、効く場所、見直す条件を決め、`knowledge.ts new`で作る。利用者が頼んだので`--status stable --by human:<名前>`とする。利用者の名前が分からなければ、Gitの`user.name`を使う。
+3. 種類、slug、title、description、効く場所、見直す条件を決め、`knowledge.ts new`で作る。利用者が頼んだので`--by human:<名前>`を付ける。利用者の名前が分からなければ、Gitの`user.name`を使う。
 4. 本文を書き、`knowledge.ts index`で目次を作り直す。
 5. 作ったパスと要点を伝える。コミットは利用者に頼まれたときか、作業の流れがコミットを含むときに行う。
 
@@ -152,7 +152,7 @@ kotoのフックが、次の場面でKnowledgeをAIに渡す。
 1. `ticket.md`（目的、結果、成果物）と、同じフォルダの`decisions.tsv`を読み返す。
 2. 「何を残すか」の順で、次の作業でも効く判断・制約・参照を選ぶ。PRの説明やコミットに書いたこと、この作業のレビューにしか要らないことは選ばない。多くても数件に絞る。何も無ければ、無いと伝えて終える。
 3. 同じ内容の1件がないかを`knowledge.ts list --query`で探す。あれば、作り直さずに直す案にする。
-4. 利用者がいるなら、候補ごとに種類、title、description、効く場所を示し、`AskUserQuestion`で残すかを聞く。残すと答えたものを`--status stable --by human:<名前>`で作る。利用者がいない作業では、`--status draft`で作る。
+4. 利用者がいるなら、候補ごとに種類、title、description、効く場所を示し、`AskUserQuestion`で残すかを聞く。残すと答えたものを`--by human:<名前>`を付けて作る。利用者がいない作業では、`--by`を付けずに作る。どちらも`stable`になる。
 5. `sources`にはチケットの`ticket.md`のパスを入れる。PRがあればそのURLも入れる。
 6. 本文を書き、目次を作り直す。チケットの更新と同じコミットに含める。
 
@@ -163,14 +163,14 @@ kotoのフックが、次の場面でKnowledgeをAIに渡す。
 1. 差分の削除行から、元の文と、そのコメントが付いていたファイル・シンボルを読む。
 2. 同じ内容の1件がないかを`knowledge.ts list --query`で探す。あれば、`code_refs`を足すなどして直す。
 3. 無ければ、制約（`constraint`）として作る。`code_refs`にはコメントが付いていたファイルを入れ、本文の「出所」に、外から来たものか内側の事情かと、元のコメントの要旨を書く。妥協なら「本当はどうしたいか」も書く。
-4. 利用者がいるなら、候補を示して`AskUserQuestion`で残すかを聞き、残すものを`--status stable --by human:<名前>`で作る。利用者がいない作業では`--status draft`で作る。
+4. 利用者がいるなら、候補を示して`AskUserQuestion`で残すかを聞き、残すものを`--by human:<名前>`を付けて作る。利用者がいない作業では`--by`を付けずに作る。
 5. 目次を作り直す。
 
 ### 資料を取り込む
 
 1. 資料が扱う関心事を1つ決める。ひとつの関心事が1件になる。
 2. 資料をMarkdownに変換し、`references/<slug>/`に置く。元のファイルは置かない。図や表が要点になるときだけ、その画像を同じフォルダに置き、Markdownから参照する。
-3. `knowledge.ts new <root> reference <slug> ...`で参照の1件を作る。`--resource`に元の資料のURLを入れる。利用者に頼まれて取り込むなら`--status stable --by human:<名前>`、チケットの作業の中などで利用者がいなければ`--status draft`とする。
+3. `knowledge.ts new <root> reference <slug> ...`で参照の1件を作る。`--resource`に元の資料のURLを入れる。利用者に頼まれて取り込むなら`--by human:<名前>`を付ける。
 4. 本文の「要点」に要点、「読む場面」にどんなときに開くか、「開き方」に元の資料の開き方（要るアカウントなど）、「目次」に写しの見出しと`references/<slug>/`の中のファイルへのリンクを書く。
 5. 後で元の資料と照らして確かめ直したら、`verified`に確かめた人と日時を足す。
 
@@ -180,7 +180,7 @@ kotoのフックが、次の場面でKnowledgeをAIに渡す。
 
 1. `knowledge.ts check`を実行する。
 2. 結果を利用者に示し、1件ずつ扱いを決める。
-   - `draft`：中身を示し、確かめてもらう。確かめたら`status: stable`にし、`verified`に`{ by: "human:<名前>", at: <日時> }`を足す。誤りなら直すか、ファイルを消す。
+   - `draft`：中身を示し、確かめてもらう。よければ`status: stable`にする。利用者が確かめたなら`verified`に`{ by: "human:<名前>", at: <日時> }`を足す。誤りなら直すか、ファイルを消す。
    - `review_when`・`stale_after`：条件を満たしたかを確かめる。満たしていれば、直すか`deprecated`にする。
    - `code_refs`の指す先が無い：移った先を探して直す。コードごと消えたなら`deprecated`にする。
    - リンク切れ、形式の誤り：直す。
