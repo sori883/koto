@@ -15,7 +15,7 @@ const USAGE = `Usage:
   knowledge.ts for-path <project-root> <path>
   knowledge.ts index    <project-root>
   knowledge.ts check    <project-root>
-  knowledge.ts hook     <session-start|subagent-start|pre-tool-use>   (reads the hook input JSON on stdin)`;
+  knowledge.ts hook     <session-start|subagent-start|post-read|pre-tool-use>   (reads the hook input JSON on stdin)`;
 
 export class KnowledgeError extends Error {}
 
@@ -446,12 +446,16 @@ export function indexContext(root: string): string | null {
   return `このプロジェクトにはKnowledge（.space/kb/）が${count}件あります（${counts.join("、")}）。目次は長いので読み込んでいません。必要なときは knowledge スキルで探してください。`;
 }
 
-export function pathContext(root: string, file: string): string | null {
+export function pathContext(root: string, file: string, moment: "read" | "edit" = "edit"): string | null {
   const target = projectPath(root, file);
   if (!target || target.startsWith(".space/")) return null;
   const entries = entriesForPath(root, target);
   if (!entries.length) return null;
-  let text = `これから編集する ${target} には、Knowledge（.space/kb/）の次の判断・制約が結びついています。従ってください。変える必要があるなら、編集の前に利用者に確かめてください。\n`;
+  const lead =
+    moment === "read"
+      ? `読んだ ${target} には、Knowledge（.space/kb/）の次の判断・制約が結びついています。このファイルを変えるときは従ってください。反する変更が要るなら、編集の前に利用者に確かめてください。`
+      : `これから編集する ${target} には、Knowledge（.space/kb/）の次の判断・制約が結びついています。従ってください。変える必要があるなら、編集の前に利用者に確かめてください。`;
+  let text = `${lead}\n`;
   for (const entry of entries) {
     const block = `\n--- .space/kb/${entry.path} ---\n${entry.raw.trim()}\n`;
     if (text.length + block.length > HOOK_TEXT_LIMIT) {
@@ -471,14 +475,14 @@ export function hookOutput(event: string, input: { cwd?: string; tool_input?: { 
     if (!context) return null;
     return { hookSpecificOutput: { hookEventName: event === "session-start" ? "SessionStart" : "SubagentStart", additionalContext: context } };
   }
-  if (event === "pre-tool-use") {
+  if (event === "pre-tool-use" || event === "post-read") {
     const path = input.tool_input?.file_path ?? input.tool_input?.notebook_path;
     if (!path) return null;
     const absolute = resolve(cwd, path);
     const root = findRoot(dirname(absolute));
-    const context = root ? pathContext(root, absolute) : null;
+    const context = root ? pathContext(root, absolute, event === "post-read" ? "read" : "edit") : null;
     if (!context) return null;
-    return { hookSpecificOutput: { hookEventName: "PreToolUse", additionalContext: context } };
+    return { hookSpecificOutput: { hookEventName: event === "post-read" ? "PostToolUse" : "PreToolUse", additionalContext: context } };
   }
   throw new KnowledgeError(`unknown hook '${event}'`);
 }

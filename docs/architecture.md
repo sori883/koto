@@ -219,10 +219,16 @@ no-commentsでのコメントの振り分けは次のとおりとする。
 | --- | --- | --- |
 | 会話の開始、サブエージェントの開始 | `SessionStart`・`SubagentStart`のフック | `index.md`をそのまま。`draft`の1件には印を付ける。目次が長くなりすぎたら（目安は100件）、種類ごとの件数と、`knowledge`スキルで探すよう案内する文だけにする |
 | 作業を思い出すとき | `recall` | チケットの`tags`や触る範囲に関係する1件を、本文まで読む |
-| ファイルを編集する直前 | `PreToolUse`（`Edit\|Write`）のフック | `code_refs`が一致する判断・制約の本文 |
-| 指摘や変更の提案の前 | koto-modeの決まり | その箇所の1件を確かめてから提案する。ファイルを読むたびには出さない |
+| 修正や実装を計画するとき | Bug fix・Feature・Refactoring・Perf issueのプレイブックの計画の段 | 触るファイルが決まったら`knowledge.ts for-path`で確かめ、計画に反映する。委任するときは、該当する1件のパスを依頼文に書く |
+| 指摘や変更の提案の前 | koto-modeの決まり | その箇所の1件を確かめてから提案する |
+| ファイルを読んだ直後 | `PostToolUse`（`Read`）のフック | `code_refs`が一致する判断・制約の本文。`Edit`は先に読むことが前提なので、編集を考える前に届く |
+| ファイルを編集する直前 | `PreToolUse`（`Edit\|Write\|NotebookEdit`）のフック | 同じ本文。読まずに書く場合の予備 |
 
-`SessionStart`の`additionalContext`はメインの会話にだけ届き、サブエージェントには`SubagentStart`で届く。`PreToolUse`の`additionalContext`はどちらにも届く。委任用エージェントには、エージェント定義の`skills`で`knowledge`スキルを読み込ませる。そのため`knowledge`スキルにも`disable-model-invocation: true`を付けない。
+`SessionStart`の`additionalContext`はメインの会話にだけ届き、サブエージェントには`SubagentStart`で届く。`PreToolUse`の`additionalContext`はどちらにも届く。
+
+`PreToolUse`の`additionalContext`は、ツールが実行された後に結果と一緒にAIに届くため、その編集を止められない。そのため、編集の前に効かせる役目は計画の段と`Read`の直後に持たせ、編集の直前は予備とする。編集を一度断る形（`permissionDecision: "deny"`）は、読ませるために拒否を使うことになり、断った記録の管理も要るので採らない。`Read`の直後のフックは読むたびに呼ばれるが、1回あたり0.01〜0.02秒（Knowledgeが300件のときに測定）で、文脈が足されるのは`code_refs`が一致したときだけである。
+
+委任用エージェントには、エージェント定義の`skills`で`knowledge`スキルを読み込ませる。そのため`knowledge`スキルにも`disable-model-invocation: true`を付けない。
 
 ### 見直し
 

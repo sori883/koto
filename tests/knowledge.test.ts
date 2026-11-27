@@ -225,6 +225,15 @@ test("the pre-tool-use hook shows entries bound to the edited file", () => {
   expect(hookOutput("pre-tool-use", { cwd: root, tool_input: {} })).toBeNull();
 });
 
+test("the post-read hook shows entries bound to the file that was read", () => {
+  nullConstraint();
+  const output = hookOutput("post-read", { cwd: root, tool_input: { file_path: join(root, "src/users/get-user.ts") } }) as any;
+  expect(output.hookSpecificOutput.hookEventName).toBe("PostToolUse");
+  expect(output.hookSpecificOutput.additionalContext).toStartWith("読んだ src/users/get-user.ts には");
+  expect(output.hookSpecificOutput.additionalContext).toContain("--- .space/kb/constraints/get-user-returns-null.md ---");
+  expect(hookOutput("post-read", { cwd: root, tool_input: { file_path: join(root, "src/other.ts") } })).toBeNull();
+});
+
 test("the CLI runs a hook from stdin and prints nothing when there is nothing to add", () => {
   nullConstraint();
   const run = (input: string) =>
