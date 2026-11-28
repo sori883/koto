@@ -129,6 +129,10 @@ PRで出す仕事のチケットは、PRを開いた時点で`done`にし、そ�
 
 show-me-your-workとHillclimbは、判断ログをチケットのフォルダの`decisions.tsv`に、show-me-your-workの列で書く。
 
+作業の状況を拾い直す役目は、`recall`スキルとSession pickupのプレイブックが持つ。どちらも、チケット（checkpoint）、判断ログ、会話記録、Gitの状態から現在地を組み立てる。`recall`は「どこまでやっていたか」に答えるもので、関係するチケットや会話をまたいで読み、現在地と次の一手を報告して終わる。何も書き換えない。Session pickupは「この作業の続きをやって」に答えるもので、引き継ぐ1件を読み、チケットを`running`に戻して、残りを該当するプレイブックへ回す。どちらもKnowledgeは読まない。Knowledgeが持つのは終わった判断と制約であり、作業の状況はチケットと会話記録にある。Knowledgeは、フックと計画の段で別に届く。
+
+`recall`は、チケットや話題の指定があればそれに絞り、無ければ会話記録を直近7日まで読む。GitHubのPR・Issueは`git`と`gh`で調べ、エラー監視やチャットなどの共有の記録は、接続（MCP）があるときだけ調べる。使えない接続は飛ばし、飛ばしたことを報告に書く。報告はpstackの形（要約、筋ごとの状態、繰り返し起きている問題、次の一手）とし、筋の状態はチケットの状態とPRの状態から付ける。
+
 ## Knowledge
 
 Knowledge（知識の継承）は、コードにもGitの履歴にも残らず、次に作業する自分とAIが知らないと困ることを、チケットより長く残す。Claude Codeの自動メモリーや`/memory`コマンドと取り違えないよう、機能の名前はMemoryではなくKnowledgeとする。
@@ -218,7 +222,6 @@ no-commentsでのコメントの振り分けは次のとおりとする。
 | 場面 | 仕組み | 出すもの |
 | --- | --- | --- |
 | 会話の開始、サブエージェントの開始 | `SessionStart`・`SubagentStart`のフック | `index.md`をそのまま。`draft`の1件には印を付ける。目次が長くなりすぎたら（目安は100件）、種類ごとの件数と、`knowledge`スキルで探すよう案内する文だけにする |
-| 作業を思い出すとき | `recall` | チケットの`tags`や触る範囲に関係する1件を、本文まで読む |
 | 修正や実装を計画するとき | Bug fix・Feature・Refactoring・Perf issueのプレイブックの計画の段 | 触るファイルが決まったら`knowledge.ts for-path`で確かめ、計画に反映する。委任するときは、該当する1件のパスを依頼文に書く |
 | 指摘や変更の提案の前 | koto-modeの決まり | その箇所の1件を確かめてから提案する |
 | ファイルを読んだ直後 | `PostToolUse`（`Read`）のフック | `code_refs`が一致する判断・制約の本文。`Edit`は先に読むことが前提なので、編集を考える前に届く |
@@ -243,7 +246,6 @@ no-commentsでのコメントの振り分けは次のとおりとする。
 実装や試験の中で見つかり、まだ決めていない事項である。決めたらこの節から消し、該当する節に書く。
 
 - **Autopilotの親チケットを閉じる場所。** 子チケットは各担当がPRを開くときに閉じる。親チケットは「子チケットがすべて終わったら閉じる」としか決めておらず、担当がクラウドで並行して動くため、どのPRの中で閉じるかが決まっていない。実際にAutopilotを動かして決める。
-- **recallの作り方。** Knowledgeは`recall`に乗せて読ませるので、`recall`はチケットとKnowledgeを読むスキルとして作る。Session pickupとの役割の分け方は、まだ決めていない。
 - **reflect・correct・automate-meの扱い。** Knowledgeとの分担を決めていない。`automate-me`は、利用者の好みと作業スタイルの置き場所になる。
 - **実際に動かして確かめていないプレイブック。** チケットを作るプレイブックのうち、Bug fixとMulti-phase plan以外（Feature、Refactoring、Perf issue、Visual parity、Hillclimb、Autonomous run、Autopilot）は、手順を揃えただけで動かしていない。PRが差し戻されてチケットを`pending`に戻す流れも試していない。
 - **スクリプトのテストの置き場所。** kotoで書いたスクリプトのテストは`tests/`に置き、配布しない。pstackからコピーした`koto-mode/scripts/watch-pr/`と`statechart/scripts/`のテストは、配布物の中に残っている。どちらに揃えるかを決める。
