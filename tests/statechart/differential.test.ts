@@ -376,7 +376,7 @@ async function answer(c: Case) {
     const compile = (view: string[]) =>
       run(
         process.execPath,
-        [path.join(here, "../statechart.ts"), `${c.module}.tla`, ...view, "--out", "out"],
+        [path.join(here, "../../plugin/skills/statechart/scripts/statechart.ts"), `${c.module}.tla`, ...view, "--out", "out"],
         dir,
       );
     const [viewed, plain] = await Promise.all([

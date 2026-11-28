@@ -1,9 +1,9 @@
 import { describe, expect, it } from "bun:test";
-import { type CliRuntime, main, parseArgs } from "./cli.ts";
+import { type CliRuntime, main, parseArgs } from "../../plugin/skills/koto-mode/scripts/watch-pr/cli.ts";
 import { fakeReader, passingCheck } from "./fakes.test-helper.ts";
-import { renderJson, renderPretty } from "./render.ts";
-import type { GitHubReader, WatcherVerdict } from "./types.ts";
-import { parsePrNumber } from "./types.ts";
+import { renderJson, renderPretty } from "../../plugin/skills/koto-mode/scripts/watch-pr/render.ts";
+import type { GitHubReader, WatcherVerdict } from "../../plugin/skills/koto-mode/scripts/watch-pr/types.ts";
+import { parsePrNumber } from "../../plugin/skills/koto-mode/scripts/watch-pr/types.ts";
 
 const silentIo = { stdout: () => {}, stderr: () => {} };
 

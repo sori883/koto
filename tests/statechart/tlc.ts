@@ -4,7 +4,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { PINNED_FLAGS } from "../run.ts";
+import { PINNED_FLAGS } from "../../plugin/skills/statechart/scripts/run.ts";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const jar = process.env.TLA2TOOLS;
@@ -96,7 +96,7 @@ export function agrees(module: string, files: { [name: string]: string[] }, cfg:
     const out = path.join(dir, "out");
     const cli = spawnSync(
       process.execPath,
-      [path.join(here, "../statechart.ts"), path.join(dir, `${module}.tla`), "--out", out],
+      [path.join(here, "../../plugin/skills/statechart/scripts/statechart.ts"), path.join(dir, `${module}.tla`), "--out", out],
       { encoding: "utf8" },
     );
     const plain = tlc(dir, module, cfg);

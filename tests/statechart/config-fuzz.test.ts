@@ -5,9 +5,9 @@ import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { configText } from "../backends/cfg.ts";
-import { readConfig } from "../frontends/config.ts";
-import { type Checks, readChecks } from "../frontends/spec.ts";
+import { configText } from "../../plugin/skills/statechart/scripts/backends/cfg.ts";
+import { readConfig } from "../../plugin/skills/statechart/scripts/frontends/config.ts";
+import { type Checks, readChecks } from "../../plugin/skills/statechart/scripts/frontends/spec.ts";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const skip = !process.env.TLA2TOOLS && "set TLA2TOOLS to the path of tla2tools.jar to run TLC";

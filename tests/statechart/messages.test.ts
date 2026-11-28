@@ -3,9 +3,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { plainText, runtime } from "../backends/plain-text.ts";
-import { readMessages } from "../frontends/messages.ts";
-import { readVerdict } from "../frontends/verdict.ts";
+import { plainText, runtime } from "../../plugin/skills/statechart/scripts/backends/plain-text.ts";
+import { readMessages } from "../../plugin/skills/statechart/scripts/frontends/messages.ts";
+import { readVerdict } from "../../plugin/skills/statechart/scripts/frontends/verdict.ts";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 

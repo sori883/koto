@@ -15,14 +15,14 @@ import {
   resolveChecks,
   resolveContext,
   resolveReviewThreads,
-} from "./github.ts";
+} from "../../plugin/skills/koto-mode/scripts/watch-pr/github.ts";
 import {
   fakeReader,
   failedCheck,
   passingCheck,
   pendingCheck,
 } from "./fakes.test-helper.ts";
-import { parsePrNumber } from "./types.ts";
+import { parsePrNumber } from "../../plugin/skills/koto-mode/scripts/watch-pr/types.ts";
 
 const context = {
   owner: "owner",
@@ -458,7 +458,7 @@ describe("context and stack discovery", () => {
 
   it("terminates when an unrelated fork opens main against main", () => {
     // Bound the subprocess so this regression reports a failure instead of hanging the suite.
-    const program = `import { orderStack } from ${JSON.stringify(import.meta.dir + "/github.ts")};
+    const program = `import { orderStack } from ${JSON.stringify(import.meta.dir + "/../../plugin/skills/koto-mode/scripts/watch-pr/github.ts")};
       console.log(JSON.stringify(orderStack(${JSON.stringify(context)}, [
         { number: 41, headRefName: "main", baseRefName: "main", isCrossRepository: true },
         { number: 42, headRefName: "feature", baseRefName: "main", isCrossRepository: false }
@@ -479,7 +479,7 @@ case "$*" in
 esac
 printf '%s\\n' '[{"number":42,"headRefName":"feature","baseRefName":"main","isCrossRepository":true}]'
 `, { mode: 0o755 });
-      const program = `import { GhGitHubReader } from ${JSON.stringify(import.meta.dir + "/github.ts")};
+      const program = `import { GhGitHubReader } from ${JSON.stringify(import.meta.dir + "/../../plugin/skills/koto-mode/scripts/watch-pr/github.ts")};
         console.log(JSON.stringify(await new GhGitHubReader().openPullRequests({ owner: "owner", repo: "repo" })));`;
       const child = spawnSync(process.execPath, ["-e", program], {
         encoding: "utf8", timeout: 2000,

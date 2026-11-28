@@ -4,6 +4,8 @@ description: /koto:koto-modeの作業中に、コードの作成や補助作業�
 background: true
 model: opus
 effort: xhigh
+skills:
+  - koto:knowledge
 ---
 
 # koto-agent

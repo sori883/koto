@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { check, PINNED_FLAGS } from "../run.ts";
+import { check, PINNED_FLAGS } from "../../plugin/skills/statechart/scripts/run.ts";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const corpus = path.join(here, "corpus");
@@ -23,7 +23,7 @@ for (const name of fs.readdirSync(corpus)) {
     const r = spawnSync(
       process.execPath,
       [
-        path.join(here, "../statechart.ts"),
+        path.join(here, "../../plugin/skills/statechart/scripts/statechart.ts"),
         path.join(dir, `${name}.tla`),
         ...(fs.existsSync(view) ? ["--view", view] : []),
         "--out",
@@ -63,7 +63,7 @@ test("a spec in a folder whose name is not ASCII checks under the POSIX locale",
   const r = spawnSync(
     process.execPath,
     [
-      path.join(here, "../statechart.ts"),
+      path.join(here, "../../plugin/skills/statechart/scripts/statechart.ts"),
       path.join(dir, "Login.tla"),
       "--view",
       path.join(dir, "view.mjs"),
@@ -82,7 +82,7 @@ test("an invariant named NoDeadlock and a deadlock break as two rules", { skip }
   const r = spawnSync(
     process.execPath,
     [
-      path.join(here, "../statechart.ts"),
+      path.join(here, "../../plugin/skills/statechart/scripts/statechart.ts"),
       path.join(corpus, "UserNoDeadlock", "UserNoDeadlock.tla"),
       "--out",
       out,
@@ -203,7 +203,7 @@ for (const [input, name, tla] of [
     const out = path.join(path.dirname(base), "out");
     const r = spawnSync(
       process.execPath,
-      [path.join(here, "../statechart.ts"), `${base}.tla`, "--out", out],
+      [path.join(here, "../../plugin/skills/statechart/scripts/statechart.ts"), `${base}.tla`, "--out", out],
       { encoding: "utf8" },
     );
     assert.equal(r.stderr, "");
@@ -240,7 +240,7 @@ test("a property that breaks on a loop draws the loop and reports it", { skip },
   const out = path.join(path.dirname(base), "out");
   const r = spawnSync(
     process.execPath,
-    [path.join(here, "../statechart.ts"), `${base}.tla`, "--out", out],
+    [path.join(here, "../../plugin/skills/statechart/scripts/statechart.ts"), `${base}.tla`, "--out", out],
     { encoding: "utf8" },
   );
   assert.equal(r.stderr, "");
@@ -279,7 +279,7 @@ test(
     const out = path.join(path.dirname(base), "out");
     const r = spawnSync(
       process.execPath,
-      [path.join(here, "../statechart.ts"), `${base}.tla`, "--out", out],
+      [path.join(here, "../../plugin/skills/statechart/scripts/statechart.ts"), `${base}.tla`, "--out", out],
       { encoding: "utf8" },
     );
     assert.equal(r.stderr, "");
@@ -364,7 +364,7 @@ for (const [width, height, config, status, drawn, chart, header] of [
       fs.mkdirSync(tlc);
       const r = spawnSync(
         process.execPath,
-        [path.join(here, "../statechart.ts"), `${base}.tla`, "--out", out],
+        [path.join(here, "../../plugin/skills/statechart/scripts/statechart.ts"), `${base}.tla`, "--out", out],
         {
           encoding: "utf8",
           env: {

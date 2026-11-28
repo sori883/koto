@@ -1,11 +1,11 @@
-import { parsePrNumber } from "./types.ts";
+import { parsePrNumber } from "../../plugin/skills/koto-mode/scripts/watch-pr/types.ts";
 import type {
   CiClean,
   GitHubMergeAllowed,
   PrContext,
   ReadyPr,
   TerminalVerdict,
-} from "./types.ts";
+} from "../../plugin/skills/koto-mode/scripts/watch-pr/types.ts";
 
 type ReadyVerdict = Extract<TerminalVerdict, { readonly kind: "READY" }>;
 

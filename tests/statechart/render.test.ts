@@ -6,10 +6,10 @@ import os from "node:os";
 import path from "node:path";
 import { before, test } from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
-import { mermaid as chartText } from "../backends/mermaid.ts";
-import type { Graph } from "../ir.ts";
-import { walk } from "../passes/reach.ts";
-import { project } from "../pipeline.ts";
+import { mermaid as chartText } from "../../plugin/skills/statechart/scripts/backends/mermaid.ts";
+import type { Graph } from "../../plugin/skills/statechart/scripts/ir.ts";
+import { walk } from "../../plugin/skills/statechart/scripts/passes/reach.ts";
+import { project } from "../../plugin/skills/statechart/scripts/pipeline.ts";
 import { fuzz, type Html, type Mermaid, type Render } from "./labels.ts";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -18,7 +18,7 @@ for (const f of fs.readdirSync(path.join(here, "charts")))
   charts.push(path.join(here, "charts", f));
 for (const d of fs.readdirSync(path.join(here, "corpus")))
   charts.push(path.join(here, "corpus", d, "chart.mmd"));
-const guide = fs.readFileSync(path.join(here, "../../references/render.md"), "utf8");
+const guide = fs.readFileSync(path.join(here, "../../plugin/skills/statechart/scripts/../references/render.md"), "utf8");
 const css = guide.match(/```css\n([\s\S]*?)```/);
 assert.ok(css, "references/render.md has no css block");
 const theme = css[1];
