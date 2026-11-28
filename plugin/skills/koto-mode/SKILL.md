@@ -95,9 +95,9 @@ disable-model-invocation: false
 
 - コード、文章、判断：`model: "opus"`、`effort: "xhigh"`。
 - 簡単で機械的な編集：`model: "opus"`、`effort: "high"`。
-- 多様な視点でのレビュー・設計の検討：`model: "fable"`・`effort: "high"`、`model: "opus"`・`effort: "high"`、`model: "sonnet"`・`effort: "xhigh"`で一人ずつ。
+- 多様な視点でのレビュー・設計の検討：`model: "opus"`・`effort: "high"`、`model: "sonnet"`・`effort: "xhigh"`、`model: "sonnet"`・`effort: "high"`で一人ずつ。
 
-**Fable 5.2は例外。** 検討の場の外でFableを使うのは、利用者がこの作業にFableを指定した場合か、同じ依頼をOpus 5.5の`effort: "xhigh"`で2回動かして2回とも確認に失敗した場合だけとする。どちらにあたるかを言う。難しさだけでは理由にならない。
+**Fable 5.2は使わない。** 費用が高いため、検討の場も含め、利用者がこの作業にFableを指定した場合だけ使う。難しさや確認の失敗は理由にならない。
 
 **モデルを仕事に合わせる。** 役割の既定から始め、系列は変えず、仕事に必要な水準を選ぶ。検討の場の席は、上に書いた水準のままにする。それ以外の役割は、もっとも難しい・微妙な作業では一段上げ（上限は`xhigh`）、判断では一段下げ、定型の作業では二段以上下げる。`xhigh`より上で動かす役割はない。検証は常に、簡単で機械的な編集の役割と同じ設定（既定は`model: "opus"`、`effort: "high"`）で動かす。`Agent`ツールが`model`や`effort`の値を拒否したら、その値は二度と渡さない。役割の既定、呼び出し元のスキルの代わりの値、同じ系列で近い有効な値の順に戻り、それでもだめなら`model`を省く。そうしたことを言う。
 

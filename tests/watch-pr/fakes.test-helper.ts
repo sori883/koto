@@ -11,8 +11,8 @@ import type {
   ReviewThread,
   ReviewThreadPage,
   RollupPage,
-} from "./types.ts";
-import { parsePrNumber } from "./types.ts";
+} from "../../plugin/skills/koto-mode/scripts/watch-pr/types.ts";
+import { parsePrNumber } from "../../plugin/skills/koto-mode/scripts/watch-pr/types.ts";
 
 export interface FakeReaderOptions {
   readonly facts?: Partial<Omit<PullRequestFacts, "context">>;

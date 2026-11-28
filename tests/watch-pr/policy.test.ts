@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { WatcherQueryError } from "./github.ts";
+import { WatcherQueryError } from "../../plugin/skills/koto-mode/scripts/watch-pr/github.ts";
 import {
   applyQueueSnapshot,
   assessGitHubMerge,
@@ -12,7 +12,7 @@ import {
   runQueued,
   runSimple,
   selectTierMajorStackDecision,
-} from "./policy.ts";
+} from "../../plugin/skills/koto-mode/scripts/watch-pr/policy.ts";
 import {
   fakeReader,
   failedCheck,
@@ -27,9 +27,9 @@ import type {
   ProgressVerdict,
   PullRequestFacts,
   RollupState,
-} from "./types.ts";
-import { parsePrNumber } from "./types.ts";
-import { renderStatusTable } from "./render.ts";
+} from "../../plugin/skills/koto-mode/scripts/watch-pr/types.ts";
+import { parsePrNumber } from "../../plugin/skills/koto-mode/scripts/watch-pr/types.ts";
+import { renderStatusTable } from "../../plugin/skills/koto-mode/scripts/watch-pr/render.ts";
 
 const context = (number: number): PrContext => ({
   owner: "owner",

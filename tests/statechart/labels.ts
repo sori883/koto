@@ -1,9 +1,9 @@
 import { inspect } from "node:util";
-import { drawnEdges, mermaid as chartText } from "../backends/mermaid.ts";
-import { checkView } from "../frontends/view.ts";
-import type { Chart, ChartState, State, Step, View } from "../ir.ts";
-import { walk } from "../passes/reach.ts";
-import { project } from "../pipeline.ts";
+import { drawnEdges, mermaid as chartText } from "../../plugin/skills/statechart/scripts/backends/mermaid.ts";
+import { checkView } from "../../plugin/skills/statechart/scripts/frontends/view.ts";
+import type { Chart, ChartState, State, Step, View } from "../../plugin/skills/statechart/scripts/ir.ts";
+import { walk } from "../../plugin/skills/statechart/scripts/passes/reach.ts";
+import { project } from "../../plugin/skills/statechart/scripts/pipeline.ts";
 
 export type Render = (text: string) => { svg: string };
 

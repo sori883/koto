@@ -6,8 +6,8 @@ import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
 import { fileURLToPath } from "node:url";
-import { plainText } from "../backends/plain-text.ts";
-import { readMessages } from "../frontends/messages.ts";
+import { plainText } from "../../plugin/skills/statechart/scripts/backends/plain-text.ts";
+import { readMessages } from "../../plugin/skills/statechart/scripts/frontends/messages.ts";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const corpus = path.join(here, "corpus");
@@ -41,7 +41,7 @@ test(
           const child = spawn(
             process.execPath,
             [
-              path.join(here, "../statechart.ts"),
+              path.join(here, "../../plugin/skills/statechart/scripts/statechart.ts"),
               path.join(dir, `${name}.tla`),
               ...(fs.existsSync(view) ? ["--view", view] : []),
               "--out",

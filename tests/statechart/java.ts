@@ -2,8 +2,8 @@
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
-import { plainText } from "../backends/plain-text.ts";
-import { readMessages } from "../frontends/messages.ts";
+import { plainText } from "../../plugin/skills/statechart/scripts/backends/plain-text.ts";
+import { readMessages } from "../../plugin/skills/statechart/scripts/frontends/messages.ts";
 
 const args = process.argv.slice(2);
 const config = args.includes("-config") ? args[args.indexOf("-config") + 1] : undefined;
