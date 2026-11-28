@@ -77,6 +77,8 @@ pstackの構成を参照し、次の層で組み立てる。
 
 スキルが使うスクリプトは、Bunで動くTypeScriptで書き、シェルスクリプトは使わない。外部パッケージに依存せず、`bun <スクリプトのパス>`だけで動くようにする。外部パッケージが要るときは、初回の実行時に依存を入れる仕組み（`koto-mode/scripts/bootstrap.ts`）に従う。スクリプトのテストは、pstackから写したものも含めてすべて`tests/`に置き、配布物に含めない。`statechart`のテストはNodeのテストランナー用に書かれているので、`tests/statechart/`に置いてNodeで実行し、`bunfig.toml`で`bun test`の対象から外す。
 
+文章のスキルは、`unslop`と`technical-writing`をそのまま使う。旧kotoの`yomiyasu`と`natural-japanese`はkotoに含めず、利用者が開発以外でも使えるよう、ユーザー単位（`~/.claude/skills/`）で入れることをREADMEで勧める。Pythonのスクリプトを持ち、kotoのスクリプトの決まりに合わないためでもある。kotoのスキルからは呼ばず、使い分けは各スキルの説明文に任せる。勧めても入れない利用者がいるので、`unslop`と`technical-writing`は残す。
+
 図は、MermaidかHTML（SVGを含む）で描く。pstackの`ketchup`の`/visualize`と、`teach`の画像生成ツールは、Claude Codeに決まった対応物が無いので使わない。
 
 `reflect`スキルは、この差し替えでkotoのスキルを直す。会話から学びを拾い、直し案を出し、利用者の承認を受けてから直す。kotoのスキルを直すときは、プラグインの中を書き換えず、スキルのフォルダごと利用先のプロジェクトの`.claude/skills/<名前>/`（すべてのプロジェクトで使うなら`~/.claude/skills/<名前>/`）にコピーし、コピーを直す。利用先のスキルは、そのまま直す。コードについての判断や制約はKnowledgeに、仕組みで防げる間違いと利用者の好みは「後でやること」として返し、それぞれ`correct`と`automate-me`に任せる。コミットやPRは作らない。利用者が頼んだときだけ動く。コピーはkotoの更新を受けないので、直すのは承認された箇所だけにする。
